@@ -1,0 +1,15 @@
+# python cache
+*.py[oc]
+__pycache__/
+
+# IDE files
+.vscode/
+
+#db
+*.sqlite3
+
+#migrations files
+AIPredict/apps/predict/migrations/*
+
+#bundles
+bundles/*
