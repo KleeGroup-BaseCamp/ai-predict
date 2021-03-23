@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from rest_framework import viewsets, status, views
 from rest_framework.response import Response
 
@@ -35,7 +35,7 @@ class DeployBundle(viewsets.ModelViewSet):
         # creates and save the bundle in the database
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
     def activate(self, request, *args, **kwargs):
         # gets the request bundle version
@@ -52,7 +52,7 @@ class DeployBundle(viewsets.ModelViewSet):
             activated_instance.update(activated=False)
         # activates the instance
         to_update.update(activated=True)
-        return Response(status=status.HTTP_200_OK)
+        return JsonResponse(status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         # gets the request bundle version
@@ -67,7 +67,7 @@ class DeployBundle(viewsets.ModelViewSet):
         remove_files(to_remove[0].path)
         # removes the instance from the database
         self.perform_destroy(to_remove)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(status=status.HTTP_204_NO_CONTENT)
 
 class Prediction(views.APIView):
 
@@ -95,14 +95,18 @@ class Prediction(views.APIView):
         predictor = Predictor(preprocessing=preprocessing, model_label=instance.name, model=model)
         
         #extracts data from the request
-        params = request.FILES["json"]
-        data = pd.read_json(params)
+        
+        body_unicode =request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        
+        data = pd.DataFrame(body)
         res = {}
         res["prediction"] = predictor.predict(data=data)
-        res["prediction_proba"] = predictor.predict_proba(data=data)
+        res["predictionProba"] = predictor.predict_proba(data=data)
         try:
             res["explanation"] = predictor.explain_prediction(data).values
         except Exception as e:
             res["explanation"] = None
         res = clean_response(res)
-        return Response(res)
+        res = json.dumps(res, cls=NumpyArrayEncoder)
+        return JsonResponse(json.loads(res))

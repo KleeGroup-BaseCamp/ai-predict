@@ -1,9 +1,17 @@
 import zipfile
 import json
+from json import JSONEncoder
 from pathlib import Path
 import os
 import shutil
 import pickle
+import numpy as np
+
+class NumpyArrayEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return JSONEncoder.default(self, obj)
 
 def handle_uploaded_file(f):
     with open('./bundles/temp/bundle.zip', 'wb+') as destination:
@@ -17,7 +25,7 @@ def unzip_bundle():
                 zip_ref.extractall(temp_path)
         os.remove(temp_path+"bundle.zip")
     except FileNotFoundError:
-        return Response("Cannot find a file called bundle.zip", status=status.HTTP_404_NOT_FOUND)
+        raise FileNotFoundError("Cannot find a file called bundle.zip", status=status.HTTP_404_NOT_FOUND)
 
 def store_bundle():
     #checks if bundle.json exists

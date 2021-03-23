@@ -8,8 +8,32 @@ __pycache__/
 #db
 *.sqlite3
 
-#migrations files
-AIPredict/apps/predict/migrations/*
+# migrations files
+migrations/
 
-#bundles
-bundles/*
+# bundles
+bundles/
+/.metadata/
+
+# java files
+
+bin/
+trash/
+target/
+.classpath
+.project
+*/.settings/
+*.prefs
+*.jar
+.settings/
+*.iml
+*.idea
+.metadata/*
+*/node_modules/*
+vertigo-release/
+vertigo-x-release/
+mvn-release.txt
+createSymLink.bat
+.factorypath
+node_modules
+/vertigo-ui-vuejs/dist
