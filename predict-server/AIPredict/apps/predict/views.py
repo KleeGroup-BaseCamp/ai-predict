@@ -107,6 +107,6 @@ class Prediction(views.APIView):
             res["explanation"] = predictor.explain_prediction(data).values
         except Exception as e:
             res["explanation"] = None
-        res = clean_response(res)
+        res = parse_response(res)
         res = json.dumps(res, cls=NumpyArrayEncoder)
-        return JsonResponse(json.loads(res))
+        return JsonResponse(json.loads(res), safe=False)

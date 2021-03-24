@@ -11,6 +11,10 @@ class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
+
+        if isinstance(obj, np.int64):
+            return int(obj)
+
         return JSONEncoder.default(self, obj)
 
 def handle_uploaded_file(f):
@@ -78,6 +82,8 @@ def get_preprocessing(path):
         data = json.load(d)
     return data["preprocessing"]
 
-def clean_response(res):
-    # removes key with none values from the prediction result dictionnary 
-    return {k:v for k,v in res.items() if not v is None}
+def parse_response(res):
+    # removes key with none values from the prediction result dictionnary
+    npredict = len(res["prediction"])
+    # to delete all None values from res : {k:v for k,v in res.items() if not v is None}
+    return [dict(zip(res,t)) for t in zip(*res.values())]
