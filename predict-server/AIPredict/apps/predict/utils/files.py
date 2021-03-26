@@ -12,7 +12,7 @@ class NumpyArrayEncoder(JSONEncoder):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
 
-        if isinstance(obj, np.int64):
+        if isinstance(obj, np.int64) or isinstance(obj, np.int32):
             return int(obj)
 
         return JSONEncoder.default(self, obj)
@@ -84,6 +84,9 @@ def get_preprocessing(path):
 
 def parse_response(res):
     # removes key with none values from the prediction result dictionnary
-    npredict = len(res["prediction"])
-    # to delete all None values from res : {k:v for k,v in res.items() if not v is None}
-    return [dict(zip(res,t)) for t in zip(*res.values())]
+    if "predictionNumeric" in res:
+        npredict = len(res["predictionNumeric"])
+    else:
+        npredict = len(res["predictionLabel"])
+    res = {k:v for k,v in res.items() if not v is None}
+    return {"predictionList": [dict(zip(res,t)) for t in zip(*res.values())]}

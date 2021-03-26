@@ -52,7 +52,7 @@ class DeployBundle(viewsets.ModelViewSet):
             activated_instance.update(activated=False)
         # activates the instance
         to_update.update(activated=True)
-        return JsonResponse(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         # gets the request bundle version
@@ -101,7 +101,11 @@ class Prediction(views.APIView):
         
         data = pd.DataFrame(body)
         res = {}
-        res["prediction"] = predictor.predict(data=data)
+        prediction = predictor.predict(data=data)
+        if all(str(pred).isnumeric() for pred in prediction):
+            res["predictionNumeric"] = prediction
+        else:
+            res["predictionLabel"] = prediction
         res["predictionProba"] = predictor.predict_proba(data=data)
         try:
             res["explanation"] = predictor.explain_prediction(data).values
@@ -109,4 +113,5 @@ class Prediction(views.APIView):
             res["explanation"] = None
         res = parse_response(res)
         res = json.dumps(res, cls=NumpyArrayEncoder)
-        return JsonResponse(json.loads(res), safe=False)
+        print(res)
+        return JsonResponse(json.loads(res))
