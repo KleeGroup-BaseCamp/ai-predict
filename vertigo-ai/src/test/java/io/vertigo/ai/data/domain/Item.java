@@ -5,7 +5,6 @@ import io.vertigo.core.lang.Cardinality;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 public final class Item implements KeyConcept {
 

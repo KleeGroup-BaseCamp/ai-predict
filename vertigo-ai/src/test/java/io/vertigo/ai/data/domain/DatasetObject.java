@@ -1,7 +1,5 @@
 package io.vertigo.ai.data.domain;
 
-import java.util.List;
-
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;

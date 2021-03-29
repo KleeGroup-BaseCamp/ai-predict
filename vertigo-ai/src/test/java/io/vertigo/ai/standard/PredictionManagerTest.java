@@ -7,7 +7,7 @@ import io.vertigo.core.node.config.NodeConfig;
 public class PredictionManagerTest extends AbstractPredictionManagerTest {
 
 	private static final String DSI_ITEM = "DsIItem";
-	private static final String DS_DATASET = "DsIDatasetObject";
+	private static final String DS_DATASET = "DsDatasetObject";
 	@Override
 	protected void doSetUp() {
 		init(DSI_ITEM, DS_DATASET);

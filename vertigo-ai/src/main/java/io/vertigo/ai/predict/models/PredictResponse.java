@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.stereotype.Field;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
@@ -17,7 +16,7 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class PredictResponse implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.predict.models.Predict> predictionList =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.ai.predict.models.Predict.class);
+	private List<io.vertigo.ai.predict.models.Predict> predictionList =  new ArrayList<io.vertigo.ai.predict.models.Predict>();
 	
 	/**
 	 * Champ : DATA.
@@ -34,7 +33,7 @@ public final class PredictResponse implements DtObject {
 	 * Définit la valeur de la propriété 'Prediction list'.
 	 * @param predictionList DtList de Predict
 	 */
-	public void setPredictionList(final DtList<Predict> predictionList) {
+	public void setPredictionList(final   List<Predict> predictionList) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(predictionList);
 		//---
 		this.predictionList = predictionList;

@@ -1,6 +1,5 @@
 package io.vertigo.ai.datasets.definitions;
 
-import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinitionSupplier;
 import io.vertigo.core.node.definition.Definition;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.DefinitionSupplier;

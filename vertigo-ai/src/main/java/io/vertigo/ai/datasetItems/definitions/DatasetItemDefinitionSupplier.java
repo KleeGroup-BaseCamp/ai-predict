@@ -9,7 +9,7 @@ public final class DatasetItemDefinitionSupplier implements DefinitionSupplier {
 
 	private final String myName;
 	private String myKeyConceptDtDefinitionName;
-	private String myDatasetDtDefinitionName;
+	private String myDatasetItemDtDefinitionName;
 	private String myDatasetLoaderId;
 	
 	public DatasetItemDefinitionSupplier(final String name) {
@@ -20,19 +20,19 @@ public final class DatasetItemDefinitionSupplier implements DefinitionSupplier {
 	public Definition get(DefinitionSpace definitionSpace) {
 		
 		final DtDefinition keyConceptDtDefinition = definitionSpace.resolve(myKeyConceptDtDefinitionName, DtDefinition.class);
-		final DtDefinition indexDtDefinition = definitionSpace.resolve(myDatasetDtDefinitionName, DtDefinition.class);
+		final DtDefinition itemDtDefinition = definitionSpace.resolve(myDatasetItemDtDefinitionName, DtDefinition.class);
 
 
 		return new DatasetItemDefinition(
 				myName,
-				indexDtDefinition,
+				itemDtDefinition,
 				false,
 				myDatasetLoaderId,
 				keyConceptDtDefinition);
 	}
 	
-	public DatasetItemDefinitionSupplier withDatasetDtDefinition(final String datasetDtDefinitionName) {
-		this.myDatasetDtDefinitionName = datasetDtDefinitionName;
+	public DatasetItemDefinitionSupplier withDatasetItemDtDefinition(final String datasetItemDtDefinitionName) {
+		this.myDatasetItemDtDefinitionName = datasetItemDtDefinitionName;
 		return this;
 
 	}

@@ -1,25 +1,16 @@
 package io.vertigo.ai.plugins;
 
-import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
 
-import io.vertigo.ai.datasetItems.models.DatasetItem;
 import io.vertigo.ai.impl.PredictionPlugin;
 import io.vertigo.ai.predict.models.PredictResponse;
 import io.vertigo.core.param.ParamValue;
@@ -36,9 +27,8 @@ public class AIPredictPluginImpl implements PredictionPlugin{
 	}
 	
 	@Override
-	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<DatasetItem<K, D>> data) {
+	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data) {
 		
-		System.out.println(server);
 		ClientConfig clientConfig = new DefaultClientConfig();
 		 
         clientConfig.getFeatures().put(
@@ -57,7 +47,6 @@ public class AIPredictPluginImpl implements PredictionPlugin{
                     + response.getStatus());
         }
 
-        ObjectMapper mapper = new ObjectMapper();
         PredictResponse output = response.getEntity(PredictResponse.class);
         
 		return output;

@@ -1,11 +1,13 @@
 package io.vertigo.ai.datasets.definitions;
 
-import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinition;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 
-@DefinitionPrefix(DatasetItemDefinition.PREFIX)
+/**
+ * Définition d'un dataset.
+ */
+@DefinitionPrefix(DatasetDefinition.PREFIX)
 public final class DatasetDefinition extends AbstractDefinition{
 
 	public static final String PREFIX = "Ds";

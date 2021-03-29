@@ -15,14 +15,14 @@ public class ItemPredictClient implements Component, DefinitionProvider {
 	
 	@Override
 	public List<DefinitionSupplier> get(DefinitionSpace definitionSpace) {
-		List<DefinitionSupplier> definitions = new ArrayList();
+		List<DefinitionSupplier> definitions = new ArrayList<DefinitionSupplier>();
 		definitions.add(
 				new DatasetItemDefinitionSupplier("DsIItem")
 				.withKeyConceptDtDefinition("DtItem")
-				.withDatasetDtDefinition("DtItem")
+				.withDatasetItemDtDefinition("DtItem")
 				.withLoaderId("ItemSearchLoader"));
 		definitions.add(
-				new DatasetDefinitionSupplier("DsIDatasetObject")
+				new DatasetDefinitionSupplier("DsDatasetObject")
 				.withDatasetDtDefinition("DtDatasetObject"));
 		return definitions;
 	}
