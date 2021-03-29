@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import io.vertigo.ai.datasets.definitions.DatasetLoader;
-import io.vertigo.ai.datasets.definitions.RecordChunk;
+import io.vertigo.ai.datasetItems.definitions.DatasetItemLoader;
+import io.vertigo.ai.datasetItems.definitions.RecordChunk;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
@@ -16,7 +16,7 @@ import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
-public abstract class AbstractDatasetLoader<P extends Serializable, K extends KeyConcept, I extends DtObject> implements DatasetLoader<K, I>{
+public abstract class AbstractDatasetLoader<P extends Serializable, K extends KeyConcept, I extends DtObject> implements DatasetItemLoader<K, I>{
 
 	/** {@inheritDoc} */
 	@Override

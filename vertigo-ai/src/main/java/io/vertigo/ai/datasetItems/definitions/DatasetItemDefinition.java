@@ -1,16 +1,21 @@
-package io.vertigo.ai.datasets.definitions;
+package io.vertigo.ai.datasetItems.definitions;
 
 import io.vertigo.core.node.definition.AbstractDefinition;
+import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 
 /**
  * 
  */
-public final class DatasetDefinition extends AbstractDefinition{
+@DefinitionPrefix(DatasetItemDefinition.PREFIX)
+public final class DatasetItemDefinition extends AbstractDefinition{
     
+	public static final String PREFIX = "DsI";
+	
     private final DtDefinition datasetDtDefinition;
     private final Boolean streamed;
     final String datasetLoaderId;
+    private final DtDefinition keyConceptDtDefinition;
 
     /**
      * 
@@ -19,17 +24,19 @@ public final class DatasetDefinition extends AbstractDefinition{
      * @param streamed
      * @param datasetLoaderId
      */
-    public DatasetDefinition(
+    public DatasetItemDefinition(
         final String name,
         final DtDefinition datasetDtDefinition,
         final Boolean streamed,
-        final String datasetLoaderId
+        final String datasetLoaderId,
+        final DtDefinition keyConceptDtDefinition
         ){
         super(name);
         
         this.datasetDtDefinition = datasetDtDefinition;
         this.streamed = streamed;
         this.datasetLoaderId = datasetLoaderId;
+        this.keyConceptDtDefinition = keyConceptDtDefinition;
         
     }
 
@@ -52,4 +59,9 @@ public final class DatasetDefinition extends AbstractDefinition{
     public Boolean isStreamed() {
     	return streamed;
     }
+    
+    public DtDefinition getKeyConceptDtDefinition() {
+		return keyConceptDtDefinition;
+	}
+    
     }

@@ -15,7 +15,8 @@ public class AIFeatures extends Features<AIFeatures>{
 
 	@Override
 	protected void buildFeatures() {
-		getModuleConfigBuilder().addComponent(PredictionManager.class, PredictionManagerImpl.class);		
+		getModuleConfigBuilder().addComponent(PredictionManager.class, PredictionManagerImpl.class);
+		
 	}
 	
 

@@ -1,32 +1,33 @@
-package io.vertigo.ai.datasets.models;
+package io.vertigo.ai.datasetItems.models;
 
-import io.vertigo.ai.datasets.definitions.DatasetDefinition;
+import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinition;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
 
 
-public class Dataset<K extends KeyConcept, I extends DtObject> {
+public class DatasetItem<K extends KeyConcept, I extends DtObject>{
         
     
-    private final DatasetDefinition datasetDefinition;
+    private final DatasetItemDefinition datasetItemDefinition;
 
     private final UID<K> uid;
 
     private final I datasetDtObject;
+    
 
     /**
      */
-    private Dataset(final DatasetDefinition datasetDefinition, final UID<K> uid, final I datasetDtObject) {
+    private DatasetItem(final DatasetItemDefinition datasetItemDefinition, final UID<K> uid, final I datasetDtObject) {
         this.uid = uid;
-        this.datasetDefinition = datasetDefinition;
+        this.datasetItemDefinition = datasetItemDefinition;
         this.datasetDtObject = datasetDtObject;
     }
 
     /**
      */
-    public DatasetDefinition getDefinition() {
-        return datasetDefinition;
+    public DatasetItemDefinition getDefinition() {
+        return datasetItemDefinition;
     }
 
     /**
@@ -46,11 +47,11 @@ public class Dataset<K extends KeyConcept, I extends DtObject> {
     public boolean hasDataset() {
         return datasetDtObject != null;
     }
-
+    
     /**
      */
-    public static <S extends KeyConcept, I extends DtObject> Dataset<S, I> createIndex(final DatasetDefinition datasetDefinition, final UID<S> uid, final I datasetDto) {
-        return new Dataset<>(datasetDefinition, uid, datasetDto);
+    public static <S extends KeyConcept, I extends DtObject> DatasetItem<S, I> createIndex(final DatasetItemDefinition datasetItemDefinition, final UID<S> uid, final I datasetDto) {
+        return new DatasetItem<>(datasetItemDefinition, uid, datasetDto);
     }
 
 }

@@ -1,4 +1,4 @@
-package io.vertigo.ai.datasets.definitions;
+package io.vertigo.ai.datasetItems.definitions;
 
 import java.util.Collections;
 import java.util.List;
