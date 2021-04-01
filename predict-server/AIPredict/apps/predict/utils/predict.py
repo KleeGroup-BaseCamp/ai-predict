@@ -26,8 +26,11 @@ class Predictor(object):
     def predict_proba(self, data):
         #calls the predict_proba method of the model if possible
         if "predict_proba" in dir(self.model):
-            preprocessed_data = self.apply_preprocessing(data)
-            return self.model.predict_proba(preprocessed_data)
+            try:
+                preprocessed_data = self.apply_preprocessing(data)
+                return self.model.predict_proba(preprocessed_data)
+            except:
+                return None
     
     def explain_prediction(self, data):
         #triggers an explainer for Tree based models

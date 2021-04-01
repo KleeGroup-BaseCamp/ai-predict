@@ -35,7 +35,7 @@ class DeployBundle(viewsets.ModelViewSet):
         # creates and save the bundle in the database
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
     
     def activate(self, request, *args, **kwargs):
         # gets the request bundle version
@@ -67,7 +67,7 @@ class DeployBundle(viewsets.ModelViewSet):
         remove_files(to_remove[0].path)
         # removes the instance from the database
         self.perform_destroy(to_remove)
-        return JsonResponse(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class Prediction(views.APIView):
 
@@ -102,16 +102,24 @@ class Prediction(views.APIView):
         data = pd.DataFrame(body)
         res = {}
         prediction = predictor.predict(data=data)
-        if all(str(pred).isnumeric() for pred in prediction):
-            res["predictionNumeric"] = prediction
+        if np.all(str(pred).isnumeric() for pred in prediction):
+            if len(np.shape(prediction))>1:
+                res["predictionVector"] = prediction
+            else:
+                res["predictionNumeric"] = prediction
         else:
             res["predictionLabel"] = prediction
         res["predictionProba"] = predictor.predict_proba(data=data)
         try:
-            res["explanation"] = predictor.explain_prediction(data).values
+            explanation = predictor.explain_prediction(data).values
+            if len(np.shape(explanation)) == 2:
+                res["explanation1D"] = predictor.explain_prediction(data).values
+            elif len(np.shape(explanation)) == 3:
+                res["explanation2D"] = predictor.explain_prediction(data).values
+            print(bundle, explanation)
         except Exception as e:
-            res["explanation"] = None
+            res["explanation1D"] = None
+            res["explanation2D"] = None
         res = parse_response(res)
         res = json.dumps(res, cls=NumpyArrayEncoder)
-        print(res)
         return JsonResponse(json.loads(res))

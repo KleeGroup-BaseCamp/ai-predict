@@ -1,6 +1,5 @@
 package io.vertigo.ai.plugins;
 
-
 import java.util.List;
 import javax.inject.Inject;
 
@@ -27,7 +26,7 @@ public class AIPredictPluginImpl implements PredictionPlugin{
 	}
 	
 	@Override
-	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data) {
+	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version) {
 		
 		ClientConfig clientConfig = new DefaultClientConfig();
 		 
@@ -37,7 +36,7 @@ public class AIPredictPluginImpl implements PredictionPlugin{
         Client client = Client.create(clientConfig);
 
         WebResource webResource = client
-                .resource(server);
+                .resource(server+modelName+"/"+version.toString()+"/");
 
         ClientResponse response = webResource.accept("application/json")
                 .type("application/json").post(ClientResponse.class, data.toString());
@@ -48,6 +47,7 @@ public class AIPredictPluginImpl implements PredictionPlugin{
         }
 
         PredictResponse output = response.getEntity(PredictResponse.class);
+        //response.close();
         
 		return output;
 		

@@ -20,8 +20,8 @@ public class PredictionManagerImpl implements PredictionManager {
 
 
 	@Override
-	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data) {
-		return predictionPlugin.predict(data);
+	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version) {
+		return predictionPlugin.predict(data, modelName, version);
 	}	
 	
 }

@@ -1,12 +1,13 @@
-package io.vertigo.ai.data.domain;
+package io.vertigo.ai.data.domain.iris;
 
+import io.vertigo.ai.data.domain.TestItems;
 import io.vertigo.core.lang.Cardinality;
 
 import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.stereotype.Field;
 
-public final class Item implements KeyConcept {
+public final class IrisItem extends TestItems {
 
 
 	private static final long serialVersionUID = 1L;
@@ -18,7 +19,7 @@ public final class Item implements KeyConcept {
 	private Double petalWidth;
 	
 	@Override
-	public UID<Item> getUID() {
+	public UID<IrisItem> getUID() {
 		return UID.of(this);
 	}
 
@@ -63,17 +64,17 @@ public final class Item implements KeyConcept {
 	@Override
 	public String toString() {
 		StringBuilder res = new StringBuilder();
-		res.append("{\"sepalWidth\":");
-		res.append(sepalWidth);
-		res.append(", ");
-		res.append("\"sepalLength\":");
+		res.append("{\"sepalLength\":");
 		res.append(sepalLength);
 		res.append(", ");
-		res.append("\"petalWidth\":");
+		res.append("\"sepalWidth\":");
 		res.append(sepalWidth);
 		res.append(", ");
 		res.append("\"petalLength\":");
 		res.append(petalLength);
+		res.append(", ");
+		res.append("\"petalWidth\":");
+		res.append(petalWidth);
 		res.append("}");
 		return res.toString();
 	}

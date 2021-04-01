@@ -17,12 +17,28 @@ public class ItemPredictClient implements Component, DefinitionProvider {
 	public List<DefinitionSupplier> get(DefinitionSpace definitionSpace) {
 		List<DefinitionSupplier> definitions = new ArrayList<DefinitionSupplier>();
 		definitions.add(
-				new DatasetItemDefinitionSupplier("DsIItem")
-				.withKeyConceptDtDefinition("DtItem")
-				.withDatasetItemDtDefinition("DtItem")
+				new DatasetItemDefinitionSupplier("DsIIrisItem")
+				.withKeyConceptDtDefinition("DtIrisItem")
+				.withDatasetItemDtDefinition("DtIrisItem")
 				.withLoaderId("ItemSearchLoader"));
 		definitions.add(
-				new DatasetDefinitionSupplier("DsDatasetObject")
+				new DatasetDefinitionSupplier("DsIrisDataset")
+				.withDatasetDtDefinition("DtDatasetObject"));
+		definitions.add(
+				new DatasetItemDefinitionSupplier("DsIBostonItem")
+				.withKeyConceptDtDefinition("DtBostonItem")
+				.withDatasetItemDtDefinition("DtBostonItem")
+				.withLoaderId("ItemSearchLoader"));
+		definitions.add(
+				new DatasetDefinitionSupplier("DsBostonDataset")
+				.withDatasetDtDefinition("DtDatasetObject"));
+		definitions.add(
+				new DatasetItemDefinitionSupplier("DsIBostonRegressionItem")
+				.withKeyConceptDtDefinition("DtBostonRegressionItem")
+				.withDatasetItemDtDefinition("DtBostonRegressionItem")
+				.withLoaderId("ItemSearchLoader"));
+		definitions.add(
+				new DatasetDefinitionSupplier("DsBostonRegressionDataset")
 				.withDatasetDtDefinition("DtDatasetObject"));
 		return definitions;
 	}

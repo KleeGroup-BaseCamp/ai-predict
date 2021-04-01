@@ -1,4 +1,4 @@
-package io.vertigo.ai;
+package io.vertigo.ai.standard.iris;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,9 +18,9 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.ai.data.domain.Item;
-import io.vertigo.ai.data.domain.ItemDatabase;
 import io.vertigo.ai.data.domain.ItemDatasetLoader;
+import io.vertigo.ai.data.domain.iris.IrisItem;
+import io.vertigo.ai.data.domain.iris.IrisDatabase;
 import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinition;
 import io.vertigo.ai.datasetItems.definitions.DatasetItemChunk;
 import io.vertigo.ai.datasetItems.models.DatasetItem;
@@ -59,43 +59,69 @@ public abstract class AbstractPredictionManagerTest {
 
 	private DatasetItemDefinition datasetItemDefinition;
 	private DatasetDefinition datasetDefinition;
-	private ItemDatabase itemDatabase;
+	private IrisDatabase irisDatabase;
+	
 	
 	protected final void init(final String itemName, final String datasetName) {
 		final DefinitionSpace definitionSpace = node.getDefinitionSpace();
 
-		itemDatabase = new ItemDatabase();
-		final ItemDatasetLoader itemDatasetLoader = node.getComponentSpace().resolve(ItemDatasetLoader.class);
-		itemDatasetLoader.bindDataBase(itemDatabase);
-
+		irisDatabase = new IrisDatabase();
 		datasetItemDefinition = definitionSpace.resolve(itemName,DatasetItemDefinition.class);
 		datasetDefinition = definitionSpace.resolve(datasetName, DatasetDefinition.class);
 	}
 	
-	@Test
-	public void testPredict() {
-		final List<DatasetItem<?, ?>> data = itemDatabase.getAllItems()
-				.stream()
-				.map(item -> DatasetItem.createItem(datasetItemDefinition, item.getUID(), item))
-				.collect(Collectors.toList());
-		final Dataset<DatasetItem<Item, Item>> dataset = new Dataset<DatasetItem<Item, Item>>(datasetDefinition, data);
-		PredictResponse response = predictionManager.predict(dataset.getDatasetSerialized());
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
-		
-	}
-	
-	@Test
-	public void testPredictWithLoader() {
-		final ItemDatasetLoader loader = new ItemDatasetLoader(datasetManager);
-		loader.bindDataBase(itemDatabase);
-		List<UID<Item>> items = itemDatabase.getAllItems()
+	private Dataset<DatasetItem<IrisItem, IrisItem>> getIrisDataset(){
+		final ItemDatasetLoader<IrisItem> loader = new ItemDatasetLoader<IrisItem>(datasetManager);
+		loader.setItemDefinition(datasetItemDefinition);
+		loader.bindDataBase(irisDatabase);
+		List<UID<IrisItem>> items = irisDatabase.getAllItems()
 				.stream()   
 				.map(item -> item.getUID())
 				.collect(Collectors.toList());
-		DatasetItemChunk<Item> chunk = new DatasetItemChunk<Item>(items);
-		final Dataset<?> dataset = loader.loadData(chunk, "DsDatasetObject");
-		PredictResponse response = predictionManager.predict(dataset.getDatasetSerialized());
+		DatasetItemChunk<IrisItem> chunk = new DatasetItemChunk<IrisItem>(items);
+		Dataset<DatasetItem<IrisItem, IrisItem>> dataset = loader.loadData(chunk, "DsIrisDataset");
+		return dataset;
+	}
+
+	private PredictResponse testPrediction(final String predictionType) {
+		Dataset<DatasetItem<IrisItem, IrisItem>> dataset = getIrisDataset();
+		PredictResponse response = predictionManager.predict(dataset.getDatasetSerialized(), "iris-"+predictionType, 0);
+		return response;
+	}
+	
+	@Test
+	public void testPredictClassification() {
+		PredictResponse response = testPrediction("classification");
 		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
-		
+	}
+	
+	@Test
+	public void testPredictClustering() {
+		PredictResponse response = testPrediction("clustering");
+		Assertions.assertEquals(BigDecimal.ONE, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictKNN() {
+		PredictResponse response = testPrediction("knn");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictSVC() {
+		PredictResponse response = testPrediction("svc");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictXGBClassifier() {
+		PredictResponse response = testPrediction("xgb");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictLogistic() {
+		PredictResponse response = testPrediction("logistic");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
 	}
 }

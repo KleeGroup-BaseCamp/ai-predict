@@ -60,7 +60,6 @@ class LabelEncoder(FeatureEncoder):
     
     def fit(self, data):
         res = self.encoder.fit(data)
-        print(len(res.classes_))
         self.params["classes"] = [list(res.classes_[0])]
         return self.get_params()
 
@@ -78,7 +77,6 @@ class OneHotEncoder(FeatureEncoder):
     
     def fit(self, data):
         res = self.encoder.fit(data)
-        print(len(res.categories_))
         self.params["categories"] = [list(res.categories_[0])]
         self.params["drop_idx"] = res.drop_idx_
         return self.get_params()

@@ -14,6 +14,9 @@ class NumpyArrayEncoder(JSONEncoder):
 
         if isinstance(obj, np.int64) or isinstance(obj, np.int32):
             return int(obj)
+        
+        if isinstance(obj, np.float64) or isinstance(obj, np.float32):
+            return float(obj)
 
         return JSONEncoder.default(self, obj)
 
@@ -59,7 +62,6 @@ def store_bundle():
     try:
         shutil.move("./bundles/temp/model.pkl", path+"/model.pkl")
     except FileNotFoundError:
-        print("OK")
         return Response("Cannot find a file called model.pkl in the archive", status=status.HTTP_404_NOT_FOUND)
     return name, version, path
 
@@ -86,7 +88,10 @@ def parse_response(res):
     # removes key with none values from the prediction result dictionnary
     if "predictionNumeric" in res:
         npredict = len(res["predictionNumeric"])
+    elif "predictionVector" in res:
+        npredict = len(res["predictionVector"])
     else:
         npredict = len(res["predictionLabel"])
     res = {k:v for k,v in res.items() if not v is None}
-    return {"predictionList": [dict(zip(res,t)) for t in zip(*res.values())]}
+    res = {"predictionList": [dict(zip(res,t)) for t in zip(*res.values())]}
+    return res

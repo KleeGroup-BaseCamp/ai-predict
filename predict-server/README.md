@@ -161,20 +161,63 @@ If the prediction succeeds, the server send a response 200 and a json with the f
     </thead>
     <tbody style="text-align: center; vertical-align: middle;">
         <tr>
-            <td rowspan=4>scikit-learn</td>
-            <td rowspan=2>Classifier</td>
-            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html?highlight=decisiontree#sklearn-tree-decisiontreeclassifier">DecisionTreeClassifier</a></td>
+            <td rowspan=11>scikit-learn</td>
+            <td rowspan=5>Classifier</td>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html">DecisionTreeClassifier</a></td>
             <td>&#10003</td>
         </tr>
         <tr>
-            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html?highlight=random%20forest#sklearn-ensemble-randomforestclassifier">RandomForestClassifier</a></td>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html">RandomForestClassifier</a></td>
             <td>&#10003</td>
         </tr>
         <tr>
-            <td rowspan=2>Regression</td>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html">IsolationForest</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html">SVC</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html">KNeighborsClassifier</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan=5>Regression</td>
             <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html?highlight=linear#sklearn-linear-model-linearregression">LinearRegression</a></td>
             <td> </td>
         </tr>
         <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">LogisticRegression</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">RandomForestRegressor</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html">SVR</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html">DecisionTreeRegressor</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td rowspan=1>Clustering</td>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html">KMeans</a></td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td rowspan=2>XGBoost</td>
+            <td rowspan=1>Classification</td>
+            <td><a href="https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBClassifier">XGBClassifier</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td rowspan=1>Regression</td>
+            <td ><a href="https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBRegressor">XGBRegressor</a></td>
+            <td>&#10003</td>
+        </tr>
     </tbody>
 </table>

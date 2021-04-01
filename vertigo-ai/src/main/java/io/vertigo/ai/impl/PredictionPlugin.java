@@ -9,6 +9,6 @@ import io.vertigo.datamodel.structure.model.KeyConcept;
 
 public interface PredictionPlugin extends Plugin {
 
-	<K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data);
+	<K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version);
 
 }

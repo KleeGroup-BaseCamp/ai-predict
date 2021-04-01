@@ -52,6 +52,31 @@
       <artifactId>vertigo-ui</artifactId>
       <version>3.1.1</version>
     </dependency>
+    
+   	<dependency>
+		<groupId>io.vertigo</groupId>
+		<artifactId>vertigo-commons</artifactId>
+		<version>3.1.1</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>io.vertigo</groupId>
+		<artifactId>vertigo-database</artifactId>
+		<version>3.1.1</version>
+		<optional>true</optional>
+	</dependency>
+	
+	<dependency>
+		<groupId>io.vertigo</groupId>
+		<artifactId>vertigo-core</artifactId>
+		<version>3.1.1</version>
+	</dependency>
+		
+	<dependency>
+		<groupId>io.vertigo</groupId>
+		<artifactId>vertigo-datastore</artifactId>
+		<version>3.1.1</version>
+	</dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -66,7 +91,19 @@
 	    <version>5.7.1</version>
 	    <scope>test</scope>
 	</dependency>
+	
+	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>1.4.200</version>
+		<scope>test</scope>
+	</dependency>
 
+	<dependency>
+	   <groupId>com.mchange</groupId>
+	   <artifactId>c3p0</artifactId>
+	   <version>0.9.2.1</version>
+	</dependency>
   </dependencies>
 
   <build>
@@ -110,6 +147,11 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.1</version>
         </plugin>
       </plugins>
     </pluginManagement>

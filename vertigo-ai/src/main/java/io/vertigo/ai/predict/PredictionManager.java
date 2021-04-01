@@ -12,5 +12,5 @@ public interface PredictionManager extends Manager {
 	/**
 	 * Transmet des données à une API de prediction et parse la réponse.
 	 */
-	<K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data);
+	<K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version);
 }
