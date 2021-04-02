@@ -1,15 +1,16 @@
 from AIPredict.apps.predict.utils.preprocessing import FeatureEngineering
 import shap
 import numpy as np
+from AIPredict.apps.predict.utils.files import *
 
 class Predictor(object):
     """Wraps a model and a preprocessing dictionnary to 
     """
-    def __init__(self, preprocessing:dict, model_label:str, model):
+    def __init__(self, preprocessing:dict, model, framework:str):
 
         self.preprocessing = preprocessing
-        self.model_label = model_label
         self.model = model
+        self.framework = framework
     
     def apply_preprocessing(self, data):
         # applies the preprocessing dictionary to the input data
@@ -19,15 +20,24 @@ class Predictor(object):
     
     def predict(self, data):
         #calls the predict moethod of the model if possible
+        preprocessed_data = self.apply_preprocessing(data)
+
+        if self.framework == "keras" and "predict" in dir(self.model):
+            prediction = self.model.predict(preprocessed_data)
+            return [np.argmax(pred) for pred in prediction] 
+
         if "predict" in dir(self.model):
-            preprocessed_data = self.apply_preprocessing(data)
             return self.model.predict(preprocessed_data)
     
     def predict_proba(self, data):
         #calls the predict_proba method of the model if possible
+        preprocessed_data = self.apply_preprocessing(data)
+        
+        if self.framework == "keras" and "predict" in dir(self.model):
+            return self.model.predict(preprocessed_data)
+        
         if "predict_proba" in dir(self.model):
             try:
-                preprocessed_data = self.apply_preprocessing(data)
                 return self.model.predict_proba(preprocessed_data)
             except:
                 return None

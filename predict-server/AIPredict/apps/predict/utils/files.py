@@ -6,6 +6,8 @@ import os
 import shutil
 import pickle
 import numpy as np
+import dill
+import keras.models
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
@@ -59,10 +61,13 @@ def store_bundle():
 
     #moves the files to the folder (and checks if model.pkl exists)
     shutil.move("./bundles/temp/bundle.json", path+"/bundle.json")
-    try:
+
+    if "model.pkl" in os.listdir("./bundles/temp/"):
         shutil.move("./bundles/temp/model.pkl", path+"/model.pkl")
-    except FileNotFoundError:
-        return Response("Cannot find a file called model.pkl in the archive", status=status.HTTP_404_NOT_FOUND)
+    elif "model.h5" in os.listdir("./bundles/temp/"):
+        shutil.move("./bundles/temp/model.h5", path+"/model.h5")
+    else:
+       raise FileNotFoundError("Cannot find a file called model.pkl or model.h5 in the archive")
     return name, version, path
 
 def remove_files(path):
@@ -75,8 +80,20 @@ def remove_files(path):
         shutil.rmtree(bundle_path)
 
 def get_model(path):
-    with open(path + "model.pkl", "rb") as m:
-        model = pickle.load(m)
+
+    framework = get_framework(path)
+
+    if framework == "custom":
+        with open(path + "model.pkl", "rb") as m:
+            model = dill.load(m)
+        return model
+
+    elif framework == "keras":
+        return keras.models.load_model(path+"model.h5")
+
+    else:    
+        with open(path + "model.pkl", "rb") as m:
+            model = pickle.load(m)
     return model
 
 def get_preprocessing(path):
@@ -95,3 +112,8 @@ def parse_response(res):
     res = {k:v for k,v in res.items() if not v is None}
     res = {"predictionList": [dict(zip(res,t)) for t in zip(*res.values())]}
     return res
+
+def get_framework(path):
+    with open(path+"bundle.json", "rb") as f:
+        bundle = json.load(f)
+    return bundle["meta"]["framework"]

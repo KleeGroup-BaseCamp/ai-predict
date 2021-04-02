@@ -119,4 +119,28 @@ public abstract class AbstractPredictionManagerTest {
 		PredictResponse response = testPrediction("rfr");
 		Assertions.assertEquals(BigDecimal.valueOf(26.04799999999999), response.getPredictionList().get(0).getPredictionNumeric());
 	}
+	
+	@Test
+	public void testPredictCustom() {
+		PredictResponse response = testPrediction("custom");
+		Assertions.assertEquals(BigDecimal.valueOf(22.289970501474926), response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictExtraReg() {
+		PredictResponse response = testPrediction("extra");
+		Assertions.assertEquals(BigDecimal.valueOf(24.0), response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictGradientReg() {
+		PredictResponse response = testPrediction("gradient");
+		Assertions.assertEquals(BigDecimal.valueOf(25.22716310264782), response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictMLPReg() {
+		PredictResponse response = testPrediction("mlp");
+		Assertions.assertEquals(BigDecimal.valueOf(30.120559630842063), response.getPredictionList().get(0).getPredictionNumeric());
+	}
 }

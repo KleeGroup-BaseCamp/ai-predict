@@ -92,7 +92,7 @@ class Prediction(views.APIView):
         model = get_model(path)
         preprocessing = get_preprocessing(path)
         # sets up a predictor instance
-        predictor = Predictor(preprocessing=preprocessing, model_label=instance.name, model=model)
+        predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
         
         #extracts data from the request
         
@@ -116,7 +116,6 @@ class Prediction(views.APIView):
                 res["explanation1D"] = predictor.explain_prediction(data).values
             elif len(np.shape(explanation)) == 3:
                 res["explanation2D"] = predictor.explain_prediction(data).values
-            print(bundle, explanation)
         except Exception as e:
             res["explanation1D"] = None
             res["explanation2D"] = None

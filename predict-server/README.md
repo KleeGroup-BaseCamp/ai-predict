@@ -161,8 +161,8 @@ If the prediction succeeds, the server send a response 200 and a json with the f
     </thead>
     <tbody style="text-align: center; vertical-align: middle;">
         <tr>
-            <td rowspan=11>scikit-learn</td>
-            <td rowspan=5>Classifier</td>
+            <td rowspan=19>scikit-learn</td>
+            <td rowspan=11>Classifier</td>
             <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html">DecisionTreeClassifier</a></td>
             <td>&#10003</td>
         </tr>
@@ -183,13 +183,33 @@ If the prediction succeeds, the server send a response 200 and a json with the f
             <td></td>
         </tr>
         <tr>
-            <td rowspan=5>Regression</td>
-            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html?highlight=linear#sklearn-linear-model-linearregression">LinearRegression</a></td>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">LogisticRegression</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html">LinearDiscriminantAnalysis</a></td>
             <td> </td>
         </tr>
         <tr>
-            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">LogisticRegression</a></td>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis.html">QuadratricDiscriminantAnalysis</a></td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html">ExtraTreesClassifier</a></td>
             <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html">GradientBoostingClassifier</a></td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html">MLPClassifier</a></td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td rowspan=7>Regression</td>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html?highlight=linear#sklearn-linear-model-linearregression">LinearRegression</a></td>
+            <td> </td>
         </tr>
         <tr>
             <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">RandomForestRegressor</a></td>
@@ -202,6 +222,18 @@ If the prediction succeeds, the server send a response 200 and a json with the f
         <tr>
             <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html">DecisionTreeRegressor</a></td>
             <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html">ExtraTreesRegressor</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html">GradientBoostingRegressor</a></td>
+            <td>&#10003</td>
+        </tr>
+        <tr>
+            <td ><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html">MLPRegressor</a></td>
+            <td> </td>
         </tr>
         <tr>
             <td rowspan=1>Clustering</td>

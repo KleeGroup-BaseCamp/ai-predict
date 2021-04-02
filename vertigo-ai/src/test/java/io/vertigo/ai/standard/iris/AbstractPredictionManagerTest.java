@@ -124,4 +124,40 @@ public abstract class AbstractPredictionManagerTest {
 		PredictResponse response = testPrediction("logistic");
 		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
 	}
+	
+	@Test
+	public void testPredictKeras() {
+		PredictResponse response = testPrediction("keras");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictGradient() {
+		PredictResponse response = testPrediction("gradient");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictExtra() {
+		PredictResponse response = testPrediction("extra");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictQDAr() {
+		PredictResponse response = testPrediction("qda");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictLDA() {
+		PredictResponse response = testPrediction("lda");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
+	
+	@Test
+	public void testPredictMLP() {
+		PredictResponse response = testPrediction("mlp");
+		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+	}
 }
