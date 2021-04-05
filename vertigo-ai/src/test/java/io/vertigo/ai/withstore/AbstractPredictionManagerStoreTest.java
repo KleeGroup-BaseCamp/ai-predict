@@ -2,6 +2,7 @@ package io.vertigo.ai.withstore;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.database.sql.SqlManager;
 import io.vertigo.database.sql.connection.SqlConnection;
 import io.vertigo.database.sql.statement.SqlStatement;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datamodel.task.TaskManager;
@@ -90,11 +92,14 @@ public abstract class AbstractPredictionManagerStoreTest {
 		final BostonRegressionDatabase itemDatabase = new BostonRegressionDatabase();
 		initialDbItemSize = itemDatabase.size();
 		
+		
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			uids = itemDatabase.getAllUIDs();
+			uids = new ArrayList<>();
 			for (final BostonRegressionItem item : itemDatabase.getAllItems()) {
 				item.setId(null);
 				entityStoreManager.create(item);
+				final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(item);
+				uids.add(UID.of(dtDefinition, DtObjectUtil.getId(item)));
 			}
 			transaction.commit();
 		};

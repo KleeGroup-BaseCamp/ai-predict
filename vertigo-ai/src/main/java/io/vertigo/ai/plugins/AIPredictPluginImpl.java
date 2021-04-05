@@ -1,7 +1,11 @@
 package io.vertigo.ai.plugins;
 
 import java.util.List;
+
 import javax.inject.Inject;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -16,13 +20,15 @@ import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 
-public class AIPredictPluginImpl implements PredictionPlugin{
+public class AIPredictPluginImpl implements PredictionPlugin {
+	
+	private static final Logger LOG = LogManager.getLogger(AIPredictPluginImpl.class);
 	
 	private String server;
 	
 	@Inject
-	public AIPredictPluginImpl(@ParamValue("server.name") String serverURL) {
-		this.server = serverURL;
+	public AIPredictPluginImpl(@ParamValue("server.name") String serverName) {
+		this.server = serverName;
 	}
 	
 	@Override
@@ -42,13 +48,13 @@ public class AIPredictPluginImpl implements PredictionPlugin{
                 .type("application/json").post(ClientResponse.class, data.toString());
 
         if (response.getStatus() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : "
-                    + response.getStatus());
+        	LOG.error("Prediction error :" + response.getStatus());
+            throw new RuntimeException("Failed : HTTP error code : "+ response.getStatus());
         }
 
         PredictResponse output = response.getEntity(PredictResponse.class);
         //response.close();
-        
+
 		return output;
 		
 	}

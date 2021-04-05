@@ -13,6 +13,7 @@ $ pip install -r requirements.txt
 If you run the server for the first time, apply the migrations to the database with these two commands:
 ```bash
 $ python scripts/manage.py makemigrations
+$ python scripts/manage.py makemigrations AIPredict
 $ python scripts/manage.py migrate
 ```
 Then run the server :
@@ -81,7 +82,25 @@ To upload a model on the prediction server, you should send a zip archive on the
     The preprocessing dictionary can be manually edited or can be obtained using the [FeatureEngineering]("./AIPredict/apps/predict/utils/preprocessing.py#L4") class.
 
 If the request succeed, the server returns a response 201.
-### PUT ```/activate/<str:bundle>/<int:version>```
+
+```
+POST /deploy/ HTTP/1.1
+Host: 127.0.0.1:8000
+Cache-Control: no-cache
+
+----WebKitFormBoundaryE19zNvXGzXaLvS5C
+Content-Disposition: form-data; name="archive"; filename="test_bundle.zip"
+Content-Type: application/x-zip-compressed
+
+
+----WebKitFormBoundaryE19zNvXGzXaLvS5C
+Content-Disposition: form-data; name="archive"
+
+
+----WebKitFormBoundaryE19zNvXGzXaLvS5C
+```
+
+### PUT ```/activate/<str:bundle>/<int:version>/```
 Once the bundle is imported, you need to activate it using the name and the version provided in the **bundle.json** file. Only models from activated bundles can be used for prediction.
 
 The activation of one version of a bundle deactivates all the other version of this bundle only. Thus, several bundles can be active simultaneously but only one version of each can be used for prediction.

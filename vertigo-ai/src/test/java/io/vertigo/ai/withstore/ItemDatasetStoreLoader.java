@@ -69,7 +69,7 @@ public final class ItemDatasetStoreLoader extends AbstractSqlDatasetLoader<Long,
 		final String sql = itemChunk.getAllUIDs()
 				.stream()
 				.map(uri -> uri.getId().toString())
-				.collect(Collectors.joining(", ", "select * from BOSTON_REGRESSION_ITEM where ID not in (", ")"));
+				.collect(Collectors.joining(", ", "select * from BOSTON_REGRESSION_ITEM where ID in (", ")"));
 
 		return TaskDefinition.builder("TkLoadAllItems")
 				.withEngine(TaskEngineSelect.class)

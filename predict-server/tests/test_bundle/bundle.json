@@ -1,34 +1,73 @@
-{"metadata": {"name": "Flags", "version": 0},
- "model": {"type": "RandomForestClassifier", "path": "model.pkl"},
- "preprocessing": {"topleft": {"OneHotEncoder": {"categories": [["black",
-      "blue",
-      "gold",
-      "green",
-      "orange",
-      "red",
-      "white"]],
-    "drop_idx": null}},
-  "botright": {"OneHotEncoder": {"categories": [["black",
-      "blue",
-      "brown",
-      "gold",
-      "green",
-      "orange",
-      "red",
-      "white"]],
-    "drop_idx": null}},
-  "mainhue": {"OneHotEncoder": {"categories": [["black",
-      "blue",
-      "brown",
-      "gold",
-      "green",
-      "orange",
-      "red",
-      "white"]],
-    "drop_idx": null}},
-  "population": {"StandardScaler": {"mean": 24.76878612716763,
-    "var": 9379.437869624779,
-    "scale": 96.84749800394835}},
-  "area": {"StandardScaler": {"mean": 736.9190751445087,
-    "var": 5211197.588826891,
-    "scale": 2282.8047636245396}}}}
+{
+  "meta": {
+    "name": "Flags",
+    "version": 1,
+    "language": "python",
+    "framework": "scikit-learn",
+    "URLDataSources": "",
+    "SearchLoaderID": "",
+    "secret": ""
+  },
+  "algorithm": {
+      "name": "RandomForest",
+      "type" : "Classifier",
+      "metrics": ""
+  },
+  "preprocessing": {
+    "topleft": {
+      "OneHotEncoder": {
+        "categories": [[
+          "black",
+          "blue",
+          "gold",
+          "green",
+          "orange",
+          "red",
+          "white"]],
+        "drop_idx": null
+      }
+    },
+    "botright": {
+      "OneHotEncoder": {
+        "categories": [[
+          "black",
+          "blue",
+          "brown",
+          "gold",
+          "green",
+          "orange",
+          "red",
+          "white"]],
+        "drop_idx": null
+      }
+    },
+    "mainhue": {
+      "OneHotEncoder": {
+        "categories": [[
+          "black",
+          "blue",
+          "brown",
+          "gold",
+          "green",
+          "orange",
+          "red",
+          "white"]],
+        "drop_idx": null
+      }
+    },
+    "population": {
+      "StandardScaler": {
+        "mean": 24.76878612716763,
+        "var": 9379.437869624779,
+        "scale": 96.84749800394835
+      }
+    },
+    "area": {
+      "StandardScaler": {
+        "mean": 736.9190751445087,
+        "var": 5211197.588826891,
+        "scale": 2282.8047636245396
+      }
+    }
+  }
+}
