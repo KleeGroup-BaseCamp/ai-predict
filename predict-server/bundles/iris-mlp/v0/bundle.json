@@ -1,0 +1,34 @@
+{
+    "meta": 
+    {
+        "name": "iris-mlp",
+        "version": 0,
+        "language": "python",
+        "framework": "scikit-learn",
+        "URLDataSources": "",
+        "SearchLoaderID": "",
+        "secret": ""
+    },
+    "algorithm": 
+    {
+        "name": "MLPClassifier",
+        "type" : "Classification",
+        "metrics": ""
+    },
+    "data":
+    {
+        "sepalLength": {"domain": "DoFloat", "is_label":false},
+        "petalLength": {"domain": "DoFloat", "is_label":false},
+        "sepalWidth": {"domain": "DoFloat", "is_label":false},
+        "petalWidth": {"domain": "DoFloat", "is_label":false},
+        "variety": {"domain": "DoLabel", "is_label":true}
+    },
+    "domains":
+    {
+        "DoLabel": "String",
+        "DoFloat": "Float"
+    },
+    "preprocessing":
+    {
+    }
+}

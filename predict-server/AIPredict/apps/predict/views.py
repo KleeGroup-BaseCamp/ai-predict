@@ -2,13 +2,18 @@ from django.shortcuts import render
 from django.http import Http404, JsonResponse
 from rest_framework import viewsets, status, views
 from rest_framework.response import Response
+from django.core.exceptions import ValidationError
 
 import pandas as pd
+import json
+import numpy as np
 
 from AIPredict.apps.predict.models import Bundle
 from AIPredict.apps.predict.serializers import BundleSerializer
-from AIPredict.apps.predict.utils.files import *
+from AIPredict.apps.predict.utils.files import upload_files, remove_files, get_model, build_bundle_path, get_preprocessing, get_framework
+from AIPredict.apps.predict.utils.response import PredictResponseEncoder, parse_response
 from AIPredict.apps.predict.utils.predict import Predictor
+from AIPredict.apps.predict.validators import validate_file, validate_archive
 
 class DeployBundle(viewsets.ModelViewSet):
 
@@ -17,16 +22,14 @@ class DeployBundle(viewsets.ModelViewSet):
 
     def create(self, request):
         #gets the file from the request
-        data = request.FILES
-        #uploads the archive to ./bundle/temp
-        handle_uploaded_file(request.FILES['archive'])
-        #unzips the archive and then deletes it
-        unzip_bundle()
-        #stores the bundle.json and the model.pkl files to their final location ./bundle/[bundle_name]/[bundle_version] 
-        # and extracts the needed data to generate the bundle model
-        name, version, path = store_bundle()
+        try:
+            file = validate_file(request.FILES)
+            archive = validate_archive(file['archive'])
+            name, version, path = upload_files(archive)
+        except ValidationError as e:
+            return Response(e, status=status.HTTP_400_BAD_REQUEST)
         # initializes the serializer
-        serializer = self.get_serializer(data={"name":name, "version": version, "path":path})
+        serializer = self.get_serializer(data={"name":name, "version": version})
         # checks validity
         try:
             serializer.is_valid(raise_exception=True)
@@ -64,7 +67,7 @@ class DeployBundle(viewsets.ModelViewSet):
         if len(to_remove) == 0:
             return Response("The bundle %s v%s does not exist" %(bundle, version), status=status.HTTP_404_NOT_FOUND)
         # removes files from ./bundles
-        remove_files(to_remove[0].path)
+        remove_files(bundle, version)
         # removes the instance from the database
         self.perform_destroy(to_remove)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -88,7 +91,7 @@ class Prediction(views.APIView):
                     status=status.HTTP_403_FORBIDDEN)
 
         # gets the model and the preprocessing dictionnary
-        path = instance.path + "/"
+        path = build_bundle_path(name=bundle, version=version)
         model = get_model(path)
         preprocessing = get_preprocessing(path)
         # sets up a predictor instance
@@ -120,5 +123,5 @@ class Prediction(views.APIView):
             res["explanation1D"] = None
             res["explanation2D"] = None
         res = parse_response(res)
-        res = json.dumps(res, cls=NumpyArrayEncoder)
+        res = json.dumps(res, cls=PredictResponseEncoder)
         return JsonResponse(json.loads(res))

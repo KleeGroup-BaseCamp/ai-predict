@@ -3,6 +3,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#Bundle upload path
+BUNDLE_PATH = BASE_DIR / "bundles"
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '+j2z7@n%#g0o42yvi%xwc+cwl5ehco3^zw_0@2#57%q$@rce*j'
 
@@ -27,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'AIPredict.apps.predict.apps.AIPredictConfig',
     'rest_framework',
+    'AIPredict.apps.predict'
 ]
 
 MIDDLEWARE = [
