@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 #Bundle upload path
-BUNDLE_PATH = BASE_DIR / "bundles"
+BUNDLE_PATH = Path("bundles")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '+j2z7@n%#g0o42yvi%xwc+cwl5ehco3^zw_0@2#57%q$@rce*j'

@@ -10,7 +10,7 @@ import numpy as np
 
 from AIPredict.apps.predict.models import Bundle
 from AIPredict.apps.predict.serializers import BundleSerializer
-from AIPredict.apps.predict.utils.files import upload_files, remove_files, get_model, build_bundle_path, get_preprocessing, get_framework
+from AIPredict.apps.predict.utils.files import upload_files, remove_files, get_model, build_bundle_path, get_preprocessing, get_framework, get_auto_deployed_bundles
 from AIPredict.apps.predict.utils.response import PredictResponseEncoder, parse_response
 from AIPredict.apps.predict.utils.predict import Predictor
 from AIPredict.apps.predict.validators import validate_file, validate_archive
@@ -25,11 +25,23 @@ class DeployBundle(viewsets.ModelViewSet):
         try:
             file = validate_file(request.FILES)
             archive = validate_archive(file['archive'])
-            name, version, path = upload_files(archive)
+            name, version = upload_files(archive)
         except ValidationError as e:
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
-        # initializes the serializer
-        serializer = self.get_serializer(data={"name":name, "version": version})
+
+        deploy_bundle = self.deploy(name, version)
+        return JsonResponse(deploy_bundle, status=status.HTTP_201_CREATED)
+    
+    def auto_deploy(self, request):
+        bundles = get_auto_deployed_bundles()
+        deploy_bundles = {"deployed_bundles": []}
+        for bundle in bundles:
+            deploy_bundle = self.deploy(bundle[0], bundle[1], auto=True)
+            deploy_bundles["deployed_bundles"].append(deploy_bundle)
+        return JsonResponse(deploy_bundles, status=status.HTTP_201_CREATED)
+
+    def deploy(self, name, version, auto=False):
+        serializer = self.get_serializer(data={"name":name, "version": version, "auto_deploy": auto})
         # checks validity
         try:
             serializer.is_valid(raise_exception=True)
@@ -38,8 +50,8 @@ class DeployBundle(viewsets.ModelViewSet):
         # creates and save the bundle in the database
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-    
+        return serializer.data
+
     def activate(self, request, *args, **kwargs):
         # gets the request bundle version
         bundle = kwargs["bundle"]
@@ -67,7 +79,8 @@ class DeployBundle(viewsets.ModelViewSet):
         if len(to_remove) == 0:
             return Response("The bundle %s v%s does not exist" %(bundle, version), status=status.HTTP_404_NOT_FOUND)
         # removes files from ./bundles
-        remove_files(bundle, version)
+        auto = to_remove.auto_deploy
+        remove_files(bundle, version, auto)
         # removes the instance from the database
         self.perform_destroy(to_remove)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -91,7 +104,8 @@ class Prediction(views.APIView):
                     status=status.HTTP_403_FORBIDDEN)
 
         # gets the model and the preprocessing dictionnary
-        path = build_bundle_path(name=bundle, version=version)
+        auto = instance.auto_deploy
+        path = build_bundle_path(name=bundle, version=version, auto=auto)
         model = get_model(path)
         preprocessing = get_preprocessing(path)
         # sets up a predictor instance

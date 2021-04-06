@@ -13,6 +13,7 @@ import uuid
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from AIPredict.settings.production import BUNDLE_PATH
 from AIPredict.apps.predict.validators import validate_archive_content, validate_bundle_meta
+from AIPredict.apps.predict.models import Bundle
 
 def handle_uploaded_file(archive:InMemoryUploadedFile):
     archive_name = archive.name
@@ -59,7 +60,9 @@ def store_bundle(temp_path):
     elif "model.h5" in os.listdir(temp_path):
         shutil.move(temp_path / "model.h5", path / "model.h5")
 
-    return name, version, str(path)
+    shutil.rmtree(temp_path)
+
+    return name, version
 
 def upload_files(archive:InMemoryUploadedFile):
     #uploads the archive to ./bundle/temp/uuid
@@ -68,11 +71,11 @@ def upload_files(archive:InMemoryUploadedFile):
     unzip_bundle(temp_path, archive_name)
     #stores the bundle.json and the model.pkl files to their final location ./bundle/[bundle_name]/[bundle_version] 
     # and extracts the needed data to generate the bundle model
-    name, version, path = store_bundle(temp_path)
-    return name, version, path
+    name, version = store_bundle(temp_path)
+    return name, version
 
-def remove_files(name, version):
-    path = build_bundle_path(name=name, version=version)
+def remove_files(name, version, auto):
+    path = build_bundle_path(name=name, version=version, auto=auto)
     # deletes the version folder (but keep the bundle folder)
     shutil.rmtree(path)
     bundle_path = build_bundle_path(name)
@@ -106,8 +109,11 @@ def get_framework(path):
         bundle = json.load(f)
     return bundle["meta"]["framework"]
 
-def build_bundle_path(name=None, version=None, target=None):
-    path = Path(".", "bundles")
+def build_bundle_path(name=None, version=None, target=None, auto=False):
+    if auto:
+        path = Path(".", "bundles", "auto_deploy")
+    else:
+        path = Path(".", "bundles")
     if name:
         path = path / name
         if version != None:
@@ -116,3 +122,18 @@ def build_bundle_path(name=None, version=None, target=None):
             if target:
                 path = path / target
     return path
+
+def get_auto_deployed_bundles():
+    path = BUNDLE_PATH / "auto_deploy"
+    bundles = []
+    for bundle in os.listdir(path):
+        for version in os.listdir(path / bundle):
+            v = int(version[1:])
+            list_dir = os.listdir(path / bundle / version)
+            if not "bundle.json" in list_dir:
+                raise FileNotFoundError("The auto deployed bundle \"%s %s\" can not be load because bundle.json is missing" %(bundle, version))
+            if not ("model.pkl" in list_dir or "model.h5" in list_dir):
+                raise FileNotFoundError("The auto deployed bundle \"%s %s\" can not be load because a binary model is missing" %(bundle, version))
+            if not Bundle.objects.filter(name=bundle, version=v):
+                bundles.append((bundle, v))
+    return bundles
