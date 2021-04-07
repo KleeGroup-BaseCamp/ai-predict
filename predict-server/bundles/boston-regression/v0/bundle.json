@@ -17,20 +17,8 @@
     },
     "data":
     {
-        "CRIM": {"domain": "DoFloat", "is_label":false},
-        "ZN": {"domain": "DoFloat", "is_label":false},
-        "INDUS": {"domain": "DoFloat", "is_label":false},
-        "CHAS": {"domain": "DoFloat", "is_label":false},
-        "NOX": {"domain": "DoFloat", "is_label":false},
-        "RM": {"domain": "DoFloat", "is_label":false},
-        "AGE": {"domain": "DoFloat", "is_label":false},
-        "DIS": {"domain": "DoFloat", "is_label":false},
-        "RAD": {"domain": "DoFloat", "is_label":false},
-        "TAX": {"domain": "DoFloat", "is_label":false},
-        "PTRATIO": {"domain": "DoFloat", "is_label":false},
-        "B": {"domain": "DoFloat", "is_label":false},
-        "LSTAT": {"domain": "DoFloat", "is_label":false},
-        "PRICE": {"domain": "DoFloat", "is_label":true}
+        "RM": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
+        "PRICE": {"domain": "DoFloat", "is_label":true, "ifna": 0}
     },
     "domains":
     {

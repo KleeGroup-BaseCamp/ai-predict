@@ -74,10 +74,9 @@ def upload_files(archive:InMemoryUploadedFile):
     name, version = store_bundle(temp_path)
     return name, version
 
-def remove_files(name, version, auto):
-    path = build_bundle_path(name=name, version=version, auto=auto)
+def remove_files(name, path):
     # deletes the version folder (but keep the bundle folder)
-    shutil.rmtree(path)
+    shutil.rmtree(path / "")
     bundle_path = build_bundle_path(name)
     # if the bundle has no other imported version, deletes it
     if os.listdir(bundle_path) == []:
@@ -99,10 +98,17 @@ def get_model(path):
             model = pickle.load(m)
     return model
 
-def get_preprocessing(path):
+def get_bundle_item(path, items):
     with open(path / "bundle.json", "rb") as d:
-        data = json.load(d)
-    return data["preprocessing"]
+        bundle = json.load(d)
+    
+    if isinstance(items, list) and all(isinstance(item, str) for item in items):
+        res = []
+        for item in items:
+            res.append(bundle[item])
+        return res
+    else:
+        return bundle[items]
 
 def get_framework(path):
     with open(path / "bundle.json", "rb") as f:

@@ -3,6 +3,8 @@ from AIPredict.settings.production import *
 
 TMP_PATH = os.path.abspath(os.path.join(BASE_DIR, 'tmp'))
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 DEBUG = True
 SECRET = '42'
 

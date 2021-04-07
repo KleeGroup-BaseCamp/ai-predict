@@ -10,10 +10,10 @@ import numpy as np
 
 from AIPredict.apps.predict.models import Bundle
 from AIPredict.apps.predict.serializers import BundleSerializer
-from AIPredict.apps.predict.utils.files import upload_files, remove_files, get_model, build_bundle_path, get_preprocessing, get_framework, get_auto_deployed_bundles
+from AIPredict.apps.predict.utils.files import upload_files, remove_files, get_model, build_bundle_path, get_bundle_item, get_framework, get_auto_deployed_bundles
 from AIPredict.apps.predict.utils.response import PredictResponseEncoder, parse_response
 from AIPredict.apps.predict.utils.predict import Predictor
-from AIPredict.apps.predict.validators import validate_file, validate_archive
+from AIPredict.apps.predict.validators import validate_file, validate_archive, validate_data
 
 class DeployBundle(viewsets.ModelViewSet):
 
@@ -79,8 +79,9 @@ class DeployBundle(viewsets.ModelViewSet):
         if len(to_remove) == 0:
             return Response("The bundle %s v%s does not exist" %(bundle, version), status=status.HTTP_404_NOT_FOUND)
         # removes files from ./bundles
-        auto = to_remove.auto_deploy
-        remove_files(bundle, version, auto)
+        auto = to_remove[0].auto_deploy
+        path = build_bundle_path(name=bundle, version=version, auto=auto)
+        remove_files(bundle, path)
         # removes the instance from the database
         self.perform_destroy(to_remove)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -107,7 +108,7 @@ class Prediction(views.APIView):
         auto = instance.auto_deploy
         path = build_bundle_path(name=bundle, version=version, auto=auto)
         model = get_model(path)
-        preprocessing = get_preprocessing(path)
+        preprocessing = get_bundle_item(path, "preprocessing")
         # sets up a predictor instance
         predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
         
@@ -117,6 +118,7 @@ class Prediction(views.APIView):
         body = json.loads(body_unicode)
         
         data = pd.DataFrame(body)
+        validate_data(data, path)
         res = {}
         prediction = predictor.predict(data=data)
         if np.all(str(pred).isnumeric() for pred in prediction):

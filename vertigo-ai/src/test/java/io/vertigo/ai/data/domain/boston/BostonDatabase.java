@@ -12,7 +12,7 @@ public class BostonDatabase extends TestDatabase<BostonItem>{
 	
 	public BostonDatabase() {
 		items = List.of(
-				createItem(Long.valueOf(1), 0.00632, 18.0, 2.31, 0.0, 0.538, 6.575, 65.2, 4.0900, 1.0, 296.0, 15.3, 396.90, 4.98),
+				createItem(Long.valueOf(1), null, 18.0, 2.31, 0.0, 0.538, 6.575, 65.2, 4.0900, 1.0, 296.0, 15.3, 396.90, 4.98),
 				createItem(Long.valueOf(2), 0.02731, 0.0, 7.07, 0.0, 0.469, 6.421, 78.9, 4.9671, 2.0, 242.0, 17.8, 396.90, 9.14),
 				createItem(Long.valueOf(3), 0.02729, 0.0, 7.07, 0.0, 0.469, 7.185, 61.1, 4.9671, 2.0, 242.0, 17.8, 392.83, 4.03),
 				createItem(Long.valueOf(4), 0.03237, 0.0, 2.18, 0.0, 0.458, 6.998, 45.8, 6.0622, 3.0, 222.0, 18.7, 394.63, 2.94));
