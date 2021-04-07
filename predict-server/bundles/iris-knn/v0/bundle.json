@@ -13,7 +13,7 @@
     {
         "name": "KNeighborsClassifier",
         "type" : "Classification",
-        "labels": ["Setosa", "Versicolor", "Virginica"],
+        "labels": {"0": "Setosa", "1": "Versicolor", "2": "Virginica"},
         "metrics": ""
     },
     "data":

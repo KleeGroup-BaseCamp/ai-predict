@@ -57,8 +57,8 @@ def validate_bundle_algorithm(algo:dict):
     if not ("name" in algo and isinstance(algo["name"], str)):
         raise ValidationError("The bundle algorithm field requires the algorithm name. e.g. RandomForestClassifier")
     if not ("type" in algo and isinstance(algo["type"], str)):
-        raise ValidationError("The bundle algorithm field requires the algorithm type. e.g. Classifier")
-    if algo["type"] in ["Classifier", "classifier"]:
+        raise ValidationError("The bundle algorithm field requires the algorithm type. e.g. Classification")
+    if algo["type"] in ["Classification", "classification"]:
         if not ("labels" in algo and isinstance(algo["labels"], list)):
             raise ValidationError("The bundle algorithm field requires the classifier labels. e.g. [\"Class1\", \"Class2\"]")
     return algo

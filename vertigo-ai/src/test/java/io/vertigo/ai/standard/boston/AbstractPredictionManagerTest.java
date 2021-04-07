@@ -93,7 +93,7 @@ public abstract class AbstractPredictionManagerTest {
 	@Test
 	public void testPredictIsolation() {
 		PredictResponse response = testPrediction("isolation");
-		Assertions.assertEquals(BigDecimal.ONE, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("OK", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test

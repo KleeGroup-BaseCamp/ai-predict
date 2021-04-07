@@ -23,11 +23,12 @@ except:
 class Predictor(object):
     """Wraps a model and a preprocessing dictionnary to 
     """
-    def __init__(self, preprocessing:dict, model, framework:str):
+    def __init__(self, preprocessing:dict, model, framework:str, labels=None):
 
         self.preprocessing = preprocessing
         self.model = model
         self.framework = framework
+        self.labels = labels
     
     def _apply_preprocessing(self, data):
         # applies the preprocessing dictionary to the input data
@@ -40,12 +41,17 @@ class Predictor(object):
         preprocessed_data = self._apply_preprocessing(data)
 
         if self.framework == "keras" and "predict" in dir(self.model):
-            prediction = self.model.predict(preprocessed_data)
-            return [np.argmax(pred) for pred in prediction] 
+            raw_pred = self.model.predict(preprocessed_data)
+            prediction = [np.argmax(pred) for pred in raw_pred]
 
-        if "predict" in dir(self.model):
-            return self.model.predict(preprocessed_data)
+        elif "predict" in dir(self.model):
+            prediction = self.model.predict(preprocessed_data)
     
+        if self.labels:
+            return [self.labels[str(pred)] for pred in prediction]
+        
+        return prediction
+
     def _predict_proba(self, data):
         #calls the predict_proba method of the model if possible
         preprocessed_data = self._apply_preprocessing(data)
@@ -70,7 +76,7 @@ class Predictor(object):
         res = {}
         #Basic Prediction
         prediction = self._predict(data)
-        if np.all(str(pred).isnumeric() for pred in prediction):
+        if all(not isinstance(pred, str) for pred in prediction):
             if len(np.shape(prediction))>1:
                 res["predictionVector"] = prediction
             else:

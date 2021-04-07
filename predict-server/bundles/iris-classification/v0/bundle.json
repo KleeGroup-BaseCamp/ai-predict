@@ -12,8 +12,8 @@
     "algorithm": 
     {
         "name": "DecisionTree",
-        "type" : "Classifier",
-        "labels": ["Setosa", "Versicolor", "Virginica"],
+        "type" : "Classification",
+        "labels": {"0": "Setosa", "1": "Versicolor", "2": "Virginica"},
         "metrics": ""
     },
     "data":

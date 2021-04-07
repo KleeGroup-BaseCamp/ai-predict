@@ -13,6 +13,7 @@
     {
         "name": "IsolationForest",
         "type" : "Classification",
+        "labels": {"-1": "Wrong", "1": "OK"},
         "metrics": ""
     },
     "data":

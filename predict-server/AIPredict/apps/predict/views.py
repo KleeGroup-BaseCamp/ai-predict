@@ -112,8 +112,13 @@ class Prediction(views.APIView):
         path = build_bundle_path(name=bundle, version=version, auto=auto)
         model = get_model(path)
         preprocessing = get_bundle_item(path, "preprocessing")
-        # sets up a predictor instance
-        predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
+        algo = get_bundle_item(path, "algorithm")
+        if algo["type"] in ["Classification", "classification"]:
+            # sets up a predictor instance
+            predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model, labels=algo["labels"])
+        else:
+            predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
+        
         
         #extracts data from the request
         
@@ -131,4 +136,5 @@ class Prediction(views.APIView):
             prediction = predictor.predict(data=data)
             return JsonResponse(prediction)
         except Exception as e:
+            print(e)
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)

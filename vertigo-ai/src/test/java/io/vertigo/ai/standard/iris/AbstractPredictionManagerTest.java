@@ -92,7 +92,7 @@ public abstract class AbstractPredictionManagerTest {
 	@Test
 	public void testPredictClassification() {
 		PredictResponse response = testPrediction("classification");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
@@ -104,60 +104,60 @@ public abstract class AbstractPredictionManagerTest {
 	@Test
 	public void testPredictKNN() {
 		PredictResponse response = testPrediction("knn");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictSVC() {
 		PredictResponse response = testPrediction("svc");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictXGBClassifier() {
 		PredictResponse response = testPrediction("xgb");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictLogistic() {
 		PredictResponse response = testPrediction("logistic");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictKeras() {
 		PredictResponse response = testPrediction("keras");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictGradient() {
 		PredictResponse response = testPrediction("gradient");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictExtra() {
 		PredictResponse response = testPrediction("extra");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictQDAr() {
 		PredictResponse response = testPrediction("qda");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictLDA() {
 		PredictResponse response = testPrediction("lda");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	@Test
 	public void testPredictMLP() {
 		PredictResponse response = testPrediction("mlp");
-		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 }
