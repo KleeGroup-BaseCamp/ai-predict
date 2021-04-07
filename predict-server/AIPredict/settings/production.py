@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'AIPredict.apps.predict.apps.AIPredictConfig',
     'rest_framework',
-    'AIPredict.apps.predict'
 ]
 
 MIDDLEWARE = [

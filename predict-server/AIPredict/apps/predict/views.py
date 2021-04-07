@@ -27,7 +27,7 @@ class DeployBundle(viewsets.ModelViewSet):
             archive = validate_archive(file['archive'])
             name, version = upload_files(archive)
         except ValidationError as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
         deploy_bundle = self.deploy(name, version)
         return JsonResponse(deploy_bundle, status=status.HTTP_201_CREATED)
@@ -118,26 +118,14 @@ class Prediction(views.APIView):
         body = json.loads(body_unicode)
         
         data = pd.DataFrame(body)
-        validate_data(data, path)
-        res = {}
-        prediction = predictor.predict(data=data)
-        if np.all(str(pred).isnumeric() for pred in prediction):
-            if len(np.shape(prediction))>1:
-                res["predictionVector"] = prediction
-            else:
-                res["predictionNumeric"] = prediction
-        else:
-            res["predictionLabel"] = prediction
-        res["predictionProba"] = predictor.predict_proba(data=data)
+
         try:
-            explanation = predictor.explain_prediction(data).values
-            if len(np.shape(explanation)) == 2:
-                res["explanation1D"] = predictor.explain_prediction(data).values
-            elif len(np.shape(explanation)) == 3:
-                res["explanation2D"] = predictor.explain_prediction(data).values
+            data = validate_data(data, path)
+        except ValidationError as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            prediction = predictor.predict(data=data)
+            return JsonResponse(prediction)
         except Exception as e:
-            res["explanation1D"] = None
-            res["explanation2D"] = None
-        res = parse_response(res)
-        res = json.dumps(res, cls=PredictResponseEncoder)
-        return JsonResponse(json.loads(res))
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)

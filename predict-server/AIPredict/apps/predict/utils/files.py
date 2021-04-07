@@ -6,14 +6,30 @@ import shutil
 import pickle
 import numpy as np
 import dill
-import keras.models
 import uuid
-
+import logging
+try:
+    import keras.models as kmodel
+except:
+    kmodel = None
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from AIPredict.settings.production import BUNDLE_PATH
 from AIPredict.apps.predict.validators import validate_archive_content, validate_bundle_meta
 from AIPredict.apps.predict.models import Bundle
+
+try:
+    import keras
+except:
+    keras = None
+try:
+    import sklearn
+except:
+    sklearn = None
+try:
+    import xgboost
+except:
+    xgboost = None
 
 def handle_uploaded_file(archive:InMemoryUploadedFile):
     archive_name = archive.name
@@ -91,11 +107,17 @@ def get_model(path):
         return model
 
     elif framework == "keras":
-        return keras.models.load_model(path / "model.h5")
+        if kmodel:
+            return keras.models.load_model(path / "model.h5")
+        else:
+            raise ImportError("No module name keras")
 
     else:
-        with open(path / "model.pkl", "rb") as m:
-            model = pickle.load(m)
+        if sklearn or xgboost:
+            with open(path / "model.pkl", "rb") as m:
+                model = pickle.load(m)
+        else:
+            raise ImportError("No module is imported to read the model")
     return model
 
 def get_bundle_item(path, items):

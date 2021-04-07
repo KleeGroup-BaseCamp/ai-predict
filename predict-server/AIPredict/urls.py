@@ -17,8 +17,10 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
-django_request = HttpRequest()
-django_request.method = 'POST'
-auto_deploy_view = views.DeployBundle.as_view({'post': 'auto_deploy'})
-deploy = auto_deploy_view(request=django_request)
-
+try:
+    django_request = HttpRequest()
+    django_request.method = 'POST'
+    auto_deploy_view = views.DeployBundle.as_view({'post': 'auto_deploy'})
+    deploy = auto_deploy_view(request=django_request)
+except Exception as e:
+    print(e)

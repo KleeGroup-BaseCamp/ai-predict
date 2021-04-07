@@ -1,0 +1,5 @@
+tensorflow==2.4.1
+keras==2.4.3
+keras-preprocessing==1.1.2
+h5py==3.1.0
+scipy>=1.5,<1.6

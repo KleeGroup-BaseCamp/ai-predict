@@ -83,6 +83,7 @@ def validate_data(data:DataFrame, path:Path):
                 raise ValidationError("%s is required but NaN.")
         else:
             data[[column]] = data[[column]].fillna(na)
+    return data
        
 
 domains_to_dtypes = {

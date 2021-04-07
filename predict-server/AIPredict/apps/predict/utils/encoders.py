@@ -1,5 +1,10 @@
-import sklearn.preprocessing
 import pandas as pd
+
+try:
+    import sklearn.preprocessing as skp
+except:
+    skp = None
+
 
 class FeatureEncoder(object):
     """This is the supper class of all AIPredict encoders
@@ -34,7 +39,10 @@ class StandardScaler(FeatureEncoder):
 
     def __init__(self):
         self.label = "StandardScaler"
-        self.encoder = sklearn.preprocessing.StandardScaler()
+        if skp:
+            self.encoder = skp.StandardScaler()
+        else:
+            self.encoder = None
         self.params = {"mean": None, "var": None, "scale": None}
     
     def fit(self, data):
@@ -55,7 +63,10 @@ class LabelEncoder(FeatureEncoder):
 
     def __init__(self):
         self.label = "LabelEncoder"
-        self.encoder = sklearn.preprocessing.LabelEncoder()
+        if skp:
+            self.encoder = skp.LabelEncoder()
+        else:
+            self.encoder = None
         self.params = {"classes": None}
     
     def fit(self, data):
@@ -72,7 +83,10 @@ class OneHotEncoder(FeatureEncoder):
 
     def __init__(self):
         self.label = "OneHotEncoder"
-        self.encoder = sklearn.preprocessing.OneHotEncoder(handle_unknown='ignore')
+        if skp:
+            self.encoder = skp.OneHotEncoder(handle_unknown='ignore')
+        else:
+            self.encoder = None
         self.params = {"categories": None, "drop_idx": None}
     
     def fit(self, data):
@@ -94,7 +108,10 @@ class MinMaxScaler(FeatureEncoder):
 
     def __init__(self):
         self.label = "MinMaxScaler"
-        self.encoder = sklearn.preprocessing.MinMaxScaler()
+        if skp:
+            self.encoder = skp.MinMaxScaler()
+        else:
+            self.encoder = None
         self.params = {"min": None, "scale": None}
     
     def fit(self, data):
