@@ -13,6 +13,7 @@
     {
         "name": "LgisticRegression",
         "type" : "Classification",
+        "labels": ["Setosa", "Versicolor", "Virginica"],
         "metrics": ""
     },
     "data":

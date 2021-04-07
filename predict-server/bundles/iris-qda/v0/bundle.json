@@ -13,6 +13,7 @@
     {
         "name": "QuadraticDiscriminantAnalysis",
         "type" : "Classification",
+        "labels": ["Setosa", "Versicolor", "Virginica"],
         "metrics": ""
     },
     "data":

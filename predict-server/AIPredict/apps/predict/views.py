@@ -36,8 +36,11 @@ class DeployBundle(viewsets.ModelViewSet):
         bundles = get_auto_deployed_bundles()
         deploy_bundles = {"deployed_bundles": []}
         for bundle in bundles:
-            deploy_bundle = self.deploy(bundle[0], bundle[1], auto=True)
-            deploy_bundles["deployed_bundles"].append(deploy_bundle)
+            try:
+                deploy_bundle = self.deploy(bundle[0], bundle[1], auto=True)
+                deploy_bundles["deployed_bundles"].append(deploy_bundle)
+            except ValidationError as e:
+                return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse(deploy_bundles, status=status.HTTP_201_CREATED)
 
     def deploy(self, name, version, auto=False):

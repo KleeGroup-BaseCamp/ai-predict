@@ -15,8 +15,9 @@ except:
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from AIPredict.settings.production import BUNDLE_PATH
-from AIPredict.apps.predict.validators import validate_archive_content, validate_bundle_meta
+from AIPredict.apps.predict.validators import validate_archive_content, validate_bundle
 from AIPredict.apps.predict.models import Bundle
+from django.core.exceptions import ValidationError
 
 try:
     import keras
@@ -61,7 +62,7 @@ def store_bundle(temp_path):
         bundle = json.load(f)
 
     #checks the metadata
-    validate_bundle_meta(bundle)
+    validate_bundle(bundle)
     name = bundle["meta"]["name"]
     version = bundle["meta"]["version"]
 
@@ -162,6 +163,14 @@ def get_auto_deployed_bundles():
                 raise FileNotFoundError("The auto deployed bundle \"%s %s\" can not be load because bundle.json is missing" %(bundle, version))
             if not ("model.pkl" in list_dir or "model.h5" in list_dir):
                 raise FileNotFoundError("The auto deployed bundle \"%s %s\" can not be load because a binary model is missing" %(bundle, version))
-            if not Bundle.objects.filter(name=bundle, version=v):
-                bundles.append((bundle, v))
+            with open(path / bundle / version / "bundle.json", "rb") as b:
+                bundle = json.load(b)
+            try:
+                validate_bundle(bundle)
+            except Exception as e:
+                if not e == ValidationError("The bundle name and version must be unique together"):
+                    raise e
+
+            
+
     return bundles
