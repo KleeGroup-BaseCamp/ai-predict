@@ -8,6 +8,7 @@ import numpy as np
 import dill
 import uuid
 import logging
+from typing import List, Tuple, Dict
 try:
     import keras.models as kmodel
 except:
@@ -15,7 +16,7 @@ except:
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from AIPredict.settings.production import BUNDLE_PATH
-from AIPredict.apps.predict.validators import validate_archive_content, validate_bundle
+from AIPredict.apps.predict.validators import validate_archive_content, validate_bundle, validate_auto_deployed_bundle
 from AIPredict.apps.predict.models import Bundle
 from django.core.exceptions import ValidationError
 
@@ -91,7 +92,13 @@ def upload_files(archive:InMemoryUploadedFile):
     name, version = store_bundle(temp_path)
     return name, version
 
-def remove_files(name, path):
+def remove_files(name:str, path:Path):
+    """Remove the stored files of a bundle
+
+    Args:
+        name (str): bundle name
+        path (Path): bundle path
+    """
     # deletes the version folder (but keep the bundle folder)
     shutil.rmtree(path / "")
     bundle_path = build_bundle_path(name)
@@ -99,7 +106,15 @@ def remove_files(name, path):
     if os.listdir(bundle_path) == []:
         shutil.rmtree(bundle_path)
 
-def get_model(path):
+def get_model(path:Path) -> object:
+    """Read the binarized model from the stored bundle
+
+    Args:
+        path (Path): path of the bundle
+
+    Returns:
+        object: the trained model. Can be for instance a sklearn model like RandomForestClassifier()
+    """
     framework = get_framework(path)
 
     if framework == "custom":
@@ -121,7 +136,16 @@ def get_model(path):
             raise ImportError("No module is imported to read the model")
     return model
 
-def get_bundle_item(path, items):
+def get_bundle_item(path:Path, items:str) -> Dict[str, object]:
+    """get a field from bundle.json.
+
+    Args:
+        path (Path): the path to the bundle folder, e.g. ./bundle/name/v0
+        items (str): the item to get from the bundle. Must be one of : meta, algorithm, data, preprocessing
+
+    Returns:
+       Dict[str, object]: the corresponding item
+    """
     with open(path / "bundle.json", "rb") as d:
         bundle = json.load(d)
     
@@ -133,18 +157,38 @@ def get_bundle_item(path, items):
     else:
         return bundle[items]
 
-def get_framework(path):
+def get_framework(path:Path) -> str:
+    """get the model framework
+
+    Args:
+        path (Path): the path to the bundle folder, e.g. ./bundle/name/v0
+
+    Returns:
+        str: get the model framework e.g. scikit-learn
+    """
     with open(path / "bundle.json", "rb") as f:
         bundle = json.load(f)
     return bundle["meta"]["framework"]
 
-def build_bundle_path(name=None, version=None, target=None, auto=False):
+def build_bundle_path(bundle:str=None, version:int=None, target:str=None, auto:bool=False) -> Path:
+    """ build a path in the ./bundles folder to get files and models
+
+    Args:
+        bundle (str, optional): the name of the bundle. Defaults to None.
+        version (int, optional): the version of the bundle. Defaults to None.
+        target (str, optional): the files required. Must be None, bundle.json, model.pkl or model.h5. Defaults to None.
+        auto (bool, optional): True if the bundle is auto deployed. Defaults to False.
+
+    Returns:
+        Path: built path
+    """
+    #build the path to a given bundle
     if auto:
         path = Path(".", "bundles", "auto_deploy")
     else:
         path = Path(".", "bundles")
-    if name:
-        path = path / name
+    if bundle:
+        path = path / bundle
         if version != None:
             v = "v"+str(version)
             path = path / v
@@ -152,25 +196,26 @@ def build_bundle_path(name=None, version=None, target=None, auto=False):
                 path = path / target
     return path
 
-def get_auto_deployed_bundles():
+def get_auto_deployed_bundles() -> List[Tuple[str, int]]:
+    """Get all bundles that need to be auto deployed
+
+    Returns:
+        List[Tuple[str, int]]: List of all (bundle_name, version) to auto deploy 
+    """
+
     path = BUNDLE_PATH / "auto_deploy"
     bundles = []
+    #find all bundles in ./bundles/auto_deploy
     for bundle in os.listdir(path):
+        #find all version of a given bundle
         for version in os.listdir(path / bundle):
             v = int(version[1:])
-            list_dir = os.listdir(path / bundle / version)
-            if not "bundle.json" in list_dir:
-                raise FileNotFoundError("The auto deployed bundle \"%s %s\" can not be load because bundle.json is missing" %(bundle, version))
-            if not ("model.pkl" in list_dir or "model.h5" in list_dir):
-                raise FileNotFoundError("The auto deployed bundle \"%s %s\" can not be load because a binary model is missing" %(bundle, version))
-            with open(path / bundle / version / "bundle.json", "rb") as b:
-                bundle = json.load(b)
+            #validate the bundle but skip if it already exists
             try:
-                validate_bundle(bundle)
+                validate_auto_deployed_bundle(path, bundle, version)
+                #add (bundle, version) to bundles
+                bundles.append((bundle, v))
             except Exception as e:
                 if not e == ValidationError("The bundle name and version must be unique together"):
-                    raise e
-
-            
-
+                    raise e 
     return bundles

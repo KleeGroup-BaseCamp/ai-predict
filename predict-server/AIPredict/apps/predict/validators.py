@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from pandas import DataFrame
 import numpy as np
+import os
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -59,7 +60,7 @@ def validate_bundle_algorithm(algo:dict):
     if not ("type" in algo and isinstance(algo["type"], str)):
         raise ValidationError("The bundle algorithm field requires the algorithm type. e.g. Classification")
     if algo["type"] in ["Classification", "classification"]:
-        if not ("labels" in algo and isinstance(algo["labels"], list)):
+        if not ("labels" in algo and isinstance(algo["labels"], dict)):
             raise ValidationError("The bundle algorithm field requires the classifier labels. e.g. [\"Class1\", \"Class2\"]")
     return algo
 
@@ -71,14 +72,18 @@ def validate_bundle_data(bundle:dict):
 
     for feature_name in data:
         feature = data[feature_name]
+        domain = feature["domain"]
         if req_fields - set(feature.keys()):
             raise ValidationError("All fields in the bundle data must have a domain and is_label attributes")
-        if feature["domain"] not in domains:
-            print(domains, feature["domain"])
+        if domain not in domains:
             raise ValidationError("The domain of %s feature is not matching any known domain." %feature_name)
         if not feature["is_label"]:
-            if "ifna" not in feature:
+            req_type = domains_to_types[domains[domain]]
+            if not "ifna" in feature:
                 raise ValidationError("The feature %s is not a label and requires a ifna attributes" %feature_name)
+            elif not (isinstance(feature["ifna"], req_type) or (isinstance(feature["ifna"], int) and req_type==float)):
+                if not feature["ifna"]=="_required":
+                    raise ValidationError("The ifna type for %s must be %s but is %s" %(feature_name, req_type, type(feature["ifna"])))
     
     for domain in domains:
         if domains[domain] not in domains_to_dtypes:
@@ -127,10 +132,26 @@ def validate_data(data:DataFrame, path:Path):
         else:
             data[[column]] = data[[column]].fillna(na)
     return data
-       
+
+def validate_auto_deployed_bundle(path, bundle, version):
+    list_dir = list_dir = os.listdir(path / bundle / version)
+    if not "bundle.json" in list_dir:
+        raise ValidationError("The auto deployed bundle \"%s %s\" can not be load because bundle.json is missing" %(bundle, version))
+    if not ("model.pkl" in list_dir or "model.h5" in list_dir):
+        raise ValidationError("The auto deployed bundle \"%s %s\" can not be load because a binary model is missing" %(bundle, version))
+    with open(path / bundle / version / "bundle.json", "rb") as b:
+        bundle = json.load(b)
+    validate_bundle(bundle)
+    return path, bundle, version
 
 domains_to_dtypes = {
     "Integer": np.dtype(np.int64),
     "Float": np.dtype(np.float64),
     "String": np.dtype(str)
+}
+
+domains_to_types = {
+    "Integer": int,
+    "Float": float,
+    "String": str
 }

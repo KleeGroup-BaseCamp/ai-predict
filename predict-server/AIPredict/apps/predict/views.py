@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 import pandas as pd
 import json
 import numpy as np
+import shutil, os
 
 from AIPredict.apps.predict.models import Bundle
 from AIPredict.apps.predict.serializers import BundleSerializer
@@ -27,6 +28,8 @@ class DeployBundle(viewsets.ModelViewSet):
             archive = validate_archive(file['archive'])
             name, version = upload_files(archive)
         except ValidationError as e:
+            #shutil.rmtree("./bundles/temp/")
+            #os.mkdir("./bundles/temp/")
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
         deploy_bundle = self.deploy(name, version)
@@ -39,20 +42,19 @@ class DeployBundle(viewsets.ModelViewSet):
             try:
                 deploy_bundle = self.deploy(bundle[0], bundle[1], auto=True)
                 deploy_bundles["deployed_bundles"].append(deploy_bundle)
+                print(deploy_bundles)
             except ValidationError as e:
                 return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                print(e)
         return JsonResponse(deploy_bundles, status=status.HTTP_201_CREATED)
 
     def deploy(self, name, version, auto=False):
         serializer = self.get_serializer(data={"name":name, "version": version, "auto_deploy": auto})
         # checks validity
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ValueError:
-            return Response("A more recent version of this bundle has already been imported", status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
         # creates and save the bundle in the database
         self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
         return serializer.data
 
     def activate(self, request, *args, **kwargs):
