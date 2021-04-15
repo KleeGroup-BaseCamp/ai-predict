@@ -68,7 +68,7 @@ def store_bundle(temp_path):
     version = bundle["meta"]["version"]
 
     #create the folder ./bundles/[bundle_name]/[bundle_version]
-    path = Path(".", "bundles", name, "v"+str(version))
+    path = Path(".", "bundles", "predict", name, "v"+str(version))
     Path(path).mkdir(parents=True, exist_ok=True)
 
     #moves the files to the folder (and checks if model.pkl exists)
@@ -186,7 +186,7 @@ def build_bundle_path(bundle:str=None, version:int=None, target:str=None, auto:b
     if auto:
         path = Path(".", "bundles", "auto_deploy")
     else:
-        path = Path(".", "bundles")
+        path = Path(".", "bundles", "predict")
     if bundle:
         path = path / bundle
         if version != None:

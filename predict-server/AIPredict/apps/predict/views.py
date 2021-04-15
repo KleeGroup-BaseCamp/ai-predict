@@ -31,7 +31,7 @@ class DeployBundle(viewsets.ModelViewSet):
             #shutil.rmtree("./bundles/temp/")
             #os.mkdir("./bundles/temp/")
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-
+        print(name)
         deploy_bundle = self.deploy(name, version)
         return JsonResponse(deploy_bundle, status=status.HTTP_201_CREATED)
     
@@ -85,15 +85,15 @@ class DeployBundle(viewsets.ModelViewSet):
             return Response("The bundle %s v%s does not exist" %(bundle, version), status=status.HTTP_404_NOT_FOUND)
         # removes files from ./bundles
         auto = to_remove[0].auto_deploy
-        path = build_bundle_path(name=bundle, version=version, auto=auto)
+        path = build_bundle_path(bundle=bundle, version=version, auto=auto)
         remove_files(bundle, path)
         # removes the instance from the database
         self.perform_destroy(to_remove)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class Prediction(views.APIView):
+class Prediction(viewsets.ViewSet):
 
-    def post(self, request, *args, **kwargs):
+    def predict(self, request, *args, **kwargs):
         # gets the request bundle version
         bundle = kwargs["bundle"]
         version = kwargs["version"]
@@ -111,7 +111,7 @@ class Prediction(views.APIView):
 
         # gets the model and the preprocessing dictionnary
         auto = instance.auto_deploy
-        path = build_bundle_path(name=bundle, version=version, auto=auto)
+        path = build_bundle_path(bundle=bundle, version=version, auto=auto)
         model = get_model(path)
         preprocessing = get_bundle_item(path, "preprocessing")
         algo = get_bundle_item(path, "algorithm")
@@ -122,12 +122,8 @@ class Prediction(views.APIView):
             predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
         
         
-        #extracts data from the request
-        
-        body_unicode =request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        
-        data = pd.DataFrame(body)
+        #extracts data from the request        
+        data = pd.DataFrame(request.data)
 
         try:
             data = validate_data(data, path)

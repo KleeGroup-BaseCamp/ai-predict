@@ -1,7 +1,4 @@
 from django.apps import AppConfig
-from django.db.models import BigAutoField
-from pathlib import Path
-
 # import the logging library
 import logging
 
@@ -31,14 +28,10 @@ try:
     logger.info('XGBoost imported')
 except:
     logger.info('XGBoost not imported')
-    
-class PredictConfig(AppConfig):
-    name = 'AIPredict.apps.predict'
-    verbose_name = "predict"
-    default_auto_field = 'django.db.models.BigAutoField'
-    def ready(self):
-        logger.info('Predict app Ready')
-        # Ensure necessary directories exists
-        path = "./bundles/temp/"
-        Path(path).mkdir(parents=True, exist_ok=True)
 
+class TrainConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'AIPredict.apps.train'
+
+    def ready(self):
+        logger.info('Train app Ready')

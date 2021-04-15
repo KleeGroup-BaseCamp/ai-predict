@@ -11,7 +11,7 @@ import io.vertigo.core.param.Param;
 
 public class AIFeatures extends Features<AIFeatures>{
 
-	protected AIFeatures() {
+	public AIFeatures() {
 		super("vertigo-ai");
 	}
 
@@ -29,4 +29,5 @@ public class AIFeatures extends Features<AIFeatures>{
 		return this;
 		
 	}
+
 }

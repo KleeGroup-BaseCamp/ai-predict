@@ -3,7 +3,7 @@ package io.vertigo.ai;
 import java.util.Collections;
 import java.util.List;
 
-import io.vertigo.ai.data.domain.iris.IrisItem;
+import io.vertigo.ai.predict.data.domain.iris.IrisItem;
 import io.vertigo.core.node.definition.Definition;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;

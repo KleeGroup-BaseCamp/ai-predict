@@ -28,8 +28,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'AIPredict.apps.predict.apps.AIPredictConfig',
+    'AIPredict.apps.predict.apps.PredictConfig',
+    'AIPredict.apps.train.apps.TrainConfig',
     'rest_framework',
+    'django_q',
 ]
 
 MIDDLEWARE = [
@@ -124,4 +126,14 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+Q_CLUSTER = {
+    'name': 'DjangORM',
+    'workers': 4,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default'
 }
