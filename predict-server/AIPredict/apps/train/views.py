@@ -87,10 +87,10 @@ class TrainModel(viewsets.ViewSet):
         #get model class
         algo = config["algorithm"]
         package = algo["package"]
-        algorithm = algo["name"]
-        model_class = build_model_class(package, algorithm)
+        model_class = algo["name"]
         #prepare parameters for the Trainer
         params = config["parameters"]
+        params["package"] = package
         params["model_class"] = model_class
         #init Trainer
         trainer = Trainer(**params)
@@ -114,7 +114,6 @@ class TrainModel(viewsets.ViewSet):
                 return Response( response, status=status.HTTP_201_CREATED)
             else:
                 response = train_response(time=t, modelName=name, version=version, status="trained", response="Train  in %d but not deployed to the prediction server (deployement failed)" %t, score=score, deploy_status="failed", deploy_response=content)
-                print(response)
                 return Response(response, status=status.HTTP_201_CREATED)
         else:
             response = train_response(time=t, modelName=config["meta"]["name"], status="trained", response="Train  in %d but not saved (low score)" %t, score=score)

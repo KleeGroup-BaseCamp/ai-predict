@@ -1,5 +1,6 @@
 from typing import Dict, List
 from django_q.tasks import AsyncTask
+import importlib
 
 from sklearn import *
 from sklearn.model_selection import GridSearchCV
@@ -7,8 +8,9 @@ from sklearn.model_selection import cross_val_score
 
 class Trainer(object):
 
-    def __init__(self, model_class:str, hyperparameters:Dict[str, List[object]], metrics:str, n_jobs=None, cv=None, grid_search:bool=False, *args, **kwargs):
-        self.model_class = eval(model_class)
+    def __init__(self, package:str, model_class:str, hyperparameters:Dict[str, List[object]], metrics:str, n_jobs=None, cv=None, grid_search:bool=False, *args, **kwargs):
+        self.package = importlib.import_module(package)
+        self.model_class = getattr(self.package, model_class)
         self.hyperparameters = hyperparameters
         self.grid_search = grid_search
         self.metrics = metrics
