@@ -17,17 +17,17 @@ public final class Explanation implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Feature Explanation'.
+	 * Récupère la valeur de la propriété 'Explanation Item'.
 	 * @return List de BigDecimal explainFeature
 	 */
-	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Feature Explanation")
+	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Explanation Item")
 	public java.util.List<java.math.BigDecimal> getExplainFeature() {
 		return explainFeature;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Feature Explanation'.
+	 * Définit la valeur de la propriété 'Explanation Item'.
 	 * @param explainFeature List de BigDecimal
 	 */
 	public void setExplainFeature(final java.util.List<java.math.BigDecimal> explainFeature) {

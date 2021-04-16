@@ -21,7 +21,7 @@ public final class TrainResponse implements DtObject {
 	private String response;
 	private io.vertigo.ai.train.models.DeployPredict deploy;
 	
-	/**a
+	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Request duration'.
 	 * @return Integer time <b>Obligatoire</b>

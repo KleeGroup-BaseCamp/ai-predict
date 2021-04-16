@@ -13,8 +13,7 @@
     {
         "package": "sklearn.tree",
         "name": "DecisionTreeClassifier",
-        "type" : "Classification",
-        "labels": {"0": "Setosa", "1": "Versicolor", "2": "Virginica"}
+        "type" : "Classification"
     },
     "dataset":
     {
@@ -30,12 +29,17 @@
          },
         "data_config":
         {
-            "\"sepalLength\"": {"domain": "DoFloat", "is_label":false, "ifna":0},
-            "\"sepalWidth\"": {"domain": "DoFloat", "is_label":false, "ifna":0},
-            "\"petalLength\"": {"domain": "DoFloat", "is_label":false, "ifna":0},
-            "\"petalWidth\"": {"domain": "DoFloat", "is_label":false, "ifna":0},
+            "\"sepalLength\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "\"sepalWidth\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "\"petalLength\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "\"petalWidth\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
             "variety": {"domain": "DoLabel", "is_label":true}
-        }
+        },
+        "domains":
+	    {
+	        "DoFloat": "float",
+	        "DoLabel": "str"
+	    }
     },
     "parameters":
     {
@@ -43,16 +47,12 @@
         "cv": 5,
         "metrics": "accuracy",
         "grid_search": true,
-        "min_score": 0,
+        "min_score": 0.0,
         "hyperparameters":
         {
             "max_depth": [1, 10, 100, 1000, 10000],
             "random_state": [0, 1]
         }
-    },
-    "domains":
-    {
-        "DoFloat": "Float"
     },
     "preprocessing":
     {

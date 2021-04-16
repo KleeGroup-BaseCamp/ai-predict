@@ -20,14 +20,16 @@ class TrainModel(viewsets.ViewSet):
 
     def deploy(self, request):
         config = request.data
-        validate_config(config)
+        try:
+            validate_config(config)
+        except ValidationError as e:
+            response = train_response(modelName=config["meta"]["name"], status="failed", response=str(e))
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
         try:
             res = self.train(config)
-            print(res)
             return res
         except Exception as e:
             response = train_response(modelName=config["meta"]["name"], status="failed", response=str(e))
-            print(e)
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
         
     

@@ -1,8 +1,5 @@
 package io.vertigo.ai.predict.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -20,23 +17,23 @@ public final class Predict implements DtObject {
 	private java.math.BigDecimal predictionNumeric;
 	private java.util.List<java.math.BigDecimal> predictionVector = new java.util.ArrayList<>();
 	private java.util.List<java.math.BigDecimal> predictionProba = new java.util.ArrayList<>();
-	private List<List<Double>> explanation2D =  new ArrayList<List<Double>>();
-	private java.util.List<java.math.BigDecimal> explanation1D = new java.util.ArrayList<>();
+	private io.vertigo.ai.predict.models.Explanation explanation1D;
+	private java.util.List<io.vertigo.ai.predict.models.Explanation> explanation2D =  new  java.util.ArrayList<>();
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Prediction Label'.
-	 * @return String predictionLabel
+	 * Récupère la valeur de la propriété 'Prediction label'.
+	 * @return String predictionLabel <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionLabel", label = "Prediction Label")
+	@Field(smartType = "STyPredictionLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Prediction label")
 	public String getPredictionLabel() {
 		return predictionLabel;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Prediction Label'.
-	 * @param predictionLabel String
+	 * Définit la valeur de la propriété 'Prediction label'.
+	 * @param predictionLabel String <b>Obligatoire</b>
 	 */
 	public void setPredictionLabel(final String predictionLabel) {
 		this.predictionLabel = predictionLabel;
@@ -44,18 +41,18 @@ public final class Predict implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Numeric Prediction'.
-	 * @return BigDecimal predictionNumeric
+	 * Récupère la valeur de la propriété 'Prediction numeric'.
+	 * @return BigDecimal predictionNumeric <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionNumeric", label = "Numeric Prediction")
+	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Prediction numeric")
 	public java.math.BigDecimal getPredictionNumeric() {
 		return predictionNumeric;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Numeric Prediction'.
-	 * @param predictionNumeric BigDecimal
+	 * Définit la valeur de la propriété 'Prediction numeric'.
+	 * @param predictionNumeric BigDecimal <b>Obligatoire</b>
 	 */
 	public void setPredictionNumeric(final java.math.BigDecimal predictionNumeric) {
 		this.predictionNumeric = predictionNumeric;
@@ -63,17 +60,17 @@ public final class Predict implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Vector Prediction'.
+	 * Récupère la valeur de la propriété 'Prediction vector'.
 	 * @return List de BigDecimal predictionVector
 	 */
-	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Prediction Probability")
+	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Prediction vector")
 	public java.util.List<java.math.BigDecimal> getPredictionVector() {
 		return predictionVector;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Vector Prediction'.
+	 * Définit la valeur de la propriété 'Prediction vector'.
 	 * @param predictionVector List de BigDecimal
 	 */
 	public void setPredictionVector(final java.util.List<java.math.BigDecimal> predictionVector) {
@@ -84,17 +81,17 @@ public final class Predict implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Prediction Probability'.
+	 * Récupère la valeur de la propriété 'Prediction probabilities'.
 	 * @return List de BigDecimal predictionProba
 	 */
-	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Prediction Probability")
+	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Prediction probabilities")
 	public java.util.List<java.math.BigDecimal> getPredictionProba() {
 		return predictionProba;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Prediction Probability'.
+	 * Définit la valeur de la propriété 'Prediction probabilities'.
 	 * @param predictionProba List de BigDecimal
 	 */
 	public void setPredictionProba(final java.util.List<java.math.BigDecimal> predictionProba) {
@@ -105,44 +102,42 @@ public final class Predict implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Explanation'.
-	 * @return DtList de Explanation explanation
+	 * Récupère la valeur de la propriété '1D Explanation'.
+	 * @return Explanation explanation1D <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyDtExplanation", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Explanation2D")
-	public List<List<Double>> getExplanation2D() {
-		return explanation2D;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Explanation2D'.
-	 * @param explanation DtList de Explanation2D
-	 */
-	public void setExplanation2D(final List<List<Double>> explanation2D) {
-		io.vertigo.core.lang.Assertion.check().isNotNull(explanation2D);
-		//---
-		this.explanation2D = explanation2D;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Explanation1D'.
-	 * @return DtList de Explanation explanation1D
-	 */
-	@Field(smartType = "STyPredictionNumeric", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Explanation1D")
-	public java.util.List<java.math.BigDecimal> getExplanation1D() {
+	@Field(smartType = "STyDtExplanation", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "1D Explanation")
+	public io.vertigo.ai.predict.models.Explanation getExplanation1D() {
 		return explanation1D;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Explanation2D'.
-	 * @param explanation DtList de Explanation2D
+	 * Définit la valeur de la propriété '1D Explanation'.
+	 * @param explanation1D Explanation <b>Obligatoire</b>
 	 */
-	public void setExplanation1D(final java.util.List<java.math.BigDecimal> explanation1D) {
-		io.vertigo.core.lang.Assertion.check().isNotNull(explanation1D);
-		//---
+	public void setExplanation1D(final io.vertigo.ai.predict.models.Explanation explanation1D) {
 		this.explanation1D = explanation1D;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété '2D Explanation'.
+	 * @return DtList de Explanation explanation2D
+	 */
+	@Field(smartType = "STyDtExplanation", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "2D Explanation")
+	public java.util.List<io.vertigo.ai.predict.models.Explanation> getExplanation2D() {
+		return explanation2D;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété '2D Explanation'.
+	 * @param explanation2D DtList de Explanation
+	 */
+	public void setExplanation2D(final java.util.List<io.vertigo.ai.predict.models.Explanation> explanation2D) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(explanation2D);
+		//---
+		this.explanation2D = explanation2D;
 	}
 	
 	/** {@inheritDoc} */

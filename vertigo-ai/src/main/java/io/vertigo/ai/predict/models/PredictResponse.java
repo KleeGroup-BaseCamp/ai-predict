@@ -1,7 +1,6 @@
 package io.vertigo.ai.predict.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -16,24 +15,24 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class PredictResponse implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private List<io.vertigo.ai.predict.models.Predict> predictionList =  new ArrayList<io.vertigo.ai.predict.models.Predict>();
+	private java.util.List<io.vertigo.ai.predict.models.Predict> predictionList =  new ArrayList<>();
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Prediction list'.
+	 * Récupère la valeur de la propriété 'Prediction List'.
 	 * @return DtList de Predict predictionList
 	 */
-	@Field(smartType = "STyDtPredict", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Prediction list")
-	public List<Predict> getPredictionList() {
+	@Field(smartType = "STyDtPredict", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Prediction List")
+	public java.util.List<io.vertigo.ai.predict.models.Predict> getPredictionList() {
 		return predictionList;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Prediction list'.
+	 * Définit la valeur de la propriété 'Prediction List'.
 	 * @param predictionList DtList de Predict
 	 */
-	public void setPredictionList(final   List<Predict> predictionList) {
+	public void setPredictionList(final java.util.List<io.vertigo.ai.predict.models.Predict> predictionList) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(predictionList);
 		//---
 		this.predictionList = predictionList;
@@ -44,5 +43,4 @@ public final class PredictResponse implements DtObject {
 	public String toString() {
 		return DtObjectUtil.toString(this);
 	}
-
 }

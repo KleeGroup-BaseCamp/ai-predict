@@ -7,7 +7,7 @@ class BundleSerializer(serializers.ModelSerializer):
 
     class Meta:
             model = Bundle
-            fields = ['id', 'name', 'activated', 'version', 'auto_deploy']
+            fields = ['id', 'name', 'activated', 'version', 'auto']
     
     def create(self, validated_data):
         return Bundle.objects.create(**validated_data)

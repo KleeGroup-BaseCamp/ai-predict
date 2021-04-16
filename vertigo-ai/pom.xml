@@ -130,10 +130,18 @@
 	</dependency>
 
 	<dependency>
-	    <groupId>org.postgresql</groupId>
-	    <artifactId>postgresql</artifactId>
-	    <version>9.3-1100-jdbc41</version>
-	</dependency>
+		<groupId>com.oracle.database.jdbc</groupId>
+	    <artifactId>ojdbc10</artifactId>
+	    <version>19.8.0.0</version>
+		<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.2.18</version>
+			<scope>test</scope>
+		</dependency>
 
   </dependencies>
   

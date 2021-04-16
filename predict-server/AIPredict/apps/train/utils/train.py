@@ -7,7 +7,7 @@ from sklearn.model_selection import cross_val_score
 
 class Trainer(object):
 
-    def __init__(self, model_class:str, hyperparameters:Dict[str, List[object]], metrics=None, n_jobs=None, cv=None, grid_search:bool=False, *args, **kwargs):
+    def __init__(self, model_class:str, hyperparameters:Dict[str, List[object]], metrics:str, n_jobs=None, cv=None, grid_search:bool=False, *args, **kwargs):
         self.model_class = eval(model_class)
         self.hyperparameters = hyperparameters
         self.grid_search = grid_search

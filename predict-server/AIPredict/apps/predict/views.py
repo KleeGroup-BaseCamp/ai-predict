@@ -28,10 +28,9 @@ class DeployBundle(viewsets.ModelViewSet):
             archive = validate_archive(file['archive'])
             name, version = upload_files(archive)
         except ValidationError as e:
-            #shutil.rmtree("./bundles/temp/")
-            #os.mkdir("./bundles/temp/")
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-        print(name)
+            shutil.rmtree("./bundles/temp/")
+            os.mkdir("./bundles/temp/")
+            return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
         deploy_bundle = self.deploy(name, version)
         return JsonResponse(deploy_bundle, status=status.HTTP_201_CREATED)
     
@@ -42,15 +41,12 @@ class DeployBundle(viewsets.ModelViewSet):
             try:
                 deploy_bundle = self.deploy(bundle[0], bundle[1], auto=True)
                 deploy_bundles["deployed_bundles"].append(deploy_bundle)
-                print(deploy_bundles)
             except ValidationError as e:
-                return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                print(e)
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse(deploy_bundles, status=status.HTTP_201_CREATED)
 
     def deploy(self, name, version, auto=False):
-        serializer = self.get_serializer(data={"name":name, "version": version, "auto_deploy": auto})
+        serializer = self.get_serializer(data={"name":name, "version": version, "auto": auto})
         # checks validity
         serializer.is_valid(raise_exception=True)
         # creates and save the bundle in the database
@@ -84,7 +80,7 @@ class DeployBundle(viewsets.ModelViewSet):
         if len(to_remove) == 0:
             return Response("The bundle %s v%s does not exist" %(bundle, version), status=status.HTTP_404_NOT_FOUND)
         # removes files from ./bundles
-        auto = to_remove[0].auto_deploy
+        auto = to_remove[0].auto
         path = build_bundle_path(bundle=bundle, version=version, auto=auto)
         remove_files(bundle, path)
         # removes the instance from the database
@@ -110,17 +106,12 @@ class Prediction(viewsets.ViewSet):
                     status=status.HTTP_403_FORBIDDEN)
 
         # gets the model and the preprocessing dictionnary
-        auto = instance.auto_deploy
+        auto = instance.auto
         path = build_bundle_path(bundle=bundle, version=version, auto=auto)
         model = get_model(path)
         preprocessing = get_bundle_item(path, "preprocessing")
         algo = get_bundle_item(path, "algorithm")
-        if algo["type"] in ["Classification", "classification"]:
-            # sets up a predictor instance
-            predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model, labels=algo["labels"])
-        else:
-            predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
-        
+        predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
         
         #extracts data from the request        
         data = pd.DataFrame(request.data)
@@ -134,5 +125,4 @@ class Prediction(viewsets.ViewSet):
             prediction = predictor.predict(data=data)
             return JsonResponse(prediction)
         except Exception as e:
-            print(e)
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)

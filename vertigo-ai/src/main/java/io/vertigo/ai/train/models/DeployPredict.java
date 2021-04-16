@@ -1,5 +1,6 @@
 package io.vertigo.ai.train.models;
 
+import io.vertigo.ai.predict.models.DeployResponse;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -14,7 +15,7 @@ public final class DeployPredict implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private String status;
-	private String response;
+	private DeployResponse response;
 	
 	/**
 	 * Champ : DATA.
@@ -38,19 +39,19 @@ public final class DeployPredict implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Response'.
-	 * @return String response <b>Obligatoire</b>
+	 * @return BigDecimal response <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Response")
-	public String getResponse() {
+	@Field(smartType = "STyDtDeployResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Response")
+	public DeployResponse getResponse() {
 		return response;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Response'.
-	 * @param response String <b>Obligatoire</b>
+	 * @param response BigDecimal <b>Obligatoire</b>
 	 */
-	public void setResponse(final String response) {
+	public void setResponse(final DeployResponse response) {
 		this.response = response;
 	}
 	

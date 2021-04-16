@@ -23,12 +23,11 @@ except:
 class Predictor(object):
     """Wraps a model and a preprocessing dictionnary to 
     """
-    def __init__(self, preprocessing:dict, model, framework:str, labels=None):
+    def __init__(self, preprocessing:dict, model, framework:str):
 
         self.preprocessing = preprocessing
         self.model = model
         self.framework = framework
-        self.labels = labels
     
     def _apply_preprocessing(self, data):
         # applies the preprocessing dictionary to the input data
@@ -46,10 +45,7 @@ class Predictor(object):
 
         elif "predict" in dir(self.model):
             prediction = self.model.predict(preprocessed_data)
-    
-        if self.labels:
-            return [self.labels[str(pred)] for pred in prediction]
-        
+
         return prediction
 
     def _predict_proba(self, data):
