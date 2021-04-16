@@ -31,7 +31,10 @@ class DeployBundle(viewsets.ModelViewSet):
             shutil.rmtree("./bundles/temp/")
             os.mkdir("./bundles/temp/")
             return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        deploy_bundle = self.deploy(name, version)
+        try:
+            deploy_bundle = self.deploy(name, version)
+        except Exception as e:
+            return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse(deploy_bundle, status=status.HTTP_201_CREATED)
     
     def auto_deploy(self, request):
@@ -119,10 +122,10 @@ class Prediction(viewsets.ViewSet):
         try:
             data = validate_data(data, path)
         except ValidationError as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             prediction = predictor.predict(data=data)
             return JsonResponse(prediction)
         except Exception as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

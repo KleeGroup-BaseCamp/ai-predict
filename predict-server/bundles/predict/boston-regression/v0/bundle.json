@@ -9,20 +9,45 @@
         "SearchLoaderID": "",
         "secret": ""
     },
-    "algorithm": 
+    "algorithm":
     {
-        "name": "LinearRegreesion",
-        "type" : "Regression",
-        "metrics": ""
+        "package": "sklearn.linear_model",
+        "name": "LinearRegression",
+        "type": "Regression"
     },
-    "data":
+    "dataset":
     {
-        "RM": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
-        "PRICE": {"domain": "DoFloat", "is_label":true, "ifna": 0}
+        "db_config":
+        {
+            "db_type": "postgresql",
+            "table": "bostontest",
+            "database": "traindb",
+            "user": "postgres",
+            "password": "admin",
+            "host": "127.0.0.1",
+            "port": "5432"
+        },
+
+        "data_config":
+        {
+            "RM": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
+            "PRICE": {"domain": "DoFloat", "is_label":true, "ifna": 0}
+        },
+        "domains":
+        {
+            "DoFloat": "float"
+        }
     },
-    "domains":
+    "parameters":
     {
-        "DoFloat": "Float"
+        "n_jobs": 1,
+        "cv": 5,
+        "metrics": "neg_mean_absolute_error",
+        "grid_search": true,
+        "min_score": 0.0,
+        "hyperparameters":
+        {
+        }
     },
     "preprocessing":
     {

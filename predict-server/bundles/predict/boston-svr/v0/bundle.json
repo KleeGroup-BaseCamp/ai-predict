@@ -9,32 +9,57 @@
         "SearchLoaderID": "",
         "secret": ""
     },
-    "algorithm": 
+    "algorithm":
     {
+        "package": "sklearn.svm",
         "name": "SVR",
-        "type" : "Regression",
-        "metrics": ""
+        "type": "Regression"
     },
-    "data":
+    "dataset":
     {
-        "CRIM": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "ZN": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "INDUS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "CHAS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "NOX": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "RM": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
-        "AGE": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "DIS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "RAD": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "TAX": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "PTRATIO": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "B": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "LSTAT": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-        "PRICE": {"domain": "DoFloat", "is_label":true, "ifna": 0}
+        "db_config":
+        {
+            "db_type": "postgresql",
+            "table": "bostontest",
+            "database": "traindb",
+            "user": "postgres",
+            "password": "admin",
+            "host": "127.0.0.1",
+            "port": "5432"
+        },
+
+        "data_config":
+        {
+            "CRIM": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "ZN": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "INDUS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "CHAS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "NOX": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "RM": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
+            "AGE": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "DIS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "RAD": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "TAX": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "PTRATIO": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "B": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "LSTAT": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "PRICE": {"domain": "DoFloat", "is_label":true, "ifna": 0}
+        },
+        "domains":
+        {
+            "DoFloat": "float"
+        }
     },
-    "domains":
+    "parameters":
     {
-        "DoFloat": "Float"
+        "n_jobs": 1,
+        "cv": 5,
+        "metrics": "neg_mean_absolute_error",
+        "grid_search": true,
+        "min_score": 0.0,
+        "hyperparameters":
+        {
+        }
     },
     "preprocessing":
     {

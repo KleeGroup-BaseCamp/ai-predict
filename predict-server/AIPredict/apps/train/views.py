@@ -114,6 +114,7 @@ class TrainModel(viewsets.ViewSet):
                 return Response( response, status=status.HTTP_201_CREATED)
             else:
                 response = train_response(time=t, modelName=name, version=version, status="trained", response="Train  in %d but not deployed to the prediction server (deployement failed)" %t, score=score, deploy_status="failed", deploy_response=content)
+                print(response)
                 return Response(response, status=status.HTTP_201_CREATED)
         else:
             response = train_response(time=t, modelName=config["meta"]["name"], status="trained", response="Train  in %d but not saved (low score)" %t, score=score)

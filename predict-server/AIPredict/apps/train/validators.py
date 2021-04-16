@@ -1,5 +1,6 @@
 from typing import Dict
 import re
+import os
 import importlib
 
 
@@ -71,6 +72,10 @@ def validate_config_dataset(dataset:Dict[str, object]) -> Dict[str, object]:
         domain_type = domains[domain]
         if not isinstance(domain_type, str):
             raise ValidationError("dataset.domains.%s must be filled as a string" %(domain))
+        try:
+            eval(domain_type)
+        except NameError:
+            raise ValidationError("dataset.domains.%s must match a python type" %(domain))
         if not isinstance(eval(domain_type), type):
             raise ValidationError("dataset.domains.%s must match a python type" %(domain))
 
@@ -92,8 +97,10 @@ def validate_config_dataset(dataset:Dict[str, object]) -> Dict[str, object]:
                 raise ValidationError("dataset.data_config.%s is a feature and thus need a ifna value of type %s" %(data, domain))
             #checks ifna type
             domain_type = domains[domain]
-            if not isinstance(data_dict["ifna"], eval(domain_type)):
-                raise ValidationError("dataset.data_config.%s ifna type is incorrect (is %s but must be %s)" %(data, domain, domain_type))
+            if not data_dict["ifna"]=="_required":
+                if not isinstance(data_dict["ifna"], eval(domain_type)): 
+                    if not (eval(domain_type)==float and isinstance(data_dict["ifna"], int)):
+                        raise ValidationError("dataset.data_config.%s ifna type is incorrect (is %s but must be %s)" %(data, str(type(data_dict["ifna"])), domain_type))
     
     return dataset
 
@@ -122,7 +129,9 @@ def validate_config(config:Dict[str, object]) -> Dict[str, object]:
     return config
 
 def validate_request(bundle, version):
-    pass
+    path = "./bundles/train/%s/v%s" %(bundle, version)
+    if not os.path.exists(path):
+        raise ValidationError("The model %s v%d can not be found" %(bundle, version))
 
 def validate_fields(item:str, config_item:Dict[str, object], required_fields:Dict[str, object]):
     missing = []
