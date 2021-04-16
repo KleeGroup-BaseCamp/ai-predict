@@ -2,6 +2,9 @@
 *.py[oc]
 __pycache__/
 
+#venv
+predict-server/env/
+
 # IDE files
 .vscode/
 
