@@ -21,7 +21,7 @@ six==1.15.0
 #Django q
 django-q==1.3.5
 django-picklefield==3.0.1
-ansicon==1.89.0:
+ansicon==1.89.0
 arrow==1.0.3
 blessed==1.18.0
 jinxed==1.1.0
