@@ -9,7 +9,7 @@ from pathlib import Path
 import time
 
 from AIPredict.apps.train.validators import validate_config, validate_request
-from AIPredict.apps.train.utils.train import Trainer, async_train, async_score, sync_train, sync_score
+from AIPredict.apps.train.utils.train import async_train, async_score, sync_train, sync_score
 from AIPredict.apps.train.utils.tools import build_model_class, get_data, train_response, score_response
 from AIPredict.apps.train.utils.files import save, send, get_config, delete_files
 from AIPredict.apps.predict.utils.files import get_model
@@ -25,12 +25,8 @@ class TrainModel(viewsets.ViewSet):
         except ValidationError as e:
             response = train_response(modelName=config["meta"]["name"], status="failed", response=str(e))
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            res = self.train(config)
-            return res
-        except Exception as e:
-            response = train_response(modelName=config["meta"]["name"], status="failed", response=str(e))
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        res = self.train(config)
+        return res
         
     
     def retrain(self, request, *args, **kwargs):
@@ -65,7 +61,7 @@ class TrainModel(viewsets.ViewSet):
 
         try:
             start = time.time()
-            score = sync_score(model, metrics, cv, X, y)
+            score = async_score(model, metrics, cv, X, y)
             t = time.time() - start
             response = score_response(modelName=bundle, status="succeed", version=version, time=t, score=score)
         except Exception as e:
@@ -87,23 +83,17 @@ class TrainModel(viewsets.ViewSet):
         #get model class
         algo = config["algorithm"]
         package = algo["package"]
-        model_class = algo["name"]
-        #prepare parameters for the Trainer
+        modelClass = algo["name"]
+        #prepare parameters and preprocessing dictionaries
         params = config["parameters"]
-        params["package"] = package
-        params["model_class"] = model_class
-        #init Trainer
-        trainer = Trainer(**params)
+        preprocessing = config["preprocessing"]
         #get dataset
         X_train, y_train = get_data(config["dataset"])
-
         #train
-        model = sync_train(trainer, X_train, y_train)
+        model = async_train(package=package, modelClass=modelClass, X=X_train, y=y_train, preprocessing=preprocessing, **params)
         #if the score is greater than a threshold value, the bundle is saved
         aim = params["min_score"]
-        metrics = trainer.metrics
-        cv = trainer.cv
-        score = sync_score(model, metrics, cv, X=X_train, y=y_train)
+        score = async_score(model, X=X_train, y=y_train, **params)
         t = time.time() - start
         if  score >= aim:
             path, name, version = save(model, config, 0, score)
