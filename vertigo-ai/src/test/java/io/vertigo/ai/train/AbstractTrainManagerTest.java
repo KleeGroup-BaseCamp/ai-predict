@@ -51,13 +51,10 @@ public abstract class AbstractTrainManagerTest {
 	
 	private AutoCloseableNode node;
 	
-	protected HashMap<String,Object> config;
-	
 	@BeforeEach
 	public final void setUp() throws Exception {
 		node = new AutoCloseableNode(buildNodeConfig());
 		DIInjector.injectMembers(this, node.getComponentSpace());
-		config = createConfig();
 		try (final SqlConnection connection = obtainMainConnection()) {
 			execpreparedStatement(connection, createTableIris());
 			execpreparedStatement(connection, createSequenceIris());
@@ -96,8 +93,8 @@ public abstract class AbstractTrainManagerTest {
 	
 	protected abstract NodeConfig buildNodeConfig();
 	
-	private HashMap<String,Object> createConfig() throws JsonParseException, JsonMappingException, IOException {
-		File JSON_SOURCE = new File("./src/test/java/io/vertigo/ai/train/config.json");
+	private HashMap<String,Object> createConfig(String configName) throws JsonParseException, JsonMappingException, IOException {
+		File JSON_SOURCE = new File("./src/test/java/io/vertigo/ai/train/configs/"+ configName + ".json");
 		@SuppressWarnings("unchecked")
 		HashMap<String,Object> config =
 		        new ObjectMapper().readValue(JSON_SOURCE , HashMap.class);
@@ -142,9 +139,17 @@ public abstract class AbstractTrainManagerTest {
 	}
 	
 	@Test
-	public void testTrain() {
+	public void testTrainPostgresql() throws JsonParseException, JsonMappingException, IOException {
+		HashMap<String,Object> config = createConfig("postgresql");
 		TrainResponse response = predictionManager.train(config);
 		Assertions.assertEquals(BigDecimal.valueOf(0.9600000000000002), response.getScore());
+	}
+	
+	@Test
+	public void testTrainCassandraSpark() throws JsonParseException, JsonMappingException, IOException {
+		HashMap<String,Object> config = createConfig("cassandra_spark");
+		TrainResponse response = predictionManager.train(config);
+		Assertions.assertEquals(1, response.getScore().compareTo(BigDecimal.valueOf(0.9)));
 	}
 	
 	@Test
@@ -156,6 +161,7 @@ public abstract class AbstractTrainManagerTest {
 	@Test
 	public void testDelete() {
 		Integer response = predictionManager.delete("iris-classification-postgresql", 1);
+		predictionManager.delete("iris-classification-cassandra-spark", 1);
 		Assertions.assertEquals(204, response);
 	}
 }

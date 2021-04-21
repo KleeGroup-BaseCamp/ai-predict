@@ -1,7 +1,8 @@
 from sklearn.datasets import load_boston, load_iris
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import psycopg2
+
+from AIPredict.apps.train.utils.databases import *
 
 def build_model_class(package:str, model:str):
     modules = package.split(".")
@@ -21,31 +22,12 @@ def get_data(dataset_config:int):
 
     db_type = db_config["db_type"]
     if db_type=="postgresql":
-        conn = connect_psql(**db_config)
-        data = get_psql_data(conn=conn, table=db_config["table"], features=features, labels=labels)
-        df = pd.DataFrame(data, columns=features+labels)
-        X, y = df[features], df[labels]
+        X, y = postgresql.get_data(db_config, features, labels)
+    elif db_type=="cassandra_spark":
+        X, y = cassandra_spark.get_data(db_config, features, labels)
     else:
-        X, y = None, None
+        X, y = None
     return X, y
-
-def connect_psql(database, user, password, host, port, *args, **kwargs):
-    conn = psycopg2.connect(database=database, user=user, password=password, host=host, port=port)
-    return conn
-
-def get_psql_data(conn, table, features, labels):
-    conn.autocommit = True
-    cursor = conn.cursor()
-    columns = [col for col in features+labels]
-    query_col = ", ".join(columns)
-    query = """
-    SELECT %s from %s
-    """ %(query_col, table)
-    cursor.execute(query)
-    result = cursor.fetchall()
-    conn.commit()
-    conn.close()
-    return result
 
 def train_response(modelName:str, status:str, response:str, version:int=None, time:int=None, score:float=None, deploy_status:str=None, deploy_response:str=None):
     response = {
