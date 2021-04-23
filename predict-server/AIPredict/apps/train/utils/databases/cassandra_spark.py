@@ -10,6 +10,7 @@ def get_cassandra_data(spark:SparkSession, keyspace:str, table:str):
     df = spark.read.format("org.apache.spark.sql.cassandra") \
     .options(table=table, keyspace=keyspace).load()
     data = df.toPandas()
+    spark.stop()
     return data
 
 def get_data(db_config:dict, features:list, labels:list):

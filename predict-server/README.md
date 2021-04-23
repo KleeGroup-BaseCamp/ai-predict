@@ -161,8 +161,6 @@ The training data have to be store in a database and the connection information 
 - Postgresql
 
 
-</table>
-
 ### Model Re-Training
 Once a model is saved, it is possible to retrain it when new data are added to the training database. To do so, use the POST ``/train/<str:name>/<int:version>`` endpoint. The request execution is similar to the first training detailed above. A new version of the model is saved if the new score is great enough.
 
@@ -215,9 +213,9 @@ You can access the list of all imported bundles by doing a GET request on ```/mo
     {
         "id": 1,
         "name": "bundle_name",
-        "path": "./bundles/bundle_name/v1",
+        "version": 1,
         "activated": true,
-        "version": 1
+        "auto": false
     },
     ...
 ]
