@@ -24,6 +24,7 @@ $ python scripts/manage.py migrate
 ```
 Then run the server :
 ```bash
+$ python scripts/manage.py qcluster
 $ python scripts/manage.py runserver
 ```
 You should be able to access the server locally on http://127.0.0.1:8000 .

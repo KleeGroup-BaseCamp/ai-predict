@@ -5,8 +5,6 @@ import importlib
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 
-
-
 def build_model(package:str, modelClass:str):
     i = importlib.import_module(package)
     return getattr(i, modelClass)

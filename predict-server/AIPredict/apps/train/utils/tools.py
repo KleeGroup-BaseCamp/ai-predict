@@ -37,11 +37,11 @@ def train_response(modelName:str, status:str, response:str, version:int=None, ti
         "score": score,
         "status": status,
         "response": response,
-        "deploy":
-        {
-            "status": deploy_status,
-            "response": deploy_response
-        }
+        #"deploy":
+        #{
+        #    "status": deploy_status,
+        #    "response": deploy_response
+        #}
     }
     return response
 

@@ -63,8 +63,7 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 	}
 
 	@Override
-	public ScoreResponse score(
-			String modelName, Integer version) {
+	public ScoreResponse score(String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(server+"score/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);

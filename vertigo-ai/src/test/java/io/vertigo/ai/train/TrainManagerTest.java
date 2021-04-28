@@ -23,14 +23,15 @@ public class TrainManagerTest extends AbstractTrainManagerTest {
 	@Override
 	protected String createTableIris() {
 		final String myString = "CREATE TABLE iris ( "
-				+ "id NUMERIC(6), "
-				+ "sepalLength NUMERIC(6,3), "
-				+ "sepalWidth NUMERIC(6,3), "
-				+ "petalLength NUMERIC(6,3), "
-				+ "petalWidth NUMERIC(6,3), "
-				+ "variety VARCHAR(80) "
+				+ "id 						NUMERIC(6), "
+				+ "sepal_length 			NUMERIC(6,3), "
+				+ "sepal_width 				NUMERIC(6,3), "
+				+ "petal_length				NUMERIC(6,3), "
+				+ "petal_width 				NUMERIC(6,3), "
+				+ "variety					VARCHAR(80)"
 				+ ")";
 		return myString;
 	}
 
 }
+

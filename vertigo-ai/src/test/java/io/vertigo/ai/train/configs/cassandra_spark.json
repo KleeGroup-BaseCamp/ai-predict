@@ -26,10 +26,10 @@
          },
         "data_config":
         {
-            "sepallength": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "sepalwidth": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "petallength": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "petalwidth": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "sepal_length": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "sepal_width": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "petal_length": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "petal_width": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
             "variety": {"domain": "DoLabel", "is_label":true}
         },
         "domains":

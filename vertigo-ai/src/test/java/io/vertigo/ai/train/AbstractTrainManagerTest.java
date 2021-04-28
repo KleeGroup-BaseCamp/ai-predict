@@ -21,9 +21,13 @@ import io.vertigo.ai.predict.PredictionManager;
 import io.vertigo.ai.train.data.Iris;
 import io.vertigo.ai.train.models.ScoreResponse;
 import io.vertigo.ai.train.models.TrainResponse;
+import io.vertigo.ai.utils.CSVReaderUtil;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.WrappedException;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
+import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.database.sql.SqlManager;
 import io.vertigo.database.sql.connection.SqlConnection;
 import io.vertigo.database.sql.statement.SqlStatement;
@@ -34,14 +38,10 @@ public abstract class AbstractTrainManagerTest {
 	private static final String DROP_SEQUENCE_IRIS = "DROP SEQUENCE seq_iris";
 	
 	private static final String INSERT_INTO_IRIS_VALUES = "insert into iris values (#iris.id#, #iris.sepalLength#, #iris.sepalWidth#, #iris.petalLength#, #iris.petalWidth#, #iris.variety#)";
-	private static final String  CREATE_TABLE_IRIS = "CREATE TABLE iris ( "
-			+ "id 						NUMERIC(6), "
-			+ "sepalLength 				NUMERIC(6,3), "
-			+ "sepalWidht 				NUMERIC(6,3), "
-			+ "petalLength 				NUMERIC(6,3), "
-			+ "petalWidth 				NUMERIC(6,3), "
-			+ "variety					VARCHAR(80), "
-			+ ")";
+	private static final int IRIS_CSV_FILE_COLUMN_NUMBER = 5;
+
+	@Inject
+	private ResourceManager resourceManager;
 
 	@Inject
 	protected SqlManager dataBaseManager;
@@ -94,10 +94,8 @@ public abstract class AbstractTrainManagerTest {
 	protected abstract NodeConfig buildNodeConfig();
 	
 	private HashMap<String,Object> createConfig(String configName) throws JsonParseException, JsonMappingException, IOException {
-		File JSON_SOURCE = new File("./src/test/java/io/vertigo/ai/train/configs/"+ configName + ".json");
-		@SuppressWarnings("unchecked")
-		HashMap<String,Object> config =
-		        new ObjectMapper().readValue(JSON_SOURCE , HashMap.class);
+		File jsonSource = new File("./src/test/java/io/vertigo/ai/train/configs/"+ configName + ".json");
+		HashMap<String,Object> config = new ObjectMapper().readValue(jsonSource , HashMap.class);
 		return config;
 	}
 	
@@ -120,16 +118,23 @@ public abstract class AbstractTrainManagerTest {
 						connection);
 	}
 	
-	private void createDatas() throws Exception {
+	private void createInitialIrisFromCSV(final String csvFilePath, final String[] irisRecord) {
+		Assertion.check().isTrue(irisRecord.length == IRIS_CSV_FILE_COLUMN_NUMBER, "CSV File {0} Format not suitable for Iris", csvFilePath);
+		// ---
+		long id = 1;
+		//FIXME: replace vertigo-database with dao/store
 		try (final SqlConnection connection = obtainMainConnection()) {
-			insert(connection, Iris.createIris(Long.valueOf(1), 1.0, 1.0, 1.0, 1.0, "test"));
-			insert(connection, Iris.createIris(Long.valueOf(2), 1.0, 1.0, 1.0, 1.0, "test"));
-			insert(connection, Iris.createIris(Long.valueOf(3), 1.0, 1.0, 1.0, 1.0, "test"));
-			insert(connection, Iris.createIris(Long.valueOf(4), 1.0, 1.0, 1.0, 1.0, "test"));
-			insert(connection, Iris.createIris(Long.valueOf(5), 1.0, 1.0, 1.0, 1.0, "test"));
-			insert(connection, Iris.createIris(Long.valueOf(5), 1.0, 1.0, 1.0, 1.0, "test"));
+			insert(connection, Iris.createIris(id++, Double.parseDouble(irisRecord[0]), Double.parseDouble(irisRecord[1]), Double.parseDouble(irisRecord[2]), Double.parseDouble(irisRecord[3]), irisRecord[4]));
 			connection.commit();
+		} catch (SQLException e) {
+			throw WrappedException.wrap(e, "Can't insert data");
 		}
+		
+	}
+	
+	
+	private void createDatas() throws Exception {
+		CSVReaderUtil.parseCSV(resourceManager, "io/vertigo/ai/datageneration/iris.csv", this::createInitialIrisFromCSV);
 	}
 
 
@@ -142,7 +147,7 @@ public abstract class AbstractTrainManagerTest {
 	public void testTrainPostgresql() throws JsonParseException, JsonMappingException, IOException {
 		HashMap<String,Object> config = createConfig("postgresql");
 		TrainResponse response = predictionManager.train(config);
-		Assertions.assertEquals(BigDecimal.valueOf(0.9600000000000002), response.getScore());
+		Assertions.assertEquals(BigDecimal.valueOf(0.9533333333333334), response.getScore());
 	}
 	
 	@Test
@@ -155,7 +160,7 @@ public abstract class AbstractTrainManagerTest {
 	@Test
 	public void testScore() {
 		ScoreResponse response = predictionManager.score("iris-classification-postgresql", 0);
-		Assertions.assertEquals(BigDecimal.valueOf(0.9600000000000002), response.getScore());
+		Assertions.assertEquals(BigDecimal.valueOf(0.9466666666666669), response.getScore());
 	}
 
 	@Test

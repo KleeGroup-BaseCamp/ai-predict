@@ -20,7 +20,7 @@
         "db_config":
          {
              "db_type": "postgresql",
-             "table": "iristest",
+             "table": "iris",
              "database": "traindb",
              "user": "postgres",
              "password": "admin",
@@ -29,10 +29,10 @@
          },
         "data_config":
         {
-            "\"sepalLength\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "\"sepalWidth\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "\"petalLength\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "\"petalWidth\"": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "sepal_length": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "sepal_width": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "petal_length": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "petal_width": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
             "variety": {"domain": "DoLabel", "is_label":true}
         },
         "domains":

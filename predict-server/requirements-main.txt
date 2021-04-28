@@ -31,6 +31,9 @@ arrow==1.0.3
 blessed==1.18.0
 jinxed==1.1.0
 
+#Postgresql
+psycopg2==2.8.6
+
 #Misc dependencies
 requests==2.25.1
 numpy==1.19.5
