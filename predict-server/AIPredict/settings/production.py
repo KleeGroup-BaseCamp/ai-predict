@@ -72,7 +72,9 @@ DATABASES = {
     }
 }
 
-
+TRAIN_DB = {
+    'traindb' : 'postgresql://postgres:admin@localhost/traindb'
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

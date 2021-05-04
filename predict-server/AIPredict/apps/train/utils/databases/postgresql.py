@@ -1,11 +1,14 @@
 import pandas as pd
-import psycopg2
+from sqlalchemy import create_engine
 
-def connect_psql(database, user, password, host, port, *args, **kwargs):
-    conn = psycopg2.connect(database=database, user=user, password=password, host=host, port=port)
-    return conn
+from AIPredict.settings.production import TRAIN_DB
 
-def get_psql_data(conn, table, features, labels):
+def connect_database(db_name:str):
+    database_url = TRAIN_DB[db_name]
+    engine = create_engine(database_url)
+    return engine.connect()
+    
+def get_database_data(conn, table, features, labels):
     conn.autocommit = True
     # Build query
     columns = [col for col in features+labels]
@@ -18,7 +21,7 @@ def get_psql_data(conn, table, features, labels):
     return result
 
 def get_data(db_config:dict, features:list, labels:list):
-    conn = connect_psql(**db_config)
-    df = get_psql_data(conn=conn, table=db_config["table"], features=features, labels=labels)
+    conn = connect_database(db_config["database"])
+    df = get_database_data(conn=conn, table=db_config["table"], features=features, labels=labels)
     X, y = df[features], df[labels]
     return X, y
