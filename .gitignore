@@ -18,6 +18,9 @@ migrations/
 predict-server/AIPredict/bundles/temp/
 /.metadata/
 
+# dockerized spark and cassandra 
+docker/spark-cassandra/
+
 # java files
 
 bin/

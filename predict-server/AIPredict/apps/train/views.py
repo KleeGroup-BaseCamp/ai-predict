@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 class TrainModel(viewsets.ViewSet):
 
     def deploy(self, request):
+        #zip pour plus général
         config = request.data
         try:
             validate_config(config)
