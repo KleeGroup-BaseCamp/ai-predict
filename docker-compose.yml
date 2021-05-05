@@ -1,22 +1,19 @@
 version: '3' # 2.4 is the last version that supports depends_on conditions for service health
 services:
   cassandra:
-    image: cassandra:3.11.10   # better to use a specific version, if you want to control upgrades
-    container_name: cassandra
+    image: bitnami/cassandra:3.11.10   # better to use a specific version, if you want to control upgrades
     hostname: cassandra
+    container_name: cassandra
+    ports:
+      - '7000:7000'
+      - '9042:9042'
     volumes:
-      - ./docker/spark-cassandra/data/cassandra:/var/lib/cassandra    # This is the volume that will persist data for cassandra node
-      - ./docker/spark-cassandra/etc/cassandra:/etc/cassandra   # Use your own config files for full control
-    command: /bin/bash -c "sleep 1 && echo ' -- Pausing to let system catch up ... -->' && /docker-entrypoint.sh cassandra -f"
-    expose:
-      - 7000
-      - 7001
-      - 7199
-      - 9042
-      - 9160
+      - 'cassandra_data:/bitnami'
       
   spark-master:
     image: spark-master:latest
+    hostname: spark-master
+    container_name: spark-master
     ports:
       - "9090:8080"
       - "7077:7077"
@@ -30,6 +27,8 @@ services:
 
   spark-worker:
     image: spark-worker:latest
+    hostname: spark-worker
+    container_name: spark-worker
     depends_on:
       - spark-master
     environment:
@@ -43,3 +42,7 @@ services:
         - ./docker/spark-cassandra/data:/opt/spark-data
     depends_on: 
       - spark-master
+
+volumes:
+  cassandra_data:
+    driver: local
