@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.vertigo.ai.predict.models.PredictResponse;
-import io.vertigo.ai.train.models.ScoreResponse;
+import io.vertigo.ai.train.models.AIPredictScoreResponse;
 import io.vertigo.ai.train.models.TrainResponse;
 import io.vertigo.core.node.component.Plugin;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -17,7 +17,7 @@ public interface PredictionPlugin extends Plugin {
 	
 	TrainResponse train(HashMap<String,Object> config);
 	
-	ScoreResponse score(String model_name, Integer version);
+	AIPredictScoreResponse score(String model_name, Integer version);
 
 	Integer delete(String modelName, Integer version);
 

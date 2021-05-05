@@ -13,58 +13,17 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class ScoreResponse implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private String modelName;
-	private Integer version;
-	private java.math.BigDecimal score;
-	private Integer time;
-	private String status;
+	private java.math.BigDecimal scoreMean;
+	private java.math.BigDecimal scoreStd;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model name'.
-	 * @return String modelName <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model name")
-	public String getModelName() {
-		return modelName;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model name'.
-	 * @param modelName String <b>Obligatoire</b>
-	 */
-	public void setModelName(final String modelName) {
-		this.modelName = modelName;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model version'.
-	 * @return Integer version <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model version")
-	public Integer getVersion() {
-		return version;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model version'.
-	 * @param version Integer <b>Obligatoire</b>
-	 */
-	public void setVersion(final Integer version) {
-		this.version = version;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model score'.
+	 * Récupère la valeur de la propriété 'Model cross validation score mean'.
 	 * @return BigDecimal score <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyFloat", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model score")
-	public java.math.BigDecimal getScore() {
-		return score;
+	@Field(smartType = "STyFloat", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model cross validation score mean")
+	public java.math.BigDecimal getScoreMean() {
+		return scoreMean;
 	}
 
 	/**
@@ -72,46 +31,27 @@ public final class ScoreResponse implements DtObject {
 	 * Définit la valeur de la propriété 'Model score'.
 	 * @param score BigDecimal <b>Obligatoire</b>
 	 */
-	public void setScore(final java.math.BigDecimal score) {
-		this.score = score;
+	public void setScoreMean(final java.math.BigDecimal scoreMean) {
+		this.scoreMean = scoreMean;
 	}
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Request duration'.
-	 * @return Integer time <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Model cross validation score standard deviation'.
+	 * @return BigDecimal score <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Request duration")
-	public Integer getTime() {
-		return time;
+	@Field(smartType = "STyFloat", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model cross validation score standard deviation")
+	public java.math.BigDecimal getScoreStd() {
+		return scoreStd;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Request duration'.
-	 * @param time Integer <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Model score'.
+	 * @param score BigDecimal <b>Obligatoire</b>
 	 */
-	public void setTime(final Integer time) {
-		this.time = time;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Status'.
-	 * @return String status <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
-	public String getStatus() {
-		return status;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Status'.
-	 * @param status String <b>Obligatoire</b>
-	 */
-	public void setStatus(final String status) {
-		this.status = status;
+	public void setScoreStd(final java.math.BigDecimal scoreStd) {
+		this.scoreStd = scoreStd;
 	}
 	
 	/** {@inheritDoc} */

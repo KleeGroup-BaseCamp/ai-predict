@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import io.vertigo.ai.predict.PredictionManager;
 import io.vertigo.ai.predict.models.PredictResponse;
-import io.vertigo.ai.train.models.ScoreResponse;
+import io.vertigo.ai.train.models.AIPredictScoreResponse;
 import io.vertigo.ai.train.models.TrainResponse;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
@@ -34,7 +34,7 @@ public class PredictionManagerImpl implements PredictionManager {
 
 
 	@Override
-	public ScoreResponse score(String modelName, Integer version) {
+	public AIPredictScoreResponse score(String modelName, Integer version) {
 		return predictionPlugin.score(modelName, version);
 	}
 

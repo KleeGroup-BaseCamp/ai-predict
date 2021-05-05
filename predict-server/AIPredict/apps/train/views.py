@@ -98,7 +98,7 @@ class TrainModel(viewsets.ViewSet):
         #get dataset
         X_train, y_train = get_data(config["dataset"])
         #train
-        model = async_train(package=package, modelClass=modelClass, X=X_train, y=y_train, preprocessing=preprocessing, **params)
+        model = sync_train(package=package, modelClass=modelClass, X=X_train, y=y_train, preprocessing=preprocessing, **params)
         #if the score is greater than a threshold value, the bundle is saved
         aim = params["min_score"]
         score = async_score(model, X=X_train, y=y_train, **params)

@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import io.vertigo.ai.impl.PredictionPlugin;
 import io.vertigo.ai.predict.models.PredictResponse;
-import io.vertigo.ai.train.models.ScoreResponse;
+import io.vertigo.ai.train.models.AIPredictScoreResponse;
 import io.vertigo.ai.train.models.TrainResponse;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -63,12 +63,12 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 	}
 
 	@Override
-	public ScoreResponse score(String modelName, Integer version) {
+	public AIPredictScoreResponse score(String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(server+"score/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(null);
-		ScoreResponse output = response.readEntity(ScoreResponse.class);
+		AIPredictScoreResponse output = response.readEntity(AIPredictScoreResponse.class);
 		response.close();
 		return output;
 	}
