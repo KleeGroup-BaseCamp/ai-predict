@@ -1,14 +1,21 @@
 from pyspark.sql import SQLContext, SparkSession
+from pyspark.conf import SparkConf
 import pandas as pd
 
 def connect_spark(clusters:list):
+    spark_conf = SparkConf()
+    spark_conf.setAll([('spark.master', 'spark://127.0.0.1:7077'),
+                   ('spark.app.name', 'myApp'),
+                   ("spark.driver.host", "192.168.1.73"),
+                   ('spark.cassandra.connection.host', ','.join(clusters)),
+                   ('spark.jars.packages', 'com.datastax.spark:spark-cassandra-connector_2.11:2.5.2') ])
     spark = SparkSession.builder.appName('AIPredict Cassandra Connection') \
-    .config('spark.cassandra.connection.host', ','.join(clusters)).getOrCreate()
+    .config(conf = spark_conf).getOrCreate()
     return spark
 
 def get_cassandra_data(spark:SparkSession, keyspace:str, table:str):
     df = spark.read.format("org.apache.spark.sql.cassandra") \
-    .options(table=table, keyspace=keyspace).load()
+    .options(table=table, keyspace=keyspace, user="cassandra", password="cassandra").load()
     data = df.toPandas()
     spark.stop()
     return data

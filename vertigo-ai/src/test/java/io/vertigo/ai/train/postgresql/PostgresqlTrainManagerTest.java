@@ -1,9 +1,9 @@
-package io.vertigo.ai.train;
+package io.vertigo.ai.train.postgresql;
 
 import io.vertigo.ai.MyNodeConfig;
 import io.vertigo.core.node.config.NodeConfig;
 
-public class TrainManagerTest extends AbstractTrainManagerTest {
+public class PostgresqlTrainManagerTest extends AbstractPostgresqlTrainManagerTest {
 
 	@Override
 	protected NodeConfig buildNodeConfig() {

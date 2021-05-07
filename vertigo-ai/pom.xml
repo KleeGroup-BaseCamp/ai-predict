@@ -160,6 +160,71 @@
 		    <version>42.2.18</version>
 			<scope>test</scope>
 		</dependency>
+		
+	<!--Spark Cassandra Connector-->
+		<dependency>
+		    <groupId>com.datastax.spark</groupId>
+		    <artifactId>spark-cassandra-connector_2.11</artifactId>
+		    <version>2.5.2</version>
+		      <exclusions>
+			    <exclusion>
+			      <groupId>io.netty</groupId>
+			      <artifactId>*</artifactId>
+			    </exclusion>
+			  </exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>com.datastax.spark</groupId>
+		    <artifactId>spark-cassandra-connector-java_2.11</artifactId>
+		    <version>1.6.0-M1</version>
+		      <exclusions>
+			    <exclusion>
+			      <groupId>io.netty</groupId>
+			      <artifactId>*</artifactId>
+			    </exclusion>
+			  </exclusions>
+		</dependency>
+        <!--Spark-->
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-core_2.11</artifactId>
+		    <version>2.4.7</version>
+		</dependency>
+        <dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-streaming_2.11</artifactId>
+		    <version>2.4.7</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-sql-kafka-0-10_2.11</artifactId>
+		    <version>2.4.7</version>
+		</dependency>
+		
+		<dependency>
+	    <groupId>org.apache.spark</groupId>
+	    <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
+	    <version>2.4.7</version>
+	</dependency>
+
+		 <dependency>
+		   <groupId>io.netty</groupId>
+		   <artifactId>netty-all</artifactId>
+		   <version>4.1.17.Final</version>
+		 </dependency>
+		 
+		 <dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-sql_2.11</artifactId>
+		    <version>2.4.7</version>
+		</dependency>
+		 
+		 <dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-lang3</artifactId>
+	    <version>3.9</version>
+	</dependency>
 
   </dependencies>
   

@@ -1,6 +1,5 @@
 package io.vertigo.ai.plugins;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,9 +12,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.vertigo.ai.impl.PredictionPlugin;
 import io.vertigo.ai.predict.models.PredictResponse;
 import io.vertigo.ai.train.models.AIPredictScoreResponse;
@@ -27,9 +23,7 @@ import io.vertigo.datamodel.structure.model.KeyConcept;
 
 
 public class AIPredictPluginImpl implements PredictionPlugin {
-	
-	private static final Logger LOG = LogManager.getLogger(AIPredictPluginImpl.class);
-	
+		
 	private String server;
 	
 	@Inject

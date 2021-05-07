@@ -9,7 +9,7 @@ services:
       - '9042:9042'
     volumes:
       - 'cassandra_data:/bitnami'
-      
+
   spark-master:
     image: spark-master:latest
     hostname: spark-master
@@ -18,17 +18,20 @@ services:
       - "9090:8080"
       - "7077:7077"
     volumes:
-        - ./docker/spark-cassandra/apps:/opt/spark-apps
-        - ./docker/spark-cassandra/data:/opt/spark-data
+        - ./docker/spark-cassandra-master/apps:/opt/spark-apps
+        - ./docker/spark-cassandra-master/data:/opt/spark-data
     environment:
       - "SPARK_LOCAL_IP=spark-master"
     depends_on: 
       - cassandra
+    
 
   spark-worker:
     image: spark-worker:latest
     hostname: spark-worker
     container_name: spark-worker
+    ports:
+      - "9091:8081"
     depends_on:
       - spark-master
     environment:
@@ -38,10 +41,11 @@ services:
       - SPARK_DRIVER_MEMORY=128m
       - SPARK_EXECUTOR_MEMORY=256m
     volumes:
-        - ./docker/spark-cassandra/apps:/opt/spark-apps
-        - ./docker/spark-cassandra/data:/opt/spark-data
+        - ./docker/spark-cassandra-worker/apps:/opt/spark-apps
+        - ./docker/spark-cassandra-worker/data:/opt/spark-data
     depends_on: 
       - spark-master
+    
 
 volumes:
   cassandra_data:

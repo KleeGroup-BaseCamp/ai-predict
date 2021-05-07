@@ -1,4 +1,4 @@
-package io.vertigo.ai.train;
+package io.vertigo.ai.train.postgresql;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import io.vertigo.database.sql.SqlManager;
 import io.vertigo.database.sql.connection.SqlConnection;
 import io.vertigo.database.sql.statement.SqlStatement;
 
-public abstract class AbstractTrainManagerTest {
+public abstract class AbstractPostgresqlTrainManagerTest {
     
 	private static final String DROP_TABLE_IRIS = "DROP TABLE iris";
 	private static final String DROP_SEQUENCE_IRIS = "DROP SEQUENCE seq_iris";
@@ -148,13 +148,6 @@ public abstract class AbstractTrainManagerTest {
 		HashMap<String,Object> config = createConfig("postgresql");
 		TrainResponse response = predictionManager.train(config);
 		Assertions.assertEquals(BigDecimal.valueOf(0.9533333333333334), response.getScore().getScoreMean());
-	}
-	
-	
-	public void testTrainCassandraSpark() throws JsonParseException, JsonMappingException, IOException {
-		HashMap<String,Object> config = createConfig("cassandra_spark");
-		TrainResponse response = predictionManager.train(config);
-		Assertions.assertEquals(1, response.getScore().getScoreMean().compareTo(BigDecimal.valueOf(0.9)));
 	}
 	
 	@Test
