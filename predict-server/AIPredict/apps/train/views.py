@@ -65,9 +65,9 @@ class TrainModel(viewsets.ViewSet):
             params = config["parameters"]
             cv = params["cv"]
             metrics = params["metrics"]
-
+            preprocessing = config["preprocessing"]
             start = time.time()
-            score = async_score(model, metrics, cv, X, y)
+            score = async_score(model, metrics, cv, X, y, preprocessing)
             t = time.time() - start
             response = score_response(modelName=bundle, status="succeed", version=version, time=t, score=score)
         except Exception as e:
@@ -98,10 +98,10 @@ class TrainModel(viewsets.ViewSet):
         #get dataset
         X_train, y_train = get_data(config["dataset"])
         #train
-        model = sync_train(package=package, modelClass=modelClass, X=X_train, y=y_train, preprocessing=preprocessing, **params)
+        model = async_train(package=package, modelClass=modelClass, X=X_train, y=y_train, preprocessing=preprocessing, **params)
         #if the score is greater than a threshold value, the bundle is saved
         aim = params["min_score"]
-        score = async_score(model, X=X_train, y=y_train, **params)
+        score = async_score(model, X=X_train, y=y_train, preprocessing=preprocessing, **params)
         t = time.time() - start
 
         path, name, version = save(model, config, 0, score)

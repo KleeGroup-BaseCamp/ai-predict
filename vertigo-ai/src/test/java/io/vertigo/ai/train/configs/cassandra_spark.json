@@ -22,7 +22,7 @@
              "db_type": "cassandra_spark",
              "table": "iris",
              "keyspace": "traindb",
-             "clusters": ["192.168.1.73"]
+             "clusters": ["192.168.1.72"]
          },
         "data_config":
         {

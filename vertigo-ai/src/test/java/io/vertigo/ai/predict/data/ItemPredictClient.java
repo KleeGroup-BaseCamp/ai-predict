@@ -3,8 +3,8 @@ package io.vertigo.ai.predict.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinitionSupplier;
-import io.vertigo.ai.datasets.definitions.DatasetDefinitionSupplier;
+import io.vertigo.ai.structure.dataset.definitions.DatasetDefinitionSupplier;
+import io.vertigo.ai.structure.row.definitions.RowDefinitionSupplier;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.node.definition.DefinitionProvider;
 import io.vertigo.core.node.definition.DefinitionSpace;
@@ -17,7 +17,7 @@ public class ItemPredictClient implements Component, DefinitionProvider {
 	public List<DefinitionSupplier> get(DefinitionSpace definitionSpace) {
 		List<DefinitionSupplier> definitions = new ArrayList<DefinitionSupplier>();
 		definitions.add(
-				new DatasetItemDefinitionSupplier("DsIIrisItem")
+				new RowDefinitionSupplier("DsRIrisItem")
 				.withKeyConceptDtDefinition("DtIrisItem")
 				.withDatasetItemDtDefinition("DtIrisItem")
 				.withLoaderId("ItemSearchLoader"));
@@ -25,7 +25,7 @@ public class ItemPredictClient implements Component, DefinitionProvider {
 				new DatasetDefinitionSupplier("DsIrisDataset")
 				.withDatasetDtDefinition("DtDatasetObject"));
 		definitions.add(
-				new DatasetItemDefinitionSupplier("DsIBostonItem")
+				new RowDefinitionSupplier("DsRBostonItem")
 				.withKeyConceptDtDefinition("DtBostonItem")
 				.withDatasetItemDtDefinition("DtBostonItem")
 				.withLoaderId("ItemSearchLoader"));
@@ -33,7 +33,7 @@ public class ItemPredictClient implements Component, DefinitionProvider {
 				new DatasetDefinitionSupplier("DsBostonDataset")
 				.withDatasetDtDefinition("DtDatasetObject"));
 		definitions.add(
-				new DatasetItemDefinitionSupplier("DsIBostonRegressionItem")
+				new RowDefinitionSupplier("DsRBostonRegressionItem")
 				.withKeyConceptDtDefinition("DtBostonRegressionItem")
 				.withDatasetItemDtDefinition("DtBostonRegressionItem")
 				.withLoaderId("ItemSearchLoader"));

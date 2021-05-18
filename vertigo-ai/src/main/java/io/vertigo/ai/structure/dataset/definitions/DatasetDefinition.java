@@ -1,17 +1,14 @@
-package io.vertigo.ai.datasets.definitions;
+package io.vertigo.ai.structure.dataset.definitions;
 
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 
-/**
- * Définition d'un dataset.
- */
 @DefinitionPrefix(DatasetDefinition.PREFIX)
-public final class DatasetDefinition extends AbstractDefinition{
-
-	public static final String PREFIX = "Ds";
+public class DatasetDefinition extends AbstractDefinition {
 	
+	public static final String PREFIX = "Ds";
+
 	private final DtDefinition datasetDtDefinition;
 	private final Boolean streamed;
 	
@@ -28,5 +25,4 @@ public final class DatasetDefinition extends AbstractDefinition{
 	public Boolean getStreamed() {
 		return streamed;
 	}
-
 }

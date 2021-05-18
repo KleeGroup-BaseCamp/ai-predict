@@ -6,7 +6,7 @@ import io.vertigo.core.node.config.NodeConfig;
 
 public class BostonRegressionPredictionManager extends AbstractPredictionManagerTest {
 
-	private static final String DSI_ITEM = "DsIBostonItem";
+	private static final String DSI_ITEM = "DsRBostonItem";
 	private static final String DS_DATASET = "DsBostonDataset";
 	
 	@Override

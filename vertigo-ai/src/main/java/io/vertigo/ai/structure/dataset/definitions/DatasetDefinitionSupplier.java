@@ -1,11 +1,11 @@
-package io.vertigo.ai.datasets.definitions;
+package io.vertigo.ai.structure.dataset.definitions;
 
 import io.vertigo.core.node.definition.Definition;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.DefinitionSupplier;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 
-public final class DatasetDefinitionSupplier implements DefinitionSupplier {
+public class DatasetDefinitionSupplier implements DefinitionSupplier {
 
 	private String myName;
 	private String myDatasetDtDefinitionName;
@@ -14,7 +14,6 @@ public final class DatasetDefinitionSupplier implements DefinitionSupplier {
 		this.myName = name;
 	}
 	
-	@Override
 	public Definition get(DefinitionSpace definitionSpace) {
 		final DtDefinition datasetDtDefinition = definitionSpace.resolve(myDatasetDtDefinitionName, DtDefinition.class);
 		return new DatasetDefinition(myName, datasetDtDefinition, false);
@@ -25,6 +24,4 @@ public final class DatasetDefinitionSupplier implements DefinitionSupplier {
 		return this;
 
 	}
-
-
 }

@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import io.vertigo.ai.datasetItems.definitions.DatasetItemChunk;
-import io.vertigo.ai.datasets.definitions.DatasetLoader;
+import io.vertigo.ai.structure.dataset.definitions.DatasetLoader;
+import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
@@ -20,7 +20,7 @@ public abstract class AbstractDatasetLoader<P extends Serializable, K extends Ke
 
 	/** {@inheritDoc} */
 	@Override
-	public final Iterable<DatasetItemChunk<K>> chunk(final Class<K> keyConceptClass) {
+	public final Iterable<RowChunk<K>> chunk(final Class<K> keyConceptClass) {
 		return () -> createIterator(keyConceptClass);
 	}
 
@@ -68,11 +68,11 @@ public abstract class AbstractDatasetLoader<P extends Serializable, K extends Ke
 		return pkValue;
 	}
 	
-	private Iterator<DatasetItemChunk<K>> createIterator(final Class<K> keyConceptClass) {
+	private Iterator<RowChunk<K>> createIterator(final Class<K> keyConceptClass) {
 		return new Iterator<>() {
 			private final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(keyConceptClass);
-			private DatasetItemChunk<K> current;
-			private DatasetItemChunk<K> next = firstChunk();
+			private RowChunk<K> current;
+			private RowChunk<K> next = firstChunk();
 
 			/** {@inheritDoc} */
 			@Override
@@ -85,7 +85,7 @@ public abstract class AbstractDatasetLoader<P extends Serializable, K extends Ke
 
 			/** {@inheritDoc} */
 			@Override
-			public DatasetItemChunk<K> next() {
+			public RowChunk<K> next() {
 				if (!hasNext()) {
 					throw new NoSuchElementException("no next chunk found");
 				}
@@ -94,20 +94,20 @@ public abstract class AbstractDatasetLoader<P extends Serializable, K extends Ke
 				return current;
 			}
 
-			private DatasetItemChunk<K> nextChunk(final DatasetItemChunk<K> previousChunk) {
+			private RowChunk<K> nextChunk(final RowChunk<K> previousChunk) {
 				final List<UID<K>> previousUris = previousChunk.getAllUIDs();
 				@SuppressWarnings("unchecked")
 				final P lastId = (P) previousUris.get(previousUris.size() - 1).getId();
 				// call loader service
 				final List<UID<K>> uris = doLoadNextURI(lastId, dtDefinition);
-				return new DatasetItemChunk<>(uris);
+				return new RowChunk<>(uris, keyConceptClass);
 			}
 
-			private DatasetItemChunk<K> firstChunk() {
+			private RowChunk<K> firstChunk() {
 				final P lastId = getLowestIdValue(dtDefinition);
 				// call loader service
 				final List<UID<K>> uris = doLoadNextURI(lastId, dtDefinition);
-				return new DatasetItemChunk<>(uris);
+				return new RowChunk<>(uris, keyConceptClass);
 			}
 
 		};

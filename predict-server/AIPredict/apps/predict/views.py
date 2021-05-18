@@ -103,7 +103,7 @@ class Prediction(viewsets.ViewSet):
                 return Response("The bundle %s v%s is not activated. Please activate it with /activate/%s/%s/ or use %s v%s." 
                     %(bundle, version, bundle, version, bundle, activated_instance.version),
                     status=status.HTTP_403_FORBIDDEN)
-            except IndexError:
+            except IndexError as e:
                 return Response("The bundle %s has no activated version. Please use /activate/%s/%s/ to activate version %s" 
                     %(bundle, bundle, version, version),
                     status=status.HTTP_403_FORBIDDEN)
@@ -115,17 +115,17 @@ class Prediction(viewsets.ViewSet):
         preprocessing = get_bundle_item(path, "preprocessing")
         algo = get_bundle_item(path, "algorithm")
         predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
-        
-        #extracts data from the request        
+        #extracts data from the request
         data = pd.DataFrame(request.data)
-
         try:
             data = validate_data(data, path)
         except ValidationError as e:
+            print(e)
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             prediction = predictor.predict(data=data)
             return JsonResponse(prediction)
         except Exception as e:
+            print(e)
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

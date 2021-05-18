@@ -5,7 +5,7 @@ import io.vertigo.core.node.config.NodeConfig;
 
 public class IrisClassificationPredictionManager extends AbstractPredictionManagerTest {
 
-	private static final String DSI_ITEM = "DsIIrisItem";
+	private static final String DSI_ITEM = "DsRIrisItem";
 	private static final String DS_DATASET = "DsIrisDataset";
 	
 	@Override

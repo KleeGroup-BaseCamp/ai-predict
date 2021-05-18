@@ -13,6 +13,10 @@ import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.predict.PredictionManager;
 import io.vertigo.ai.predict.models.PredictResponse;
+import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.row.definitions.RowChunk;
+import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -21,11 +25,6 @@ import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.ai.predict.data.domain.ItemDatasetLoader;
 import io.vertigo.ai.predict.data.domain.boston.BostonDatabase;
 import io.vertigo.ai.predict.data.domain.boston.BostonItem;
-import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinition;
-import io.vertigo.ai.datasetItems.definitions.DatasetItemChunk;
-import io.vertigo.ai.datasetItems.models.DatasetItem;
-import io.vertigo.ai.datasets.DatasetManager;
-import io.vertigo.ai.datasets.models.Dataset;
 
 public abstract class AbstractPredictionManagerTest {
     
@@ -56,7 +55,7 @@ public abstract class AbstractPredictionManagerTest {
 
 	protected abstract NodeConfig buildNodeConfig();
 
-	private DatasetItemDefinition datasetItemDefinition;
+	private RowDefinition rowDefinition;
 	private BostonDatabase bostonDatabase;
 	
 	
@@ -64,25 +63,25 @@ public abstract class AbstractPredictionManagerTest {
 		final DefinitionSpace definitionSpace = node.getDefinitionSpace();
 
 		bostonDatabase = new BostonDatabase();
-		datasetItemDefinition = definitionSpace.resolve(itemName,DatasetItemDefinition.class);
+		rowDefinition = definitionSpace.resolve(itemName,RowDefinition.class);
 	}
 	
-	private Dataset<DatasetItem<BostonItem, BostonItem>> getBostonDataset(){
+	private Dataset getBostonDataset(){
 		final ItemDatasetLoader<BostonItem> loader = new ItemDatasetLoader<BostonItem>(datasetManager);
-		loader.setItemDefinition(datasetItemDefinition);
+		loader.setItemDefinition(rowDefinition);
 		loader.bindDataBase(bostonDatabase);
 		List<UID<BostonItem>> items = bostonDatabase.getAllItems()
 				.stream()   
 				.map(item -> item.getUID())
 				.collect(Collectors.toList());
-		DatasetItemChunk<BostonItem> chunk = new DatasetItemChunk<BostonItem>(items);
-		Dataset<DatasetItem<BostonItem, BostonItem>> dataset = loader.loadData(chunk, "DsBostonDataset");
+		RowChunk<BostonItem> chunk = new RowChunk<BostonItem>(items, BostonItem.class);
+		Dataset dataset = loader.loadData(chunk, "DsBostonDataset");
 		return dataset;
 	}
 	
 	private PredictResponse testPrediction(final String predictionType) {
-		Dataset<DatasetItem<BostonItem, BostonItem>> dataset = getBostonDataset();
-		PredictResponse response = predictionManager.predict(dataset.getDatasetSerialized(), "boston-"+predictionType, 0);
+		Dataset dataset = getBostonDataset();
+		PredictResponse response = predictionManager.predict(dataset.collect(), "boston-"+predictionType, 0);
 		return response;
 	}
 	

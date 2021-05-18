@@ -30,8 +30,8 @@
 
         "data_config":
         {
-            "RM": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
-            "PRICE": {"domain": "DoFloat", "is_label":true, "ifna": 0}
+            "rm": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
+            "price": {"domain": "DoFloat", "is_label":true, "ifna": 0}
         },
         "domains":
         {

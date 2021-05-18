@@ -12,6 +12,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.gson.Gson;
+
 import io.vertigo.ai.impl.PredictionPlugin;
 import io.vertigo.ai.predict.models.PredictResponse;
 import io.vertigo.ai.train.models.AIPredictScoreResponse;
@@ -36,7 +38,8 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(server+"predict/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.post(Entity.entity(data.toString(), MediaType.APPLICATION_JSON));
+		Entity<String> test = Entity.entity(data.toString(), MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.post(test);
 		PredictResponse output = response.readEntity(PredictResponse.class);	
 		response.close();
 		return output;

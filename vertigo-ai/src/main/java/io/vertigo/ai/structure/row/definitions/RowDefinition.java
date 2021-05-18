@@ -1,4 +1,4 @@
-package io.vertigo.ai.datasetItems.definitions;
+package io.vertigo.ai.structure.row.definitions;
 
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
@@ -7,19 +7,17 @@ import io.vertigo.datamodel.structure.definitions.DtDefinition;
 /**
  * Définition de l'item d'un dataset.
  *
- * Un DatasetItem est constitué de deux types d'objets.
+ * Une Row est constitué de deux types d'objets.
  * - Un objet (les champs indexés)
  * - Un keyConcept représentant le concept métier réprésenté par cet item.
- * La définition d'item précise également un DatasetItemLoader permettant la mise à jour autonome de l'item.
- *
  */
-@DefinitionPrefix(DatasetItemDefinition.PREFIX)
-public final class DatasetItemDefinition extends AbstractDefinition{
-    
-	public static final String PREFIX = "DsI";
+
+@DefinitionPrefix(RowDefinition.PREFIX)
+public final class RowDefinition extends AbstractDefinition {
+
+	public static final String PREFIX = "DsR";
 	
-    private final DtDefinition itemDtDefinition;
-    private final Boolean streamed;
+	private final DtDefinition rowDtDefinition;
     final String datasetLoaderId;
     private final DtDefinition keyConceptDtDefinition;
 
@@ -30,17 +28,15 @@ public final class DatasetItemDefinition extends AbstractDefinition{
      * @param streamed
      * @param datasetLoaderId
      */
-    public DatasetItemDefinition(
+    public RowDefinition(
         final String name,
-        final DtDefinition itemDtDefinition,
-        final Boolean streamed,
+        final DtDefinition rowDtDefinition,
         final String datasetLoaderId,
         final DtDefinition keyConceptDtDefinition
         ){
         super(name);
         
-        this.itemDtDefinition = itemDtDefinition;
-        this.streamed = streamed;
+        this.rowDtDefinition = rowDtDefinition;
         this.datasetLoaderId = datasetLoaderId;
         this.keyConceptDtDefinition = keyConceptDtDefinition;
         
@@ -49,8 +45,8 @@ public final class DatasetItemDefinition extends AbstractDefinition{
     /**
      * @return Définition de l'objet représentant le contenu de l'item.
      */
-    public DtDefinition getDatasetItemDtDefinition() {
-		return itemDtDefinition;
+    public DtDefinition getRowDtDefinition() {
+		return rowDtDefinition;
 	}
 
     /**
@@ -60,18 +56,10 @@ public final class DatasetItemDefinition extends AbstractDefinition{
         return datasetLoaderId;
     }
 
-    /**
-     * @return True si l'item est streamé, false sinon
-     */
-    public Boolean isStreamed() {
-    	return streamed;
-    }
-    
 	/**
 	 * @return Définition du keyConcept de l'item.
 	 */
     public DtDefinition getKeyConceptDtDefinition() {
 		return keyConceptDtDefinition;
 	}
-    
-    }
+}

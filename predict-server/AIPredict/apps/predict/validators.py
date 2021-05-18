@@ -170,7 +170,13 @@ def validate_data(data:DataFrame, path:Path):
             domain = domains[item["domain"]]
             dtypes.append(domains_to_dtypes[domain])
             nan.append(item["ifna"])
+
+    data_col = data.columns
+    for col in data_col:
+        if not col in columns:
+            data = data.drop(columns=[col]) 
     #check data types and columns
+    data = data[columns]
     to_check = DataFrame(data.dtypes).transpose()
     scheme = DataFrame([dtypes], columns=columns)
     if not scheme.equals(to_check):

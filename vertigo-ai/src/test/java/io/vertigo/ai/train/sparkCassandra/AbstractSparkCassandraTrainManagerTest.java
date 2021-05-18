@@ -122,15 +122,12 @@ public abstract class AbstractSparkCassandraTrainManagerTest {
         }
 	}
 
-	
-	@Test
 	public void testTrainCassandraSpark() throws JsonParseException, JsonMappingException, IOException {
 		HashMap<String,Object> config = createConfig("cassandra_spark");
 		TrainResponse response = predictionManager.train(config);
 		Assertions.assertEquals(1, response.getScore().getScoreMean().compareTo(BigDecimal.valueOf(0.9)));
 	}
 	
-	@Test
 	public void testDelete() {
 		long response = predictionManager.delete("iris-classification-cassandra-spark", 1);
 		Assertions.assertEquals(204, response);

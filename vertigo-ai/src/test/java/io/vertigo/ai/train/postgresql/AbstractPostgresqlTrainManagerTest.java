@@ -147,13 +147,13 @@ public abstract class AbstractPostgresqlTrainManagerTest {
 	public void testTrainPostgresql() throws JsonParseException, JsonMappingException, IOException {
 		HashMap<String,Object> config = createConfig("postgresql");
 		TrainResponse response = predictionManager.train(config);
-		Assertions.assertEquals(BigDecimal.valueOf(0.9533333333333334), response.getScore().getScoreMean());
+		Assertions.assertEquals(-1, BigDecimal.valueOf(0.94).compareTo(response.getScore().getScoreMean()));
 	}
 	
 	@Test
 	public void testScore() {
 		AIPredictScoreResponse response = predictionManager.score("iris-classification-postgresql", 0);
-		Assertions.assertEquals(BigDecimal.valueOf(0.9466666666666669), response.getScore().getScoreMean());
+		Assertions.assertEquals(-1, BigDecimal.valueOf(0.94).compareTo(response.getScore().getScoreMean()));
 	}
 
 	@Test

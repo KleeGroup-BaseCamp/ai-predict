@@ -13,12 +13,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-import io.vertigo.ai.datasetItems.definitions.DatasetItemChunk;
-import io.vertigo.ai.datasetItems.models.DatasetItem;
-import io.vertigo.ai.datasets.DatasetManager;
-import io.vertigo.ai.datasets.models.Dataset;
 import io.vertigo.ai.predict.PredictionManager;
 import io.vertigo.ai.predict.models.PredictResponse;
+import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionDatabase;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
 import io.vertigo.commons.transaction.VTransactionManager;
@@ -127,9 +126,9 @@ public abstract class AbstractPredictionManagerStoreTest {
 	@Test
 	public void testPredictWithStore() {
 		final ItemDatasetStoreLoader loader = new ItemDatasetStoreLoader(taskManager, datasetManager, transactionManager);
-		DatasetItemChunk<BostonRegressionItem> chunk = new DatasetItemChunk<BostonRegressionItem>(uids);
-		Dataset<DatasetItem<BostonRegressionItem, BostonRegressionItem>> dataset = loader.loadData(chunk, DS_DATASET);
-		PredictResponse response = predictionManager.predict(dataset.getDatasetSerialized(), "boston-regression", 0);
+		RowChunk<BostonRegressionItem> chunk = new RowChunk<BostonRegressionItem>(uids, BostonRegressionItem.class);
+		Dataset dataset = loader.loadData(chunk, DS_DATASET);
+		PredictResponse response = predictionManager.predict(dataset.collect(), "boston-regression", 0);
 		Assertions.assertEquals(BigDecimal.valueOf(25.175095544577786), response.getPredictionList().get(0).getPredictionVector().get(0));
 
 	}

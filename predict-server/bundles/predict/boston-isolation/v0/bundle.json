@@ -30,21 +30,22 @@
 
         "data_config":
         {
-            "CRIM": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "ZN": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "INDUS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "CHAS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "NOX": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "RM": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
-            "AGE": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "DIS": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "RAD": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "TAX": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "PTRATIO": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "B": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "LSTAT": {"domain": "DoFloat", "is_label":false, "ifna": 0},
-            "PRICE": {"domain": "DoFloat", "is_label":true, "ifna": 0}
+            "crim": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "zn": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "indus": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "chas": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "nox": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "rm": {"domain": "DoFloat", "is_label":false, "ifna": "_required"},
+            "age": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "dis": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "rad": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "tax": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "ptRatio": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "b": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "lstat": {"domain": "DoFloat", "is_label":false, "ifna": 0},
+            "price": {"domain": "DoFloat", "is_label":true, "ifna": 0}
         },
+        
         "domains":
         {
             "DoFloat": "float"

@@ -7,13 +7,13 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinition;
-import io.vertigo.ai.datasetItems.definitions.DatasetItemChunk;
-import io.vertigo.ai.datasetItems.models.DatasetItem;
-import io.vertigo.ai.datasets.DatasetManager;
-import io.vertigo.ai.datasets.definitions.DatasetDefinition;
-import io.vertigo.ai.datasets.models.Dataset;
 import io.vertigo.ai.impl.AbstractDatasetLoader;
+import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
+import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.row.definitions.RowChunk;
+import io.vertigo.ai.structure.row.definitions.RowDefinition;
+import io.vertigo.ai.structure.row.models.Row;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.model.UID;
@@ -23,7 +23,7 @@ public class ItemDatasetLoader<T extends TestItems> extends AbstractDatasetLoade
 	private static final int SEARCH_CHUNK_SIZE = 5;
 	private final DatasetManager datasetManager;
 	private TestDatabase<T> itemDatabase;
-	private DatasetItemDefinition itemDefinition;
+	private RowDefinition itemDefinition;
 
 	
 	@Inject
@@ -33,7 +33,7 @@ public class ItemDatasetLoader<T extends TestItems> extends AbstractDatasetLoade
 		this.datasetManager = predictionManager;
 	}
 	
-	public void setItemDefinition(final DatasetItemDefinition datasetItemDefinition) {
+	public void setItemDefinition(final RowDefinition datasetItemDefinition) {
 		this.itemDefinition = datasetItemDefinition;
 	}
 	@Override
@@ -53,18 +53,19 @@ public class ItemDatasetLoader<T extends TestItems> extends AbstractDatasetLoade
 	}
 	
 	@Override
-	public Dataset<DatasetItem<T, T>> loadData(final DatasetItemChunk<T> recordChunk, final String datasetName) {
+	public Dataset loadData(final RowChunk<T> recordChunk, final String datasetName) {
 		Assertion.check().isNotNull(itemDatabase, "itemDataBase not bound");
 		//-----
 		final DatasetDefinition datasetDefinition = datasetManager.findDatasetDefinition(datasetName);
-		final Dataset<DatasetItem<T, T>> dataset = new Dataset<DatasetItem<T, T>>(datasetDefinition, new ArrayList<DatasetItem<?, ?>>());
+		final Class<?> clazz = recordChunk.getRowClass();
+		final Dataset dataset = new Dataset(clazz, datasetDefinition);
 		final Map<Long, T> itemPerId = new HashMap<>();
 		for (final T item : itemDatabase.getAllItems()) {
 			itemPerId.put(item.getId(), item);
 		}
 		for (final UID<T> uid : recordChunk.getAllUIDs()) {
 			final T item = itemPerId.get(uid.getId());
-			dataset.addDatasetItem(DatasetItem.createItem(itemDefinition, uid, item));
+			dataset.append(new Row(item, uid, itemDefinition));
 		}
 		return dataset;
 	}

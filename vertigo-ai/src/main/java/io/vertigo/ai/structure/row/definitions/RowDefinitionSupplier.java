@@ -1,50 +1,48 @@
-package io.vertigo.ai.datasetItems.definitions;
+package io.vertigo.ai.structure.row.definitions;
 
 import io.vertigo.core.node.definition.Definition;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.DefinitionSupplier;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 
-public final class DatasetItemDefinitionSupplier implements DefinitionSupplier {
+public final class RowDefinitionSupplier implements DefinitionSupplier {
 
 	private final String myName;
 	private String myKeyConceptDtDefinitionName;
 	private String myDatasetItemDtDefinitionName;
 	private String myDatasetLoaderId;
 	
-	public DatasetItemDefinitionSupplier(final String name) {
+	public RowDefinitionSupplier(final String name) {
 		this.myName = name;
 	}
-	
-	@Override
+
 	public Definition get(DefinitionSpace definitionSpace) {
 		
 		final DtDefinition keyConceptDtDefinition = definitionSpace.resolve(myKeyConceptDtDefinitionName, DtDefinition.class);
 		final DtDefinition itemDtDefinition = definitionSpace.resolve(myDatasetItemDtDefinitionName, DtDefinition.class);
-
-
-		return new DatasetItemDefinition(
+		
+		return new RowDefinition(
 				myName,
 				itemDtDefinition,
-				false,
 				myDatasetLoaderId,
 				keyConceptDtDefinition);
 	}
 	
-	public DatasetItemDefinitionSupplier withDatasetItemDtDefinition(final String datasetItemDtDefinitionName) {
+	public RowDefinitionSupplier withDatasetItemDtDefinition(final String datasetItemDtDefinitionName) {
 		this.myDatasetItemDtDefinitionName = datasetItemDtDefinitionName;
 		return this;
 
 	}
 	
-	public DatasetItemDefinitionSupplier withKeyConceptDtDefinition(final String myKeyConceptDtDefinitionName) {
+	public RowDefinitionSupplier withKeyConceptDtDefinition(final String myKeyConceptDtDefinitionName) {
 		this.myKeyConceptDtDefinitionName = myKeyConceptDtDefinitionName;
 		return this;
 
 	}
 	
-	public DatasetItemDefinitionSupplier withLoaderId(final String myDatasetLoaderId) {
+	public RowDefinitionSupplier withLoaderId(final String myDatasetLoaderId) {
 		this.myDatasetLoaderId = myDatasetLoaderId;
 		return this;
 	}
+
 }

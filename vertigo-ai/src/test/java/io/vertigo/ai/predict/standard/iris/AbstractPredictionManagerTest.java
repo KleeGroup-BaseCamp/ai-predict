@@ -13,6 +13,10 @@ import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.predict.PredictionManager;
 import io.vertigo.ai.predict.models.PredictResponse;
+import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.row.definitions.RowChunk;
+import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -21,11 +25,6 @@ import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.ai.predict.data.domain.ItemDatasetLoader;
 import io.vertigo.ai.predict.data.domain.iris.IrisItem;
 import io.vertigo.ai.predict.data.domain.iris.IrisDatabase;
-import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinition;
-import io.vertigo.ai.datasetItems.definitions.DatasetItemChunk;
-import io.vertigo.ai.datasetItems.models.DatasetItem;
-import io.vertigo.ai.datasets.DatasetManager;
-import io.vertigo.ai.datasets.models.Dataset;
 
 public abstract class AbstractPredictionManagerTest {
     
@@ -56,7 +55,7 @@ public abstract class AbstractPredictionManagerTest {
 
 	protected abstract NodeConfig buildNodeConfig();
 
-	private DatasetItemDefinition datasetItemDefinition;
+	private RowDefinition datasetItemDefinition;
 	private IrisDatabase irisDatabase;
 	
 	
@@ -64,10 +63,10 @@ public abstract class AbstractPredictionManagerTest {
 		final DefinitionSpace definitionSpace = node.getDefinitionSpace();
 
 		irisDatabase = new IrisDatabase();
-		datasetItemDefinition = definitionSpace.resolve(itemName,DatasetItemDefinition.class);
+		datasetItemDefinition = definitionSpace.resolve(itemName,RowDefinition.class);
 	}
 	
-	private Dataset<DatasetItem<IrisItem, IrisItem>> getIrisDataset(){
+	private Dataset getIrisDataset(){
 		final ItemDatasetLoader<IrisItem> loader = new ItemDatasetLoader<IrisItem>(datasetManager);
 		loader.setItemDefinition(datasetItemDefinition);
 		loader.bindDataBase(irisDatabase);
@@ -75,14 +74,14 @@ public abstract class AbstractPredictionManagerTest {
 				.stream()   
 				.map(item -> item.getUID())
 				.collect(Collectors.toList());
-		DatasetItemChunk<IrisItem> chunk = new DatasetItemChunk<IrisItem>(items);
-		Dataset<DatasetItem<IrisItem, IrisItem>> dataset = loader.loadData(chunk, "DsIrisDataset");
+		RowChunk<IrisItem> chunk = new RowChunk<IrisItem>(items, IrisItem.class);
+		Dataset dataset = loader.loadData(chunk, "DsIrisDataset");
 		return dataset;
 	}
 
 	private PredictResponse testPrediction(final String predictionType) {
-		Dataset<DatasetItem<IrisItem, IrisItem>> dataset = getIrisDataset();
-		PredictResponse response = predictionManager.predict(dataset.getDatasetSerialized(), "iris-"+predictionType, 0);
+		Dataset dataset = getIrisDataset();
+		PredictResponse response = predictionManager.predict(dataset.collect(), "iris-"+predictionType, 0);
 		return response;
 	}
 	

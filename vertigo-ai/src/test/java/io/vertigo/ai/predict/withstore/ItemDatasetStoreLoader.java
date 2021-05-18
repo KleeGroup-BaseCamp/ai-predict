@@ -1,18 +1,17 @@
 package io.vertigo.ai.predict.withstore;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import io.vertigo.ai.predict.data.domain.boston.BostonItem;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
-import io.vertigo.ai.datasetItems.definitions.DatasetItemChunk;
-import io.vertigo.ai.datasetItems.definitions.DatasetItemDefinition;
-import io.vertigo.ai.datasetItems.models.DatasetItem;
-import io.vertigo.ai.datasets.DatasetManager;
-import io.vertigo.ai.datasets.definitions.DatasetDefinition;
-import io.vertigo.ai.datasets.models.Dataset;
+import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
+import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.row.definitions.RowChunk;
+import io.vertigo.ai.structure.row.definitions.RowDefinition;
+import io.vertigo.ai.structure.row.models.Row;
 import io.vertigo.ai.impl.AbstractSqlDatasetLoader;
 import io.vertigo.basics.task.TaskEngineSelect;
 import io.vertigo.commons.transaction.VTransactionManager;
@@ -40,21 +39,22 @@ public final class ItemDatasetStoreLoader extends AbstractSqlDatasetLoader<Long,
 	}
 
 	@Override
-	public Dataset<DatasetItem<BostonRegressionItem, BostonRegressionItem>> loadData(
-			DatasetItemChunk<BostonRegressionItem> itemChunk, String datasetName) {
+	public Dataset loadData(
+			RowChunk<BostonRegressionItem> itemChunk, String datasetName) {
 		final DatasetDefinition datasetDefinition = datasetManager.findDatasetDefinition(datasetName);
-		final DatasetItemDefinition datasetItemDefinition = datasetManager.findFirstDatasetItemDefinitionByKeyConcept(BostonItem.class);
+		final RowDefinition datasetItemDefinition = datasetManager.findFirstRowDefinitionByKeyConcept(BostonItem.class);
+		final Class<?> clazz = itemChunk.getRowClass();
 		try (final VTransactionWritable tx = getTransactionManager().createCurrentTransaction()) {
-			final Dataset<DatasetItem<BostonRegressionItem, BostonRegressionItem>> result = new Dataset<DatasetItem<BostonRegressionItem, BostonRegressionItem>>(datasetDefinition, new ArrayList<>());
+			final Dataset result = new Dataset(clazz, datasetDefinition);
 			for (final BostonRegressionItem item : loadItems(itemChunk)) {
 				final UID<BostonRegressionItem> uid = item.getUID();
-				result.addDatasetItem(DatasetItem.createItem(datasetItemDefinition, uid, item));
+				result.append(new Row(item, uid, datasetItemDefinition));
 			}
 			return result;
 		}
 	}
 
-	private DtList<BostonRegressionItem> loadItems(final DatasetItemChunk<BostonRegressionItem> itemChunk) {
+	private DtList<BostonRegressionItem> loadItems(final RowChunk<BostonRegressionItem> itemChunk) {
 		final TaskDefinition taskDefinition = getTaskDefinition(itemChunk);
 
 		final Task task = Task.builder(taskDefinition)
@@ -64,7 +64,7 @@ public final class ItemDatasetStoreLoader extends AbstractSqlDatasetLoader<Long,
 				.getResult();
 	}
 
-	private TaskDefinition getTaskDefinition(final DatasetItemChunk<BostonRegressionItem> itemChunk) {
+	private TaskDefinition getTaskDefinition(final RowChunk<BostonRegressionItem> itemChunk) {
 		final SmartTypeDefinition smartTypeItem = definitionSpace.resolve("STyDtBostonRegressionItem", SmartTypeDefinition.class);
 		final String sql = itemChunk.getAllUIDs()
 				.stream()
