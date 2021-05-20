@@ -16,6 +16,7 @@ public final class PredictResponse implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private java.util.List<io.vertigo.ai.predict.models.Predict> predictionList =  new ArrayList<>();
+	private String error =  new String();
 	
 	/**
 	 * Champ : DATA.
@@ -36,6 +37,26 @@ public final class PredictResponse implements DtObject {
 		io.vertigo.core.lang.Assertion.check().isNotNull(predictionList);
 		//---
 		this.predictionList = predictionList;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Prediction Error'.
+	 * @return error String
+	 */
+	@Field(smartType = "STyPredictionLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Prediction Erro")
+	public String getError() {
+		return error;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Prediction Error'.
+	 * @param error String
+	 */
+	public void setError(final String error) {
+		//---
+		this.error = error;
 	}
 	
 	/** {@inheritDoc} */

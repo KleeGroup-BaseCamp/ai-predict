@@ -37,7 +37,7 @@ public abstract class AbstractPostgresqlTrainManagerTest {
 	private static final String DROP_TABLE_IRIS = "DROP TABLE iris";
 	private static final String DROP_SEQUENCE_IRIS = "DROP SEQUENCE seq_iris";
 	
-	private static final String INSERT_INTO_IRIS_VALUES = "insert into iris values (#iris.id#, #iris.sepalLength#, #iris.sepalWidth#, #iris.petalLength#, #iris.petalWidth#, #iris.variety#)";
+	private static final String INSERT_INTO_IRIS_VALUES = "insert into iris values (#iris.id#, #iris.sepallength#, #iris.sepalwidth#, #iris.petallength#, #iris.petalwidth#, #iris.variety#)";
 	private static final int IRIS_CSV_FILE_COLUMN_NUMBER = 5;
 
 	@Inject

@@ -1,34 +1,38 @@
-from pyspark.sql import SQLContext, SparkSession
-from pyspark.conf import SparkConf
 import pandas as pd
+from AIPredict.settings.production import TRAIN_DB
+from cassandra.cluster import Cluster
+from cassandra.auth import PlainTextAuthProvider
+from cassandra.query import SimpleStatement
+from threading import Event
 
-def connect_spark(clusters:list):
-    packages = ["com.datastax.spark:spark-cassandra-connector-assembly_2.11:2.5.2", "com.datastax.spark:spark-cassandra-connector-driver_2.11:2.5.2", "org.apache.spark:spark-sql_2.11:2.4.7"]
-    spark_conf = SparkConf()
-    spark_conf.setAll([('spark.master', 'spark://127.0.0.1:7077'),
-                   ('spark.app.name', 'myApp'),
-                   ("spark.driver.host", "192.168.1.72"),
-                   ('spark.cassandra.connection.host', ','.join(clusters)),
-                   ('spark.jars.packages', ','.join(packages)) ])
-    spark = SparkSession.builder.appName('AIPredict Cassandra Connection') \
-    .config(conf = spark_conf).getOrCreate()
-    return spark
+def pandas_factory(colnames, rows):
+    return pd.DataFrame(rows, columns=colnames)
 
-def get_cassandra_data(spark:SparkSession, keyspace:str, table:str):
-    df = spark.read.format("org.apache.spark.sql.cassandra") \
-    .options(table=table, keyspace=keyspace, user="cassandra", password="cassandra").load()
-    data = df.toPandas()
-    spark.stop()
-    return data
+def cassandra_connect(db_name:str, table:str, fetch_size:int):
+    #get database connection parameters
+    database = TRAIN_DB[db_name]
+    #set credentials
+    credential = PlainTextAuthProvider(username=database["username"], password=database["password"])
+    #initialize connection
+    cluster = Cluster(database["cluster"], auth_provider=credential)
+    session = cluster.connect(database["keyspace"])
+    #prepare the query
+    query = """select * from %s""" %table
+    statement = SimpleStatement(query, fetch_size=fetch_size)
+    #get first page result
+    result = session.execute(statement)
+    column_names = result.column_names
+    #initialize the dataframe
+    df = pd.DataFrame(columns=column_names)
+    #iterate through the pages and the rows to fill the dataframe
+    for row in result:
+        df = df.append(pd.DataFrame([row], columns=column_names))
+    #close the connection
+    cluster. shutdown()
+    return df
 
 def get_data(db_config:dict, features:list, labels:list):
-    # connect to cassandra through spark
-    clusters = db_config["clusters"]
-    spark = connect_spark(clusters)
-    # get the table
-    keyspace = db_config["keyspace"]
-    table = db_config["table"]
-    data = get_cassandra_data(spark, keyspace, table)
+    data = cassandra_connect(db_config["db_type"], db_config["table"], db_config["fetch_size"])
     #split features and labels
     X, y = data[features], data[labels]
     return X, y

@@ -20,16 +20,15 @@
         "db_config":
          {
              "db_type": "cassandra_spark",
-             "table": "iris",
-             "keyspace": "traindb",
-             "clusters": ["192.168.1.72"]
+             "table": "iristest",
+             "fetch_size": 100
          },
         "data_config":
         {
-            "sepal_length": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "sepal_width": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "petal_length": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
-            "petal_width": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "sepallength": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "sepalwidth": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "petallength": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
+            "petalwidth": {"domain": "DoFloat", "is_label":false, "ifna":0.0},
             "variety": {"domain": "DoLabel", "is_label":true}
         },
         "domains":
@@ -41,7 +40,7 @@
     "parameters":
     {
         "n_jobs": 1,
-        "cv": 5,
+        "cv": 2,
         "metrics": "accuracy",
         "grid_search": true,
         "min_score": 0.0,

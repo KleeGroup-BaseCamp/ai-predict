@@ -73,7 +73,21 @@ DATABASES = {
 }
 
 TRAIN_DB = {
-    'traindb' : 'postgresql://postgres:admin@localhost/traindb'
+    'traindb' : 
+        {
+            "sql" : "postgresql",
+            "username" : "postgres",
+            "password" : "admin",
+            "host" : "localhost",
+            "keyspace" : "traindb"
+        },
+    'cassandra_spark' : 
+        {
+            "username" : "cassandra",
+            "password" : "cassandra",
+            "keyspace" : "traindb",
+            "cluster" : ['192.168.1.72']
+        }
 }
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

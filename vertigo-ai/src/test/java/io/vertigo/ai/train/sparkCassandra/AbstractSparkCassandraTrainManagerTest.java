@@ -1,14 +1,22 @@
 package io.vertigo.ai.train.sparkCassandra;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import static com.datastax.spark.connector.japi.CassandraJavaUtil.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.vertigo.ai.predict.PredictionManager;
+import io.vertigo.ai.train.data.Iris;
 import io.vertigo.ai.train.models.TrainResponse;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
@@ -57,6 +66,7 @@ public abstract class AbstractSparkCassandraTrainManagerTest {
 
 	@AfterEach
 	public final void tearDown() throws Exception {
+		sc.close();
 		if (node != null) {
 				dropDatas();
 				node.close();
@@ -82,9 +92,9 @@ public abstract class AbstractSparkCassandraTrainManagerTest {
         conf.setAppName("Java API demo");
         conf.setMaster("spark://127.0.0.1:7077");
         
-        conf.set("spark.driver.host", "192.168.1.73");
+        conf.set("spark.driver.host", "192.168.1.72");
 
-        conf.set("spark.cassandra.connection.host", "192.168.1.73");
+        conf.set("spark.cassandra.connection.host", "192.168.1.72");
         conf.set("spark.cassandra.auth.username", "cassandra");            
         conf.set("spark.cassandra.auth.password", "cassandra");
         
@@ -101,33 +111,49 @@ public abstract class AbstractSparkCassandraTrainManagerTest {
         sc.addJar("file:///C:/Users/dcouillard/.m2/repository/com/datastax/oss/native-protocol/1.4.12/native-protocol-1.4.12.jar");
         sc.addJar("file:///C:/Users/dcouillard/.m2/repository/org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar");
 
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/database/cassandra/spark/kafka/dbtest/0.0.1-SNAPSHOT/dbtest-0.0.1-SNAPSHOT.jar");
+        sc.addJar("file:///C:/Users/dcouillard/Documents/predict/Iris/target/Iris-0.0.1-SNAPSHOT.jar");
         
         this.sc = sc;
 	}
 	
-	private void createDatas() {
-        CassandraConnector connector = CassandraConnector.apply(sc.getConf());
+	private void createDatas() throws IOException {
+		CassandraConnector connector = CassandraConnector.apply(sc.getConf());
 
         // Prepare the schema
         try (CqlSession session = connector.openSession()) {
         	session.execute("CREATE KEYSPACE IF NOT EXISTS traindb WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };");
         	session.execute("DROP TABLE IF EXISTS traindb.iristest");
-            session.execute("CREATE TABLE traindb.iristest (id INT PRIMARY KEY, Sepallength DOUBLE, Sepalwidth DOUBLE, Petallength DOUBLE, Petalwidth DOUBLE, Variety TEXT)");
-            session.execute("INSERT INTO traindb.iristest(id, Sepallength, Sepalwidth, Petallength, Petalwidth, Variety) VALUES (1, 2.0, 1.0, 1.0, 1.0, 'test')");
-            session.execute("INSERT INTO traindb.iristest(id, Sepallength, Sepalwidth, Petallength, Petalwidth, Variety) VALUES (2, 2.0, 1.0, 1.0, 1.0, 'test')");
-            session.execute("INSERT INTO traindb.iristest(id, Sepallength, Sepalwidth, Petallength, Petalwidth, Variety) VALUES (3, 2.0, 1.0, 1.0, 1.0, 'test')");
-            session.execute("INSERT INTO traindb.iristest(id, Sepallength, Sepalwidth, Petallength, Petalwidth, Variety) VALUES (4, 2.0, 1.0, 1.0, 1.0, 'test')");
-            session.execute("INSERT INTO traindb.iristest(id, Sepallength, Sepalwidth, Petallength, Petalwidth, Variety) VALUES (5, 2.0, 1.0, 1.0, 1.0, 'test')");
+            session.execute("CREATE TABLE traindb.iristest (id INT PRIMARY KEY, SepalLength DOUBLE, SepalWidth DOUBLE, PetalLength DOUBLE, PetalWidth DOUBLE, Variety TEXT)");
+        } 
+        // Prepare the schema
+        
+        List<Iris> records = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/io/vertigo/ai/datageneration/iris.csv"))) {
+            String line;
+            long id = 0;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(";");
+                if (id!=0) {
+	                Iris iris = Iris.createIris(id++, Double.valueOf(values[0]), Double.valueOf(values[1]), Double.valueOf(values[2]), Double.valueOf(values[3]), values[4]);
+	                records.add(iris);
+                }
+                id++;
+            }
         }
+        System.out.println(records);
+        JavaRDD<Iris> irisRDD = sc.parallelize(records);
+        javaFunctions(irisRDD).writerBuilder("traindb", "iristest", mapToRow(Iris.class)).saveToCassandra();
+        
+
 	}
 
+	@Test
 	public void testTrainCassandraSpark() throws JsonParseException, JsonMappingException, IOException {
 		HashMap<String,Object> config = createConfig("cassandra_spark");
 		TrainResponse response = predictionManager.train(config);
 		Assertions.assertEquals(1, response.getScore().getScoreMean().compareTo(BigDecimal.valueOf(0.9)));
 	}
-	
+	@Test
 	public void testDelete() {
 		long response = predictionManager.delete("iris-classification-cassandra-spark", 1);
 		Assertions.assertEquals(204, response);

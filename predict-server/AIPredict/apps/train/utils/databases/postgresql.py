@@ -3,8 +3,12 @@ from sqlalchemy import create_engine
 
 from AIPredict.settings.production import TRAIN_DB
 
+def build_url(database:dict):
+    return database["sql"]+"://"+database["username"]+":"+database["password"]+"@"+database["host"]+"/"+database["keyspace"]
+
 def connect_database(db_name:str):
-    database_url = TRAIN_DB[db_name]
+    database = TRAIN_DB[db_name]
+    database_url = build_url(database)
     engine = create_engine(database_url)
     return engine.connect()
     
@@ -16,7 +20,7 @@ def get_database_data(conn, table, features, labels):
     query = """
     SELECT %s from %s
     """ %(query_col, table)
-    result = pd.read_sql(query, conn);
+    result = pd.read_sql(query, conn)
     conn.close()
     return result
 

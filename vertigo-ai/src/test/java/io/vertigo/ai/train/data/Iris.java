@@ -1,52 +1,58 @@
 package io.vertigo.ai.train.data;
 
+import java.io.Serializable;
+
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.datamodel.structure.stereotype.Field;
 
-public class Iris {
+public class Iris implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;
-	private Double sepalLength;
-	private Double sepalWidth;
-	private Double petalLength;
-	private Double petalWidth;
+	private Double sepallength;
+	private Double sepalwidth;
+	private Double petallength;
+	private Double petalwidth;
 	private String variety;
 	
 	@Field(smartType = "STyDouble", cardinality = Cardinality.ONE, label = "Longueur du pistil")
-	public Double getSepalLength() {
-		return sepalLength;
+	public Double getSepallength() {
+		return sepallength;
 	}
 
-	public void setSepalLength(Double sepalLenght) {
-		this.sepalLength = sepalLenght;
+	public void setSepallength(Double sepalLenght) {
+		this.sepallength = sepalLenght;
 	}
 
 
 	@Field(smartType = "STyDouble", cardinality = Cardinality.ONE, label = "Largeur du pistil")
-	public Double getSepalWidth() {
-		return sepalWidth;
+	public Double getSepalwidth() {
+		return sepalwidth;
 	}
 
-	public void setSepalWidth(Double sepalWidth) {
-		this.sepalWidth = sepalWidth;
+	public void setSepalwidth(Double sepalWidth) {
+		this.sepalwidth = sepalWidth;
 	}
 
 	@Field(smartType = "STyDouble", cardinality = Cardinality.ONE, label = "Longueur des pétales")
-	public Double getPetalLength() {
-		return petalLength;
+	public Double getPetallength() {
+		return petallength;
 	}
 
-	public void setPetalLength(Double petalLenght) {
-		this.petalLength = petalLenght;
+	public void setPetallength(Double petalLenght) {
+		this.petallength = petalLenght;
 	}
 
 	@Field(smartType = "STyDouble", cardinality = Cardinality.ONE, label = "Largeur des pétales")
-	public Double getPetalWidth() {
-		return petalWidth;
+	public Double getPetalwidth() {
+		return petalwidth;
 	}
 
-	public void setPetalWidth(Double petalWidth) {
-		this.petalWidth = petalWidth;
+	public void setPetalwidth(Double petalWidth) {
+		this.petalwidth = petalWidth;
 	}
 
 	@Field(smartType = "STyIdentifiant", type = "ID", cardinality = Cardinality.ONE, label = "identifiant de la fleur")
@@ -69,11 +75,11 @@ public class Iris {
 	
 	public static Iris createIris(Long id, Double sepalLength, Double sepalWidht, Double petalLength, Double petalWidth, String variety) {
 		Iris iris = new Iris();
-		iris.setPetalLength(petalLength);
+		iris.setPetallength(petalLength);
 		iris.setId(id);
-		iris.setPetalWidth(petalWidth);
-		iris.setSepalLength(sepalLength);
-		iris.setSepalWidth(sepalWidht);		
+		iris.setPetalwidth(petalWidth);
+		iris.setSepallength(sepalLength);
+		iris.setSepalwidth(sepalWidht);		
 		iris.setVariety(variety);
 		return iris;
 	}
