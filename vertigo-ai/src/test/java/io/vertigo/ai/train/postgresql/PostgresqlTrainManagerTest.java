@@ -7,7 +7,7 @@ public class PostgresqlTrainManagerTest extends AbstractPostgresqlTrainManagerTe
 
 	@Override
 	protected NodeConfig buildNodeConfig() {
-		return MyNodeConfig.config(false);
+		return MyNodeConfig.config(false, false);
 	}
 
 	@Override

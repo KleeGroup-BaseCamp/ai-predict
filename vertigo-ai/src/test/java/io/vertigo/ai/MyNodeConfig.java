@@ -1,5 +1,7 @@
 package io.vertigo.ai;
 
+import io.vertigo.ai.example.data.ItemDefinitionProvider;
+import io.vertigo.ai.example.data.SmartTypes;
 import io.vertigo.ai.predict.data.ItemPredictClient;
 import io.vertigo.ai.predict.data.TestPredictSmartTypes;
 import io.vertigo.ai.predict.data.domain.ItemDatasetLoader;
@@ -21,7 +23,7 @@ import io.vertigo.datastore.DataStoreFeatures;
 
 public final class MyNodeConfig {
 	
-	public static NodeConfig config(final boolean withDb) {
+	public static NodeConfig config(final boolean withDb, final boolean example) {
 		
 		final AIFeatures aiFeatures = new AIFeatures()
 				.withAIPredictBackend(
@@ -75,7 +77,20 @@ public final class MyNodeConfig {
 					.build());
 		}
 		
-		nodeConfigBuilder.addModule(aiFeatures.build())
+		if (example) {
+			nodeConfigBuilder.addModule(aiFeatures.build())
+					.addModule(ModuleConfig.builder("myApp")
+					.addComponent(ItemDefinitionProvider.class)
+					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+							.addDefinitionResource("smarttypes", SmartTypes.class.getName())
+							.addDefinitionResource("dtobjects", "io.vertigo.ai.example.data.domain.DtDefinitions")
+							.build())
+					.addComponent(ItemDatasetStoreLoader.class)
+					.addDefinitionProvider(StoreCacheDefinitionProvider.class)
+					.build());
+			
+		} else {
+			nodeConfigBuilder.addModule(aiFeatures.build())
 			.addModule(ModuleConfig.builder("myApp")
 					.addComponent(ItemPredictClient.class)
 					.addComponent(ItemDatasetLoader.class)
@@ -86,7 +101,7 @@ public final class MyNodeConfig {
 					.addComponent(withDb ? io.vertigo.ai.predict.withstore.ItemDatasetStoreLoader.class : ItemDatasetStoreLoader.class)
 					.addDefinitionProvider(StoreCacheDefinitionProvider.class)
 					.build());
-		
+		}
 		return nodeConfigBuilder.build();
 		
 	}

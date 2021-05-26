@@ -271,13 +271,49 @@ public class TestDataset {
 	}
 	
 	@Test
-	public void testGroupBy() throws IllegalArgumentException, IllegalAccessException {
+	public void testGroupByMean() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		Dataset dataset = new Dataset(Hero.class, heroData);
-		Hero doppelganger = new Hero(7, "Obiwan", 22);
+		Hero doppelganger = new Hero(3, "Obiwan", 22);
 		dataset.append(doppelganger);
 		Dataset groupDataset = dataset.groupBy("name", "mean").orderBy("name");
 		Assertions.assertEquals(6, groupDataset.count());
-		Assertions.assertEquals(20.0, groupDataset.get(4, "age"));
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		Assertions.assertEquals(20.0, groupDataset.get(4, "age_mean"));
+	}
+	
+	@Test
+	public void testGroupBySum() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		Dataset dataset = new Dataset(Hero.class, heroData);
+		Hero doppelganger = new Hero(3, "Obiwan", 22);
+		dataset.append(doppelganger);
+		Dataset groupDataset = dataset.groupBy("name", "sum").orderBy("name");
+		Assertions.assertEquals(6, groupDataset.count());
+		Assertions.assertEquals(40.0, groupDataset.get(4, "age_sum"));
+	}
+	
+	@Test
+	public void testGroupByCount() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		Dataset dataset = new Dataset(Hero.class, heroData);
+		Hero doppelganger = new Hero(3, "Obiwan", 22);
+		dataset.append(doppelganger);
+		Dataset groupDataset = dataset.groupBy("name", "count").orderBy("name");
+		Assertions.assertEquals(6, groupDataset.count());
+		System.out.println();
+		System.out.println();
+		System.out.println(groupDataset.collect());
+		Assertions.assertEquals((long) 2, groupDataset.get(4, "name_count"));
+	}
+	
+	@Test
+	public void testGroupByStd() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		Dataset dataset = new Dataset(Hero.class, heroData);
+		Hero doppelganger = new Hero(3, "Obiwan", 22);
+		dataset.append(doppelganger);
+		Dataset groupDataset = dataset.groupBy("name", "std", "count").orderBy("name");
+		Assertions.assertEquals(6, groupDataset.count());
+		Assertions.assertEquals(1, Math.round((Double)groupDataset.get(4, "age_std")));
 	}
 
 	@Test
@@ -337,5 +373,6 @@ public class TestDataset {
 		Assertions.assertEquals("Luke", joined.get(0, "name"));
 		Assertions.assertEquals("Rey", joined.get(6, "name"));
 		Assertions.assertEquals("Empire", joined.get(3, "faction"));
+		
 	}
 }

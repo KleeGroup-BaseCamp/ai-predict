@@ -15,7 +15,7 @@ public class IrisClassificationPredictionManager extends AbstractPredictionManag
 
 	@Override
 	protected NodeConfig buildNodeConfig() {
-		return MyNodeConfig.config(false);
+		return MyNodeConfig.config(false, false);
 	}
 
 }

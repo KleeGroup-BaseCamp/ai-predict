@@ -37,6 +37,7 @@ public final class CSVReaderUtil {
 		} catch (final IOException | CsvValidationException e) {
 			throw WrappedException.wrap(e, "Can't load csv file {0}", csvFilePath);
 		}
+		
 	}
 	
 }

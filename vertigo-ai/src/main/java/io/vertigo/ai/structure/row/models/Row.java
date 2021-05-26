@@ -12,6 +12,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import io.vertigo.ai.structure.dataset.models.DatasetField;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.UID;
@@ -23,26 +24,26 @@ public class Row implements Serializable, DtObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private HashMap<Field, Object> map;
+	private HashMap<DatasetField, Object> map;
 	private UID<?> uid = null;
 	private RowDefinition rowDefinition = null;
     
-	public Row(HashMap<Field, Object> item) {
+	public Row(HashMap<DatasetField, Object> item) {
 		map = item;
 	}
 	
 	public Row() {
-		this.map = new HashMap<Field, Object>();
+		this.map = new HashMap<DatasetField, Object>();
 	}
 	
-	public Row(HashMap<Field, Object> item, UID<?> uid, RowDefinition rowDefinition) {
+	public Row(HashMap<DatasetField, Object> item, UID<?> uid, RowDefinition rowDefinition) {
 		map = item;
 		this.uid = uid;
 		this.rowDefinition = rowDefinition;
 	}
 	
 	public Row(UID<?> uid, RowDefinition rowDefinition) {
-		this.map = new HashMap<Field, Object>();
+		this.map = new HashMap<DatasetField, Object>();
 		this.uid = uid;
 		this.rowDefinition = rowDefinition;
 	}
@@ -60,15 +61,15 @@ public class Row implements Serializable, DtObject {
 		} else {
 			Class<?> clazz = item.getClass();
 			Field[] fields = clazz.getDeclaredFields();
-			HashMap<Field, Object> mapItem = new HashMap<Field, Object>();
+			HashMap<DatasetField, Object> mapItem = new HashMap<DatasetField, Object>();
 			for (Field field : fields) {
 				if (field.getName() != "this$0") {
 					field.setAccessible(true);
 					try {
-						mapItem.put(field, field.get(item));
+						mapItem.put(new DatasetField(field), field.get(item));
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						e.printStackTrace();
-						mapItem.put(field, null);
+						mapItem.put(new DatasetField(field), null);
 					}
 				}
 			}
@@ -84,41 +85,51 @@ public class Row implements Serializable, DtObject {
 		return uid;
 	}
 	
-	public HashMap<Field, Object> collect() {
+	public Row rename(DatasetField currentField, DatasetField newField) {
+		Object o = remove(currentField);
+		map.put(newField, o);
+		
+		return this;
+	}
+	public HashMap<DatasetField, Object> collect() {
 		return map;
 	}
 	
+	public Object get(DatasetField field) {
+		return get(field.getName());
+	}
+	
 	public Object get(Field field) {
-		return map.get(field);
+		return get(field.getName());
 	}
 	
 	public Object get(String fieldName) {
-		List<Field> fields = map.keySet().stream().filter(p -> p.getName()==fieldName).collect(Collectors.toList());
+		List<DatasetField> fields = map.keySet().stream().filter(p -> p.getName().equals(fieldName)).collect(Collectors.toList());
 		return map.get(fields.get(0));
 	}
 	
-	public Object put(Field key, Object value) {
+	public Object put(DatasetField key, Object value) {
 		return map.put(key, value);
 	}
 	
-	public void putAll(HashMap<Field, Object> item) {
+	public void putAll(HashMap<DatasetField, Object> item) {
 		map.putAll(item);
 	}
 	
 	public void putAll(Row item) {
-		HashMap<Field, Object> other = item.collect();
+		HashMap<DatasetField, Object> other = item.collect();
 		map.putAll(other);
 	}
 	
 	public Row join(Row item) {
-		HashMap<Field, Object> other = item.collect();
-		HashMap<Field, Object> mapCopy = new HashMap<Field, Object>(map);
+		HashMap<DatasetField, Object> other = item.collect();
+		HashMap<DatasetField, Object> mapCopy = new HashMap<DatasetField, Object>(map);
 		other.putAll(mapCopy);
 		return new Row(other);
 		
 	}
 
-	public Object remove(Field key) {
+	public Object remove(DatasetField key) {
 		return map.remove(key);
 	}
 	
@@ -126,20 +137,20 @@ public class Row implements Serializable, DtObject {
 		return map.remove(key, value);
 	}
 	
-	public Set<Field> keySet() {
+	public Set<DatasetField> keySet() {
 		return map.keySet();
 	}
 	
-	public Object merge(Field key, Object value, BiFunction<? super Object, ? super Object, ? extends Object> function) {
+	public Object merge(DatasetField key, Object value, BiFunction<? super Object, ? super Object, ? extends Object> function) {
 		return map.merge(key, value, function);
 	}
 	
-	public void forEach(BiConsumer<? super Field,? super Object> consumer) {
+	public void forEach(BiConsumer<? super DatasetField,? super Object> consumer) {
 		map.forEach(consumer);
 	}
 	
-	public Object replace(Field field, Object value) {
-		return map.replace(field, value);
+	public void replace(DatasetField field, Object value) {
+		map.replace(fields().get(field.getName()), value);
 	}
 	
 	public String toString() {
@@ -153,21 +164,21 @@ public class Row implements Serializable, DtObject {
 		return builder.toString();
 	}
 	
-	public Row get(List<Field> fields) {
-		HashMap<Field, Object> newMap = new HashMap<Field, Object>();
-		for (Field field: fields) {
+	public Row get(List<DatasetField> fields) {
+		HashMap<DatasetField, Object> newMap = new HashMap<DatasetField, Object>();
+		for (DatasetField field: fields) {
 			newMap.put(field, get(field));
 		}
 		return new Row(newMap);
 	}
 
-	public int compareTo(Row other, Field field) {
+	public int compareTo(Row other, DatasetField field) {
 		return get(field).toString().compareTo(other.get(field).toString());
 	}
 	
-	public HashMap<String, Field> fields() {
-		HashMap<String, Field> fieldMap = new HashMap<String, Field>();
-		Set<Field> fields = map.keySet();
+	public HashMap<String, DatasetField> fields() {
+		HashMap<String, DatasetField> fieldMap = new HashMap<String, DatasetField>();
+		Set<DatasetField> fields = map.keySet();
 		fields.forEach(field -> fieldMap.put(field.getName(), field));
 		return fieldMap;
 	}
@@ -187,7 +198,7 @@ public class Row implements Serializable, DtObject {
 		I newObject = (I) ctor.newInstance();
 		
 		List<Field> clazzFields = Arrays.asList(clazz.getDeclaredFields());
-		HashMap<String, Field> rowFields = fields();
+		HashMap<String, DatasetField> rowFields = fields();
 		for (Field field : clazzFields) {
 			String key = field.getName();
 			if (rowFields.containsKey(key)) {
