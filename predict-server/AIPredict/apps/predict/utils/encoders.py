@@ -87,9 +87,15 @@ class OneHotEncoder(FeatureEncoder):
             self.encoder = skp.OneHotEncoder(handle_unknown='ignore')
         else:
             self.encoder = None
-        self.params = {"categories": None, "drop_idx": None}
+        self.params = {"categories": None, "drop_idx": None, "others": False}
     
-    def fit(self, data):
+    def fit(self, data, other, max_category=None):
+        if other:
+            if not max_category:
+                raise ValueError("max_category must be filled if other is true")
+            categories = data.count_values()[:max_category].index.tolist()
+            data.apply(lambda x: x if x in categories else "other" )
+            self.other = True
         res = self.encoder.fit(data)
         self.params["categories"] = [list(res.categories_[0])]
         self.params["drop_idx"] = res.drop_idx_
@@ -102,7 +108,10 @@ class OneHotEncoder(FeatureEncoder):
         return True
     
     def transform(self, data):
-        return pd.DataFrame(self.encoder.transform(data).toarray())
+        if self.params["others"]:
+            column = data.columns[0]
+            data[column] = data[column].apply(lambda x: x if x in self.params["categories"][0] else "others" )
+        return pd.DataFrame(self.encoder.transform(data).toarray(), columns=self.encoder.get_feature_names())
     
 class MinMaxScaler(FeatureEncoder):
 

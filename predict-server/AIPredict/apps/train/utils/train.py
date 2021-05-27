@@ -31,7 +31,6 @@ def sync_score(model, metrics, cv, X, y, preprocessing:dict, *args, **kwargs):
     X_score, y_score = _apply_preprocessing(X, y, preprocessing)
     scores = cross_val_score(model, X_score, y_score, scoring=metrics, cv=cv)
     res = {"scoreMean": scores.mean(), "scoreStd": scores.std()}
-    print(res)
     return res
 
 def async_train(package:str, modelClass:str, X, y, preprocessing:dict, hyperparameters:dict, metrics:str, n_jobs:int=None, cv:int=None, grid_search:bool=False, *args, **kwargs):

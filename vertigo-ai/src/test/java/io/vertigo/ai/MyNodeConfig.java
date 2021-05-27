@@ -85,8 +85,6 @@ public final class MyNodeConfig {
 							.addDefinitionResource("smarttypes", SmartTypes.class.getName())
 							.addDefinitionResource("dtobjects", "io.vertigo.ai.example.data.domain.DtDefinitions")
 							.build())
-					.addComponent(ItemDatasetStoreLoader.class)
-					.addDefinitionProvider(StoreCacheDefinitionProvider.class)
 					.build());
 			
 		} else {

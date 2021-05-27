@@ -202,7 +202,8 @@ public class Row implements Serializable, DtObject {
 		for (Field field : clazzFields) {
 			String key = field.getName();
 			if (rowFields.containsKey(key)) {
-				rowFields.get(key).set(newObject, get(field));
+				field.setAccessible(true);
+				field.set(newObject, get(field));
 			}
 					
 		}

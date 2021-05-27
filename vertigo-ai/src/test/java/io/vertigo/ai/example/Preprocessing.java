@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import io.vertigo.ai.example.data.models.EventType;
 import io.vertigo.ai.example.data.models.Location;
 import io.vertigo.ai.example.data.models.LogFeature;
@@ -17,7 +20,7 @@ import io.vertigo.ai.train.data.Iris;
 
 public class Preprocessing {
 
-	public static void process(List<Location> locations, List<SeverityType> severityTypes, List<LogFeature> logFeatures, List<EventType> eventTypes, List<ResourceType> resourceTypes) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+	public static Dataset process(List<Location> locations, List<SeverityType> severityTypes, List<LogFeature> logFeatures, List<EventType> eventTypes, List<ResourceType> resourceTypes) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		// Convert all List to Datasets
 		Dataset locationDataset = new Dataset(Location.class, locations);
 		Dataset severityDataset = new Dataset(SeverityType.class, severityTypes);
@@ -37,10 +40,10 @@ public class Preprocessing {
 		
 		Dataset logFeatureDataset = featureDataset.apply("volume", log);
 				
-		Dataset eventById = eventDataset.groupBy("id", "count").select("id", "id_count").rename("id_count", "event_per_id");
-		Dataset resourceCount = resourceDataset.groupBy("resourceType", "count").select("resourceType", "resourceType_count");
-		Dataset locationCount = locationDataset.groupBy("location", "count").select("location", "location_count");
-		Dataset logFeatureById = logFeatureDataset.groupBy("id", "count", "min", "max", "mean", "sum", "std").select("id", "id_count", "volume_min", "volume_max", "volume_mean", "volume_sum", "volume_std").rename("id_count", "feature_count");
+		Dataset eventById = eventDataset.groupBy("id", "count").select("id", "idCount").rename("idCount", "eventPerId");
+		Dataset resourceCount = resourceDataset.groupBy("resourceType", "count").select("resourceType", "resourceTypeCount");
+		Dataset locationCount = locationDataset.groupBy("location", "count").select("location", "locationCount");
+		Dataset logFeatureById = logFeatureDataset.groupBy("id", "count", "min", "max", "mean", "sum", "std").select("id", "idCount", "volumeMin", "volumeMax", "volumeMean", "volumeSum", "volumeStd").rename("idCount", "featureCount");
 		
 		Dataset resourceJoined = resourceDataset.join(resourceCount, "resourceType", "resourceType", "left").except("serialVersionUID");
 		Dataset eventJoined = eventDataset.join(eventById, "id", "id", "left").except("serialVersionUID");
@@ -48,19 +51,16 @@ public class Preprocessing {
 		Dataset featureJoined = featureDataset.join(logFeatureById, "id", "id", "left").except("serialVersionUID");
 		
 		Dataset train = locationJoined.join(eventJoined, "id", "id", "left").join(featureJoined, "id", "id", "left").join(resourceJoined, "id", "id", "left").join(severityDataset, "id", "id", "left").distinct().except("serialVersionUID");
-		
-		train.forEach(row -> System.out.println(row));
-		System.out.println(train.columns().size());
-		System.out.println(train.count());
+		return train;
 	}
 	
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, IOException {
+	public static Dataset runPreprocessing() throws IOException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		List<Location> locations = readLocation("./src/main/resources/io/vertigo/ai/datageneration/train.csv");
 		List<EventType> eventType = readEvent("./src/main/resources/io/vertigo/ai/datageneration/event_type.csv");
 		List<LogFeature> features = readFeature("./src/main/resources/io/vertigo/ai/datageneration/log_feature.csv");
 		List<ResourceType> resources = readResource("./src/main/resources/io/vertigo/ai/datageneration/resource_type.csv");
 		List<SeverityType> severities = readSeverity("./src/main/resources/io/vertigo/ai/datageneration/severity_type.csv");
-		process(locations, severities, features, eventType, resources);
+		return process(locations, severities, features, eventType, resources);
 	}
 	
 	private static List<Location> readLocation(String path) throws IOException {
@@ -158,6 +158,35 @@ public class Preprocessing {
 	            }
 	        }
 	        return records;
+	}
+	
+	@Test
+	public void testPreprocessing() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, IOException {
+		Dataset train = runPreprocessing();
+		Dataset filteredTrain = train.filter(p -> (int) p.get("id") == 10422);
+		// Checks dimensions
+		Assertions.assertEquals(61839, train.count());
+		Assertions.assertEquals(17, train.columns().size());
+		// Checks one element
+		Assertions.assertEquals(10422, filteredTrain.get(0, "id"));
+		Assertions.assertEquals("location 584", filteredTrain.get(0, "location"));
+		Assertions.assertEquals("feature 73", filteredTrain.get(0, "logFeature"));
+		Assertions.assertEquals("severity_type 2", filteredTrain.get(0, "severityType"));
+		Assertions.assertEquals(0.3010299956639812, filteredTrain.get(0, "volume"));
+		Assertions.assertEquals(0.3010299956639812, filteredTrain.get(0, "volumeMean"));
+		Assertions.assertEquals(0.3010299956639812, filteredTrain.get(0, "volumeSum"));
+		Assertions.assertEquals(0.3010299956639812, filteredTrain.get(0, "volumeMin"));
+		Assertions.assertEquals(0.3010299956639812, filteredTrain.get(0, "volumeMax"));
+		Assertions.assertEquals(0.0, filteredTrain.get(0, "volumeStd"));
+		Assertions.assertEquals((long)10268, filteredTrain.get(0, "resourceTypeCount"));
+		Assertions.assertEquals(0, filteredTrain.get(0, "severityFault"));
+		Assertions.assertEquals((long)1, filteredTrain.get(0, "featureCount"));
+		Assertions.assertEquals("resource_type 8", filteredTrain.get(0, "resourceType"));
+		Assertions.assertEquals((long)1, filteredTrain.get(0, "eventPerId"));
+		Assertions.assertEquals("event_type 11", filteredTrain.get(0, "eventType"));
+		Assertions.assertEquals((long)25, filteredTrain.get(0, "locationCount"));
+		
+		
 	}
 	
 }

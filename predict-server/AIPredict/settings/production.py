@@ -86,7 +86,7 @@ TRAIN_DB = {
             "username" : "cassandra",
             "password" : "cassandra",
             "keyspace" : "traindb",
-            "cluster" : ['192.168.1.72']
+            "cluster" : ['192.168.1.70']
         }
 }
 # Password validation

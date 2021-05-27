@@ -477,7 +477,7 @@ public class Dataset implements Serializable, Iterable<Row> {
 
 					if (aggTypes.contains("mean")) {
 						DatasetField meanField = DatasetFieldUtils.getMeanField();
-						meanField.setName(field.getName() + "_mean");
+						meanField.setName(field.getName() + "Mean");
 						if (!groupDataset.columns().contains(meanField.getName())) {
 							groupDataset.columns.add(meanField);
 						}
@@ -485,7 +485,7 @@ public class Dataset implements Serializable, Iterable<Row> {
 					}
 					if (aggTypes.contains("sum")) {
 						DatasetField sumField = DatasetFieldUtils.getSumField();
-						sumField.setName(field.getName() + "_sum");
+						sumField.setName(field.getName() + "Sum");
 						if (!groupDataset.columns().contains(sumField.getName())) {
 							groupDataset.columns.add(sumField);
 						}
@@ -496,7 +496,7 @@ public class Dataset implements Serializable, Iterable<Row> {
 					}
 					if (aggTypes.contains("std")) {
 						DatasetField stdField = DatasetFieldUtils.getStdField();
-						stdField.setName(field.getName() + "_std");
+						stdField.setName(field.getName() + "Std");
 						if (!groupDataset.columns().contains(stdField.getName())) {
 							groupDataset.columns.add(stdField);
 						}
@@ -504,7 +504,7 @@ public class Dataset implements Serializable, Iterable<Row> {
 					}
 					if (aggTypes.contains("min")) {
 						DatasetField minField = DatasetFieldUtils.getMinField();
-						minField.setName(field.getName() + "_min");
+						minField.setName(field.getName() + "Min");
 						if (!groupDataset.columns().contains(minField.getName())) {
 							groupDataset.columns.add(minField);
 						}
@@ -512,7 +512,7 @@ public class Dataset implements Serializable, Iterable<Row> {
 					}
 					if (aggTypes.contains("max")) {
 						DatasetField maxField = DatasetFieldUtils.getMaxField();
-						maxField.setName(field.getName() + "_max");
+						maxField.setName(field.getName() + "Max");
 						if (!groupDataset.columns().contains(maxField.getName())) {
 							groupDataset.columns.add(maxField);
 						}
@@ -524,7 +524,7 @@ public class Dataset implements Serializable, Iterable<Row> {
 			
 		}
 		if (aggTypes.contains("count")) {
-			groupDataset.rename("count", fieldBy.getName()+"_count");
+			groupDataset.rename("count", fieldBy.getName()+"Count");
 		}
 			
 		return groupDataset;
