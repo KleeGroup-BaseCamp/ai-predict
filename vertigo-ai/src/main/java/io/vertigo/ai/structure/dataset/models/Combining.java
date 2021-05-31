@@ -1,6 +1,5 @@
 package io.vertigo.ai.structure.dataset.models;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,7 +9,16 @@ import io.vertigo.ai.structure.row.models.Row;
 
 public class Combining {
 
-	public static Dataset join(Dataset left, Dataset right, String how, String onLeft, String onRight) throws IllegalArgumentException, IllegalAccessException {
+	/**
+	 * Joins two dataset on the given keys with the given joinType how.
+	 * @param left the left Dataset
+	 * @param right the right Dataset
+	 * @param onLeft the name of the left key column
+	 * @param onRight name of the right key column
+	 * @param how the join type. Must be one of left, right, inner, full.
+	 * @returna new dataset
+	 */
+	public static Dataset join(Dataset left, Dataset right, String onLeft, String onRight, String how) {
 		DatasetField leftField = left.getField(onLeft);
 		DatasetField rightField = right.getField(onRight);
 		List<DatasetField> columns = Stream.concat(left.fields().stream(), right.fields().stream())
@@ -30,7 +38,7 @@ public class Combining {
 		}
 	}
 	
-	public static Dataset innerJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) throws IllegalArgumentException, IllegalAccessException {
+	private static Dataset innerJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
 		HashMap<Object, Dataset> rightMap = right.group(rightField);
 		Dataset dataset = new Dataset(columns);
 		for (Row leftRow : left) {
@@ -49,7 +57,7 @@ public class Combining {
 		return dataset;	
 	}
 	
-	public static Dataset leftJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) throws IllegalArgumentException, IllegalAccessException {
+	private static Dataset leftJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
 		HashMap<Object, Dataset> rightMap = right.group(rightField);
 		Dataset dataset = new Dataset(columns);
 		
@@ -79,7 +87,7 @@ public class Combining {
 		return dataset;	
 	}
 	
-	public static Dataset fullJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) throws IllegalArgumentException, IllegalAccessException {
+	private static Dataset fullJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
 		HashMap<Object, Dataset> rightMap = right.group(rightField);
 		Dataset dataset = new Dataset(columns);
 		for (Row leftRow : left) {

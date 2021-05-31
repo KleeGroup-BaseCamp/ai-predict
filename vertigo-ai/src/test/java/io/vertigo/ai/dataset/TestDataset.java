@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Assertions;
@@ -201,13 +200,6 @@ public class TestDataset {
 		Assertions.assertTrue(dataset.contains(nonDroppedPerson));
 	}
 	
-	@Test
-	public void testDTypes() {
-		Dataset dataset = new Dataset(Hero.class, heroData);
-		Map<String, Class<?>> dtypes = dataset.dTypes();
-		Assertions.assertEquals(String.class, dtypes.get("name"));
-	}
-	
     public static Predicate<Row> isAgeMoreThan(Integer age) {
         return p -> (int) p.get("age") > age;
     }
@@ -277,10 +269,7 @@ public class TestDataset {
 		dataset.append(doppelganger);
 		Dataset groupDataset = dataset.groupBy("name", "mean").orderBy("name");
 		Assertions.assertEquals(6, groupDataset.count());
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		Assertions.assertEquals(20.0, groupDataset.get(4, "age_mean"));
+		Assertions.assertEquals(20.0, groupDataset.get(4, "ageMean"));
 	}
 	
 	@Test
@@ -290,7 +279,7 @@ public class TestDataset {
 		dataset.append(doppelganger);
 		Dataset groupDataset = dataset.groupBy("name", "sum").orderBy("name");
 		Assertions.assertEquals(6, groupDataset.count());
-		Assertions.assertEquals(40.0, groupDataset.get(4, "age_sum"));
+		Assertions.assertEquals(40.0, groupDataset.get(4, "ageSum"));
 	}
 	
 	@Test
@@ -300,10 +289,7 @@ public class TestDataset {
 		dataset.append(doppelganger);
 		Dataset groupDataset = dataset.groupBy("name", "count").orderBy("name");
 		Assertions.assertEquals(6, groupDataset.count());
-		System.out.println();
-		System.out.println();
-		System.out.println(groupDataset.collect());
-		Assertions.assertEquals((long) 2, groupDataset.get(4, "name_count"));
+		Assertions.assertEquals((long) 2, groupDataset.get(4, "nameCount"));
 	}
 	
 	@Test
@@ -313,7 +299,7 @@ public class TestDataset {
 		dataset.append(doppelganger);
 		Dataset groupDataset = dataset.groupBy("name", "std", "count").orderBy("name");
 		Assertions.assertEquals(6, groupDataset.count());
-		Assertions.assertEquals(1, Math.round((Double)groupDataset.get(4, "age_std")));
+		Assertions.assertEquals(1, Math.round((Double)groupDataset.get(4, "ageStd")));
 	}
 
 	@Test

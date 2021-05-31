@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -83,12 +82,12 @@ public class Dataset implements Serializable, Iterable<Row> {
 		this(columns, data, null);
 	}
 	
-	
     /**
      * Construct an dataset.
      */
 	@SuppressWarnings("unchecked")
 	public <I> Dataset(final List<? extends AccessibleObject> columns, final List<I> data, final DatasetDefinition datasetDefinition) {
+		//if a list of field is provided, converts it to a list of DatasetFields. Else, assumes that a list of DatasetField is provided and copies this list as a mutable list.
 		if (Field.class.isInstance(columns.get(0))) {
 				this.columns = DatasetField.createDatasetFields((List<Field>) columns);
 		} else {
@@ -97,8 +96,11 @@ public class Dataset implements Serializable, Iterable<Row> {
 			this.columns = cols;
 		}
 		
+		//if a list of row is provided as data, copies it as a mutable list. Else, convertw all items of data as row and add them to data.
 		if (!data.isEmpty() && Row.class.isInstance(data.get(0))) {
-			this.data = (List<Row>) data;
+			List<Row> rows = new ArrayList<Row>();
+			rows.addAll( (List<Row>) data);
+			this.data = rows;
 		} else {
 			this.data = new ArrayList<Row>();
 			for (I item : data) {
@@ -113,43 +115,51 @@ public class Dataset implements Serializable, Iterable<Row> {
 	 * Copy an existing dataset
 	 * @param dataset the dataset to copy
 	 */
-	public  Dataset(Dataset dataset) {
+	public  Dataset(final Dataset dataset) {
 		this.data = dataset.collect();
 		this.columns = dataset.fields();
 		this.datasetDefinition = dataset.getDefinition();
 	}
 	
-	
-	// DatasetDefinition getter
-	
+	/**
+	 * DatasetDefinition getter
+	 */
 	public DatasetDefinition getDefinition() {
 		return datasetDefinition;
 	}
 	
-	// Row UIDs getter
+	
+	/**
+	 * Row UIDs getter. Can be used for chunk usage.
+	 */
 	public List<UID<?>> getUIDs() {
 		List<UID<?>> uids = new ArrayList<UID<?>>();
 		forEach(row -> uids.add(row.getUID()));
 		return uids;
 	}
-	// Append methods
 	
 	/**
-	 * Append several rows to the dataset.
-	 * @param newData the rows to append
+	 * Append several items to the dataset. These items are wrapped into rows if necessary.
+	 * @param newData the items to append
 	 * @return this dataset
 	 */
-	public <I> Dataset append(List<I> newData) {
-		data.addAll(generateRows(newData));
+	@SuppressWarnings("unchecked")
+	public <I> Dataset append(final List<I> newData) {
+		if (!newData.isEmpty() && Row.class.isInstance(newData.get(0))) {
+			data.addAll((List<Row>)newData);
+		}
+		for (I item : newData) {
+			data.add(new Row(item));
+		}
 		return this;
 	}
 	
 	/**
-	 * Append one row to the dataset.
-	 * @param newData the row to append
+	 * Append one item to the dataset. This item is wrapped into row if necessary.
+	 * @param newData the item to append
 	 * @return this dataset
 	 */
-	public <I> Dataset append(I newData) {
+	public <I> Dataset append(final I newData) {
 		if (Row.class.isInstance(newData)) {
 			data.add((Row) newData);
 		} else {
@@ -159,23 +169,30 @@ public class Dataset implements Serializable, Iterable<Row> {
 	}
 	
 	/**
-	 * Append several rows indexed by the specified index to the dataset.
-	 * @param index the index of the first row to append
+	 * Append several items indexed by the specified index to the dataset to the dataset. These items are wrapped into rows if necessary.
+	 * @param index the index where the first item will be appended
 	 * @param newData the rows to append
 	 * @return this dataset
 	 */
-	public <I> Dataset append(Integer index, List<I> newData) {
-		data.addAll(index, generateRows(newData));
+	@SuppressWarnings("unchecked")
+	public <I> Dataset append(final Integer index, final List<I> newData) {
+		if (!newData.isEmpty() && Row.class.isInstance(newData.get(0))) {
+			data.addAll(index, (List<Row>)newData);
+		}
+		Integer idx = index;
+		for (I item : newData) {
+			data.add(idx++, new Row(item));
+		}
 		return this;
 	}
 	
 	/**
-	 * Append one row indexed by the specified index to the dataset.
+	 * Append one item indexed by the specified index to the dataset to the dataset. This item is wrapped into row if necessary.
 	 * @param indexthe index of the row to append
 	 * @param newData the row to append
 	 * @return this dataset
 	 */
-	public <I> Dataset append(Integer index, I newData) {
+	public <I> Dataset add(Integer index, I newData) {
 		if (Row.class.isInstance(newData)) {
 			data.add(index, (Row) newData);
 		} else {
@@ -184,50 +201,27 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return this;
 	}
 	
-	// Distinct elements
-	
+	/**
+	 * Remove all duplicated rows of the dataset	
+	 * @return the dataset of all distinct rows
+	 */
 	public Dataset distinct() {
 		List<Row> unique = data.stream()
                 .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparing(Row::toString))),
                                            ArrayList::new));
 		return new Dataset(columns, unique);
 	}
-	// Columns selection methods
-	/**
-	 * Select a subset of the dataset using a single column name.
-	 * @param fieldName the column to extract
-	 * @return a new dataset
-	 */
-	public Dataset select(String fieldName) {
-		List<DatasetField> col =  getFields(fieldName);
-		List<Row> values = getColumns(col);
-		return new Dataset(col, values);
-	}
 	
 	/**
 	 * Select a subset of the dataset using several column names.
 	 * @param fieldNames the columns to extract
-	 * @return a new dataset
+	 * @return a new dataset containing the selected columns
 	 */
 	public Dataset select(String... fieldNames) {
 		List<DatasetField> col =  getFields(fieldNames);
 		List<Row> values = getColumns(col);
 		return new Dataset(col, values);
 	}
-	
-	//Rename column
-	public Dataset rename(String currentName, String newName) {
-		DatasetField currentField = getField(currentName);
-		DatasetField newField = new DatasetField(currentField);
-		newField.setName(newName);
-		columns.remove(currentField);
-		columns.add(newField);
-		for (Row row: data) {
-			row.rename(currentField, newField);
-		}
-		return this;
-	}
-	// Column exceptions methods
 	
 	/**
 	 * Select a subset of the dataset excepting a single column name.
@@ -251,26 +245,46 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return new Dataset(col, values);
 	}
 	
-	// Data getter
+	/**
+	 * Rename a column of the dataset
+	 * @param currentName the name of the column to rename
+	 * @param newName the new name of the column
+	 * @return this instance of dataset
+	 */
+	public Dataset rename(String currentName, String newName) {
+		DatasetField currentField = getField(currentName);
+		DatasetField newField = new DatasetField(currentField);
+		newField.setName(newName);
+		columns.remove(currentField);
+		columns.add(newField);
+		for (Row row: data) {
+			row.rename(currentField, newField);
+		}
+		return this;
+	}
+	
 	/**
 	 * Get a row of the dataset by its index
 	 * @param index the index of the row to extract
 	 */
 	public Row get(Integer index) {
+		if (index < 0 || index >= count()) {
+			throw new IllegalArgumentException(index + "not in the dataset bounds.");
+		}
 		return data.get(index);
 	}
 	
 	/**
-	 * Get an Object from the dataset using its index and its column
+	 * Get an Object (item of a row) from the dataset using its index and its column name
 	 * @param index the index of the row to extract
-	 * @param column the column name of the row to extract
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
+	 * @param column the column name of the object to extract
 	 */
 	public Object get(Integer index, String column) {
-		Row row = data.get(index);
 		DatasetField field = getField(column);
-		return row.get(field);		
+		if (index < 0 || index >= count()) {
+			throw new IllegalArgumentException(index + " not in the dataset bounds.");
+		}
+		return data.get(index).get(field);		
 	}
 	
 	/**
@@ -298,7 +312,6 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return header;
 	}
 	
-	// Columns list
 	/**
 	 * List all the column names of a dataset
 	 */
@@ -307,36 +320,52 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return col;
 	}
 	
+	/**
+	 *  List all the DatasetField of the dataset columns
+	 */
 	public List<DatasetField> fields() {
 		return columns;
 	}
 	
 	/**
-	 * List all the column names of a dataset
+	 * Get the mean value of a numeric column
+	 * @param columnName the name of the column
 	 */
-	public Map<String, Class<?>> dTypes() {
-		Map<String, Class<?>> dtypeMap = new HashMap<>();
-		columns.forEach(field -> dtypeMap.put(field.getName(), field.getType()));
-		return dtypeMap;
-	}
-	
-	//Columns stats
-
 	public Double mean(String columnName) {
-		List<Row> col = getColumn(columnName);
 		DatasetField field = getField(columnName);
-		List<Double> doubleList = new ArrayList<Double>();
-		col.forEach(row -> doubleList.add(Double.valueOf(row.get(field).toString())));
-		Double mean = doubleList.stream().mapToDouble(d -> d).average().orElse(0.0);
+		// throws IllegalArgumentException is the column is not numeric. 
+		if (!numericFields.contains(field.getType())) {
+			throw new IllegalArgumentException(field.getName() + " is not numeric."); 
+		}
+		List<Row> col = getColumn(field);
+		// casts all elements to Double and computes the mean
+		Double mean = col.stream()
+						.mapToDouble(row -> Double.valueOf(row.get(field).toString()))
+						.average()
+						.orElse(0.0);
 		return mean;
 	}
 	
+	/**
+	 * Get the standard deviation of a numeric column
+	 * @param columnName the name of the column
+	 */
 	public Double std(String columnName) {
-		List<Row> col = getColumn(columnName);
 		DatasetField field = getField(columnName);
+		// throws IllegalArgumentException is the column is not numeric. 
+				if (!numericFields.contains(field.getType())) {
+					throw new IllegalArgumentException(field.getName() + " is not numeric."); 
+				}
+		List<Row> col = getColumn(field);
+		// computes the mean
+		Double mean = col.stream()
+				.mapToDouble(row -> Double.valueOf(row.get(field).toString()))
+				.average()
+				.orElse(0.0);
+		// casts all elements to Double
 		List<Double> doubleList = new ArrayList<Double>();
-		Double mean = mean(columnName);
 		col.forEach(row -> doubleList.add(Double.valueOf(row.get(field).toString())));
+		// computes the standard deviation
 		Double temp = 0.0;
 		for (Double d: doubleList)
         {
@@ -346,41 +375,58 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return std;
 	}
 	
+	/**
+	 * Get the max value of a numeric column
+	 * @param columnName the name of the column
+	 */
 	public OptionalDouble max(String columnName) {
-		List<Row> col = getColumn(columnName);
 		DatasetField field = getField(columnName);
+		List<Row> col = getColumn(field);
 		OptionalDouble max = col.stream().mapToDouble(d -> Double.valueOf(d.get(field).toString())).max();
 		return max;
 	}
 	
+	/**
+	 * Get the max value of a numeric column
+	 * @param columnName the name of the column
+	 */
 	public OptionalDouble min(String columnName) {
-		List<Row> col = getColumn(columnName);
 		DatasetField field = getField(columnName);
+		List<Row> col = getColumn(field);
 		OptionalDouble min = col.stream().mapToDouble(d -> Double.valueOf(d.get(field).toString())).min();
 		return min;
 	}
+	
+	/**
+	 * Get the sum of all value of a numeric column
+	 * @param columnName the name of the column
+	 */
 	public Double sum(String columnName) {
-		List<Row> col = getColumn(columnName);
-		
 		DatasetField field = getField(columnName);
+		List<Row> col = getColumn(field);
 		Double sum = col.stream().mapToDouble(d -> Double.valueOf(d.get(field).toString())).sum();
 		return sum;
 	}
 	
-	// For Each
+	/**
+	 * {@inheritDoc}
+	 */
 	public void forEach(Consumer<? super Row> action) {
 		data.forEach(action);
 	}
-	//Filter rows
 	
+	/**
+	 * Get a dataset that match the predicate
+	 * @param predicate a non-interfering, statelesspredicate to apply to each element to determine if itshould be included
+	 * @return a new dataset
+	 */
 	public Dataset filter(Predicate<Row> pred) {
 		List<Row> newData = data.stream().filter(pred).collect(Collectors.<Row>toList());
 		return new Dataset(this.columns, newData);
 	}
 	
-	// OrderBy
-	
 	/**
+	 * Sorts this list according to the order induced by the specified sortOrder.
 	 * @param columnName name of the column use for sorting
 	 * @param sortOrder the sorting order of the dataset. Must be one of ASC, ascending, DESC, descending.
 	 * @return this dataset
@@ -388,87 +434,123 @@ public class Dataset implements Serializable, Iterable<Row> {
 	public Dataset orderBy(String columnName, String sortOrder) {
 		DatasetField field = getField(columnName);
 		data.sort((Row o1, Row o2)-> {
-			try {
-				switch(sortOrder) {
-				case "ASC" :
-					return o1.compareTo(o2, field);
-				case "ascending":
-					return o1.compareTo(o2, field);
-				case "DESC" :
-					return - o1.compareTo(o2, field);
-				case "descending":
-					return - o1.compareTo(o2, field); 
-				default:
-					throw new IllegalArgumentException("sortOrder badly configured. Must be ASC, ascending, DESC, descending.");
-				}
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				return 0;
-			}
-		});
+			switch(sortOrder) {
+			case "ASC" :
+				return o1.compareTo(o2, field);
+			case "ascending":
+				return o1.compareTo(o2, field);
+			case "DESC" :
+				return - o1.compareTo(o2, field);
+			case "descending":
+				return - o1.compareTo(o2, field); 
+			default:
+				throw new IllegalArgumentException("sortOrder badly configured. Must be ASC, ascending, DESC, descending.");
+
+		}});
 		return this;
 	}
-		
+	
+	/**
+	 * Sorts this list according to the ascending order.
+	 * @param columnName name of the column use for sorting
+	 * @return this dataset
+	 */
 	public Dataset orderBy(String columnName) {
 		return orderBy(columnName, "ASC");		
 	}
 	
+	/**
+	 * Sorts this list according to the order induced by the specified Comparator. The sort is stable: this method must notreorder equal elements. 
+	 * @param comparator the Comparator used to compare list elements.A null value indicates that the elements' natural ordering should be used.
+	 * @return this dataset
+	 */
 	public Dataset orderBy(Comparator<Row> comparator) {
 		data.sort((Row o1, Row o2)-> {return comparator.compare(o1, o2);});
 		return this;
 	}
 
-	//Split and subDataset methods
+	/**
+	 * Extract subset of row from the dataset.
+	 * @param begin the first index to extract
+	 * @param end the last index to extract
+	 * @return a new dataset
+	 */
 	public Dataset subDataset(int begin, int end) {
 		return new Dataset(columns, data.subList(begin, end));
 	}
 	
+	/**
+	 * Split the dataset into n new dataset
+	 * @param n the number of subdatset
+	 * @return a list of splitted dataset
+	 */
 	public List<Dataset> split(int n) {
 		List<Dataset> datasets = new ArrayList<>();
 		int size = (int) count();
 		int i;
 		for (i=0; i<size/n; i++) {
 			datasets.add(
-					new Dataset(columns, data.subList(i*n, (i+1)*n))
+					subDataset(i*n, (i+1)*n)
 					);
 		}
 		if (i*n != size) {
 			datasets.add(
-					new Dataset(columns, data.subList(i*n, size))
+					subDataset(i*n, size)
 					);
 		}
 		return datasets;
 	}
 	
-	// Join
-	
+	/**
+	 * Joins two dataset on the given keys (leftColumnName, rightColumnName).
+	 * @param other the dataset to join with
+	 * @param leftColumnName the name of the left key column
+	 * @param rigthColumnNamethe name of the right key column
+	 * @param how the join type. Must be one of left, right, inner, full.
+	 * @returna new dataset
+	 */
 	public Dataset join(Dataset other, String leftColumnName, String rigthColumnName, String how) throws IllegalArgumentException, IllegalAccessException {
-		Dataset joinedDataset = Combining.join(this, other, how, leftColumnName, rigthColumnName);
+		Dataset joinedDataset = Combining.join(this, other, leftColumnName, rigthColumnName, how);
 		return joinedDataset;
 	}
-	// Group by
-	
-	public Dataset groupBy(String columnName, String... aggType) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+
+	/**
+	 * Group the dataset by the given columnn. Multiple aggregation can be performed to numeric fields. 
+	 * @param columnName the name of column usde for grouping.
+	 * @param aggType the types of aggreations to perform. Must be one of min, max, sum, count, mean, std.
+	 * @return a new dataset
+	 */
+	public Dataset groupBy(String columnName, String... aggType) {
 		DatasetField field = getField(columnName);
 		return groupBy(field, aggType);
 	}
-	
-	private Dataset groupBy(DatasetField fieldBy, String... aggType) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+
+	/**
+	 * Group the dataset by the given columnn. Multiple aggregation can be performed to numeric fields. 
+	 * @param columnName the name of column usde for grouping.
+	 * @param aggType the types of aggreations to perform. Must be one of min, max, sum, count, mean, std.
+	 * @return a new dataset
+	 */
+	private Dataset groupBy(DatasetField fieldBy, String... aggType) {
 		//Get groups
 		Dataset groupDataset = new Dataset(Arrays.asList(fieldBy));
 		HashMap<Object, Dataset> map = group(fieldBy);
 		List<String> aggTypes = Arrays.asList(aggType);
 		
+		//if count is required, add the field to the dataset
 		DatasetField countField = null;
+		
 		if (aggTypes.contains("count")) {
-			countField = DatasetFieldUtils.getCountField();
+			countField = new DatasetField(fieldBy.getName() + "Count", long.class);
 			groupDataset.columns.add(countField);
 		}
-			
+		
+		//for each unique key, create a new row
 		for (Object key : map.keySet()) {
 			Dataset dataset = map.get(key);
 			Row row = new Row();
 		
+			//Fills the row with the aggregation of numeric columns
 			for (DatasetField field : columns) {
 				
 				if (fieldBy.equals(field)) {
@@ -476,44 +558,74 @@ public class Dataset implements Serializable, Iterable<Row> {
 				} else if (numericFields.contains(field.getType())) {
 
 					if (aggTypes.contains("mean")) {
-						DatasetField meanField = DatasetFieldUtils.getMeanField();
-						meanField.setName(field.getName() + "Mean");
-						if (!groupDataset.columns().contains(meanField.getName())) {
+						//Initiate a DatasetField and its name
+						String fieldName = field.getName() + "Mean";
+						DatasetField meanField = null;
+						try {
+							// if the meanField is already in the dataset
+							meanField = groupDataset.getField(fieldName); 
+						} catch (IllegalArgumentException e) {
+							meanField = new DatasetField(fieldName, Double.class);
 							groupDataset.columns.add(meanField);
 						}
 						row.put(meanField, dataset.mean(field.getName()));
 					}
+					
 					if (aggTypes.contains("sum")) {
-						DatasetField sumField = DatasetFieldUtils.getSumField();
-						sumField.setName(field.getName() + "Sum");
-						if (!groupDataset.columns().contains(sumField.getName())) {
+						//Initiate a DatasetField and its name
+						String fieldName = field.getName() + "Sum";
+						DatasetField sumField = null;
+						try {
+							// if the sumField is already in the dataset
+							sumField = groupDataset.getField(fieldName); 
+						} catch (IllegalArgumentException e) {
+							sumField = new DatasetField(fieldName, Double.class);
 							groupDataset.columns.add(sumField);
 						}
 						row.put(sumField, dataset.sum(field.getName()));
 					}
+					
 					if (aggTypes.contains("count")) {
 						row.put(countField, dataset.count());
 					}
+					
 					if (aggTypes.contains("std")) {
-						DatasetField stdField = DatasetFieldUtils.getStdField();
-						stdField.setName(field.getName() + "Std");
-						if (!groupDataset.columns().contains(stdField.getName())) {
+						//Initiate a DatasetField and its name
+						String fieldName = field.getName() + "Std";
+						DatasetField stdField = null;
+						try {
+							// if the stdField is already in the dataset
+							stdField = groupDataset.getField(fieldName); 
+						} catch (IllegalArgumentException e) {
+							stdField = new DatasetField(fieldName, Double.class);
 							groupDataset.columns.add(stdField);
 						}
 						row.put(stdField, dataset.std(field.getName()));
 					}
+					
 					if (aggTypes.contains("min")) {
-						DatasetField minField = DatasetFieldUtils.getMinField();
-						minField.setName(field.getName() + "Min");
-						if (!groupDataset.columns().contains(minField.getName())) {
+						//Initiate a DatasetField and its name
+						String fieldName = field.getName() + "Min";
+						DatasetField minField = null;
+						try {
+							// if the minField is already in the dataset
+							minField = groupDataset.getField(fieldName); 
+						} catch (IllegalArgumentException e) {
+							minField = new DatasetField(fieldName, Double.class);
 							groupDataset.columns.add(minField);
 						}
 						row.put(minField, dataset.min(field.getName()).getAsDouble());
 					}
+					
 					if (aggTypes.contains("max")) {
-						DatasetField maxField = DatasetFieldUtils.getMaxField();
-						maxField.setName(field.getName() + "Max");
-						if (!groupDataset.columns().contains(maxField.getName())) {
+						//Initiate a DatasetField and its name
+						String fieldName = field.getName() + "Max";
+						DatasetField maxField = null;
+						try {
+							// if the maxField is already in the dataset
+							maxField = groupDataset.getField(fieldName); 
+						} catch (IllegalArgumentException e) {
+							maxField = new DatasetField(fieldName, Double.class);
 							groupDataset.columns.add(maxField);
 						}
 						row.put(maxField, dataset.max(field.getName()).getAsDouble());
@@ -523,15 +635,16 @@ public class Dataset implements Serializable, Iterable<Row> {
 			groupDataset.append(row);
 			
 		}
-		if (aggTypes.contains("count")) {
-			groupDataset.rename("count", fieldBy.getName()+"Count");
-		}
 			
 		return groupDataset;
 	}
 	
-	
-	public HashMap<Object, Dataset> group(DatasetField fieldBy) throws IllegalArgumentException, IllegalAccessException {
+	/**
+	 * Get a map of datasets that share common column value. The map key corresponds to this value and the map value t the dataset.
+	 * @param fieldBy the field of the column used for grouping the dataset. The resulting map keys correpond to all the distinct value of this column.
+	 * @return a map
+	 */
+	public HashMap<Object, Dataset> group(DatasetField fieldBy) {
 		//Get groups
 		HashMap<Object, Dataset> map = new HashMap<Object, Dataset>();
 		for (Row item : data) {
@@ -547,17 +660,28 @@ public class Dataset implements Serializable, Iterable<Row> {
 		}
 		return map;
 	}
-	// apply function to a column
 	
-	public Dataset apply(String colNames, Function<String, ?> function) {
-		DatasetField field = getField(colNames);
+	/**
+	 * Apply a function to all the element of a given column
+	 * @param colNames the name of the column
+	 * @param function the function argument
+	 * @param inputClass the class of the input. Must match the current DatasetField type.
+	 * @param outputClass the class of the input. Will be the new type of the DatasetField.
+	 * @return this dataset
+	 */
+	@SuppressWarnings("unchecked")
+	public <I, O> Dataset apply(String colName, Function<I, O> function, Class<I> inputClass, Class<O> outputClass) {
+		DatasetField field = getField(colName);
+		if (! field.getType().equals(inputClass)) {
+			throw new IllegalArgumentException("The input type " + inputClass.getCanonicalName() + " does not match the " + colName + " type.");
+		}
+		field.setType(outputClass);
 		for (Row row : data) {
-			row.replace(field, function.apply(row.get(field).toString()));
+			row.replace(field, function.apply((I) row.get(field)));
 		}
 		return this;
 	}
-	//Drop and remove functions
-	
+
 	/**
 	 * Remove a row using its index
 	 * @param index the index of the row to remove
@@ -646,8 +770,6 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return removedItems;
 	}
 	
-	// Contains method
-	
 	/**
 	 * Check if a value is contained in the dataset
 	 * @param row 
@@ -657,7 +779,6 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return data.contains(row);
 	}
 	
-	// isEmpty method
 	/**
 	 * Check if the dataset is empty
 	 * @return True if empty
@@ -666,7 +787,6 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return data.isEmpty();
 	}
 	
-	// Count and Shape
 	/**
 	 * Get the numbers of rows in the dataset
 	 */
@@ -685,16 +805,11 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return shape;
 	}
 	
-	// Private methods 
-	
-	private List<Row> getColumn(String fieldName) {
-		//get the required field
-		DatasetField field = getField(fieldName);
-		//get the field from all items
-		List<Row> values = getColumn(field);
-		return values;
-	}
-	
+	/**
+	 * Get the data of a given column from the dataset.
+	 * @param field the DatasetField associated to the column to extract
+	 * @return a list of mono columned rows
+	 */
 	private List<Row> getColumn(DatasetField field) {
 		//get the field from all items
 		List<Row> values = new ArrayList<Row>();
@@ -706,6 +821,11 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return values;
 	}
 	
+	/**
+	 * Get the data of multiple given columns from the dataset.
+	 * @param field the DatasetField associated to the column to extract
+	 * @return a list of multi columned rows
+	 */
 	private List<Row> getColumns(List<DatasetField> fields) {
 		List<Row> values = new ArrayList<Row>();
 		for (Row row: data) {
@@ -713,10 +833,12 @@ public class Dataset implements Serializable, Iterable<Row> {
 		}
 		return values;
 	}
-	
 
-	//filter fields
-	
+	/**
+	 * Get the data of columns from the dataset excepting given ones.
+	 * @param fieldNames
+	 * @return
+	 */
 	private List<DatasetField> filterFields(String... fieldNames) {
 		List<String> fieldNamesList = Arrays.asList(fieldNames);
 		List<DatasetField> filteredList = columns.stream()
@@ -725,15 +847,11 @@ public class Dataset implements Serializable, Iterable<Row> {
 		return filteredList;
 	}
 	
-	private List<DatasetField> filterFields(String fieldNames) {
-		List<String> fieldNamesList = Arrays.asList(fieldNames);
-		List<DatasetField> filteredList = columns.stream()
-		        .filter(item -> !fieldNamesList.contains(item.getName()))
-		        .collect(Collectors.toList());
-		return filteredList;
-	}
-	
-	// get DatasetField
+	/**
+	 * Get the DatasetField associated to the given fieldName
+	 * @param fieldName the name of the field to get
+	 * @return a DatasetField
+	 */
 	public DatasetField getField(String fieldName) {
 		DatasetField resField = null;
 		for (DatasetField field : columns) {
@@ -742,9 +860,17 @@ public class Dataset implements Serializable, Iterable<Row> {
 				break;
 			}
 		}
+		if (resField == null) {
+			throw new IllegalArgumentException(fieldName + " not found in the columns of the dataset.");
+		}
 		return resField;
 	}
 	
+	/**
+	 * Get several DatasetField associated to given fieldNames
+	 * @param fieldName the name of the field to get
+	 * @return a DatasetField
+	 */
 	private List<DatasetField> getFields(String... fieldNames) {
 		List<String> fieldNamesList = Arrays.asList(fieldNames);
 		List<DatasetField> fieldList = new ArrayList<DatasetField>();
@@ -754,18 +880,6 @@ public class Dataset implements Serializable, Iterable<Row> {
 			}
 		}
 		return fieldList;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private <I> List<Row> generateRows(List<I> newData) {
-		if (!data.isEmpty() && Row.class.isInstance(data.get(0))) {
-			return (List<Row>) newData;
-		}
-		List<Row> newRows = new ArrayList<Row>();
-		for (I item : newData) {
-			newRows.add(new Row(item));
-		}
-		return newRows;
 	}
 	
 	@Override

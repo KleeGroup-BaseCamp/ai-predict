@@ -10,40 +10,44 @@ public class DatasetField extends AccessibleObject{
 	
 	private String name;
 	private Class<?> type;
-	private Field field;
 	
+	/**
+	 * Build a DatasetField based on an existing field
+	 * @param field the original field
+	 */
 	public DatasetField(Field field) {
 		this.name = field.getName();
 		this.type = field.getType();
-		this.setField(field);
 	}
 	
+	/*
+	 * Copy a DatasetField
+	 */
 	public DatasetField(DatasetField field) {
 		this.name = field.getName();
 		this.type = field.getType();
-		this.setField(field.getField());
 	}
 	
-	public Object get(Object o) throws IllegalArgumentException, IllegalAccessException {
-		field.setAccessible(true);
-		return field.get(o);
-	}
-	
-	public void set(Object o, Object value) throws IllegalArgumentException, IllegalAccessException {
-		field.setAccessible(true);
-		field.set(o, value);
-	}
-	
+	/*
+	 * Build a Dataset field with a given name and type 
+	 */
+	public DatasetField(String name, Class<?> type) {
+		this.name = name;
+		this.type = type;
+	}	
 	
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public Class<?> getType() {
 		return type;
 	}
+	
 	public void setType(Class<?> type) {
 		this.type = type;
 	}
@@ -54,20 +58,12 @@ public class DatasetField extends AccessibleObject{
 		return datasetFields;
 	}
 	
+	public boolean equals(DatasetField other) {
+		return name.equals(other.getName());
+	}
+	
 	@Override
 	public String toString() {
 		return name + " (" + type + ")";
-	}
-
-	public Field getField() {
-		return field;
-	}
-
-	public void setField(Field field) {
-		this.field = field;
-	}
-	
-	public boolean equals(DatasetField other) {
-		return name.equals(other.getName());
 	}
 }

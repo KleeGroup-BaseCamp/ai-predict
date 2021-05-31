@@ -16,7 +16,6 @@ import io.vertigo.ai.example.data.models.LogFeature;
 import io.vertigo.ai.example.data.models.ResourceType;
 import io.vertigo.ai.example.data.models.SeverityType;
 import io.vertigo.ai.structure.dataset.models.Dataset;
-import io.vertigo.ai.train.data.Iris;
 
 public class Preprocessing {
 
@@ -28,17 +27,16 @@ public class Preprocessing {
 		Dataset eventDataset = new Dataset(EventType.class, eventTypes);
 		Dataset resourceDataset = new Dataset(ResourceType.class, resourceTypes);
 		
-		Function<String, Double> log = new Function<String, Double>() {
+		Function<Integer, Double> log = new Function<Integer, Double>() {
 
 			@Override
-			public Double apply(String t) {
-				Double d = Double.valueOf(t);
-				return Math.log10(1+d);
+			public Double apply(Integer t) {
+				return Math.log10(1+t);
 			}
 			
 		};
 		
-		Dataset logFeatureDataset = featureDataset.apply("volume", log);
+		Dataset logFeatureDataset = featureDataset.apply("volume", log, Integer.class, Double.class);
 				
 		Dataset eventById = eventDataset.groupBy("id", "count").select("id", "idCount").rename("idCount", "eventPerId");
 		Dataset resourceCount = resourceDataset.groupBy("resourceType", "count").select("resourceType", "resourceTypeCount");
@@ -162,6 +160,7 @@ public class Preprocessing {
 	
 	@Test
 	public void testPreprocessing() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, IOException {
+		long startTime = System.currentTimeMillis();
 		Dataset train = runPreprocessing();
 		Dataset filteredTrain = train.filter(p -> (int) p.get("id") == 10422);
 		// Checks dimensions
@@ -185,8 +184,15 @@ public class Preprocessing {
 		Assertions.assertEquals((long)1, filteredTrain.get(0, "eventPerId"));
 		Assertions.assertEquals("event_type 11", filteredTrain.get(0, "eventType"));
 		Assertions.assertEquals((long)25, filteredTrain.get(0, "locationCount"));
-		
-		
+		long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println(elapsedTime);
+        Runtime runtime = Runtime.getRuntime();
+        // Run the garbage collector
+        runtime.gc();
+        // Calculate the used memory
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory is bytes: " + memory);
 	}
 	
 }
