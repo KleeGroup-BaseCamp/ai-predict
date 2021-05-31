@@ -1,4 +1,5 @@
 import os
+import socket
 from AIPredict.settings.production import *
 
 TMP_PATH = os.path.abspath(os.path.join(BASE_DIR, 'tmp'))
@@ -38,4 +39,22 @@ LOGGING = {
             'level': 'INFO',
         },
     },
+}
+
+TRAIN_DB = {
+    'traindb' : 
+        {
+            "sql" : "postgresql",
+            "username" : "postgres",
+            "password" : "admin",
+            "host" : "localhost",
+            "keyspace" : "traindb"
+        },
+    'cassandra_spark' : 
+        {
+            "username" : "cassandra",
+            "password" : "cassandra",
+            "keyspace" : "traindb",
+            "cluster" : [socket.gethostbyname(socket.gethostname())]
+        }
 }

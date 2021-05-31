@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.inject.Inject;
 
@@ -69,14 +71,15 @@ public abstract class AbstractExampleTrainManagerTest {
 
 	protected abstract NodeConfig buildNodeConfig();
 	
-	private void createSparkConf() {
+	private void createSparkConf() throws UnknownHostException {
         SparkConf conf = new SparkConf();
         conf.setAppName("Java API demo");
         conf.setMaster("spark://127.0.0.1:7077");
         
-        conf.set("spark.driver.host", "192.168.1.70");
+        String localhost = InetAddress.getLocalHost().getHostAddress();
+        conf.set("spark.driver.host", localhost);
 
-        conf.set("spark.cassandra.connection.host", "192.168.1.70");
+        conf.set("spark.cassandra.connection.host", localhost);
         conf.set("spark.cassandra.auth.username", "cassandra");            
         conf.set("spark.cassandra.auth.password", "cassandra");
         
@@ -85,15 +88,16 @@ public abstract class AbstractExampleTrainManagerTest {
 	
 	private void createSparkContext() {
 		JavaSparkContext sc = new JavaSparkContext(conf);
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/com/datastax/spark/spark-cassandra-connector_2.11/2.5.2/spark-cassandra-connector_2.11-2.5.2.jar");
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/com/datastax/spark/spark-cassandra-connector-driver_2.11/2.5.2/spark-cassandra-connector-driver_2.11-2.5.2.jar");
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/com/datastax/oss/java-driver-core-shaded/4.10.0/java-driver-core-shaded-4.10.0.jar");
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/com/datastax/oss/java-driver-shaded-guava/25.1-jre-graal-sub-1/java-driver-shaded-guava-25.1-jre-graal-sub-1.jar");
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/com/typesafe/config/1.4.1/config-1.4.1.jar");
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/com/datastax/oss/native-protocol/1.4.12/native-protocol-1.4.12.jar");
-        sc.addJar("file:///C:/Users/dcouillard/.m2/repository/org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar");
+		String userHome = System.getProperty("user.home");
+        sc.addJar("file:///"+userHome+"/.m2/repository/com/datastax/spark/spark-cassandra-connector_2.11/2.5.2/spark-cassandra-connector_2.11-2.5.2.jar");
+        sc.addJar("file:///"+userHome+"/.m2/repository/com/datastax/spark/spark-cassandra-connector-driver_2.11/2.5.2/spark-cassandra-connector-driver_2.11-2.5.2.jar");
+        sc.addJar("file:///"+userHome+"/.m2/repository/com/datastax/oss/java-driver-core-shaded/4.10.0/java-driver-core-shaded-4.10.0.jar");
+        sc.addJar("file:///"+userHome+"/.m2/repository/com/datastax/oss/java-driver-shaded-guava/25.1-jre-graal-sub-1/java-driver-shaded-guava-25.1-jre-graal-sub-1.jar");
+        sc.addJar("file:///"+userHome+"/.m2/repository/com/typesafe/config/1.4.1/config-1.4.1.jar");
+        sc.addJar("file:///"+userHome+"/.m2/repository/com/datastax/oss/native-protocol/1.4.12/native-protocol-1.4.12.jar");
+        sc.addJar("file:///"+userHome+"/.m2/repository/org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar");
 
-        sc.addJar("file:///C:/Users/dcouillard/Documents/predict/telstra/target/telstra-0.0.1-SNAPSHOT.jar");
+        sc.addJar("./src/main/resources/io/vertigo/ai/models/telstra-0.0.1-SNAPSHOT.jar");
         
         this.sc = sc;
 	}

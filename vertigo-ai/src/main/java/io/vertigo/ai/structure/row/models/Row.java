@@ -30,7 +30,7 @@ public class Row implements DtObject {
 	/**
 	 * Construct a row based on an HashMap
 	 */
-	public Row(HashMap<DatasetField, Object> item) {
+	public Row(HashMap<DatasetField, Object> item) { 
 		map = item;
 	}
 	
@@ -40,7 +40,7 @@ public class Row implements DtObject {
 	public Row() {
 		this.map = new HashMap<DatasetField, Object>();
 	}
-	
+
 	/**
 	 * Construct a row based on an HashMap with an UID and a RowDefinition for Vertigo Applications
 	 */

@@ -39,11 +39,15 @@ public class Combining {
 	}
 	
 	private static Dataset innerJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
+		// group right dataset. The map values are datasets that share the same rightField value;
 		HashMap<Object, Dataset> rightMap = right.group(rightField);
+		//initiate the joined dataset
 		Dataset dataset = new Dataset(columns);
 		for (Row leftRow : left) {
+			//for each row of the left dataset, compares the value of leftField to the keys of rightMap
 			Object key = leftRow.get(leftField);
 			if (rightMap.containsKey(key)) {
+				// if the list of rigtMap's keys contains the value of leftField, merges the left row with every rows of the dataset linked to the rightMap's key and append them to 
 				for (Row rightRow : rightMap.get(key)) {
 					Row item = new Row(leftRow);
 					Row rightItem = new Row(rightRow);
@@ -58,13 +62,23 @@ public class Combining {
 	}
 	
 	private static Dataset leftJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
+		// group right dataset. The map values are datasets that share the same rightField value;
 		HashMap<Object, Dataset> rightMap = right.group(rightField);
 		Dataset dataset = new Dataset(columns);
 		
+		// creating a right row map with only null values
+		HashMap<DatasetField, Object> rightRowContent = new HashMap<DatasetField, Object>();
+		for (DatasetField field: right.fields()) {
+			if (! field.equals(rightField)) {
+				rightRowContent.put(field, null);
+			}
+		}
+		
 		for (Row leftRow : left) {
+			//for each row of the left dataset, compares the value of leftField to the keys of rightMap
 			Object key = leftRow.get(leftField);
 			if (rightMap.containsKey(key)) {
-				
+				// if the list of rigtMap's keys contains the value of leftField, merges the left row with every rows of the dataset linked to the rightMap's key and append them to 
 				for (Row rightRow : rightMap.get(key)) {
 					Row newRow = new Row();
 					leftRow.forEach((k, v) -> newRow.put(k, v));
@@ -72,12 +86,8 @@ public class Combining {
 					dataset.append(newRow);
 				}
 			} else {
-				HashMap<DatasetField, Object> rightRowContent = new HashMap<DatasetField, Object>();
-				for (DatasetField field: right.fields()) {
-					if (! field.equals(rightField)) {
-						rightRowContent.put(field, null);
-					}
-				}
+				//else join the left row with a right row containing only null values.
+
 				Row newRow = new Row();
 				leftRow.forEach((k, v) -> newRow.put(k, v));
 				rightRowContent.forEach((k, v) -> newRow.put(k, v));

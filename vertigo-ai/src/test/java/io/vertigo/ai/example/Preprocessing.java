@@ -160,7 +160,6 @@ public class Preprocessing {
 	
 	@Test
 	public void testPreprocessing() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, IOException {
-		long startTime = System.currentTimeMillis();
 		Dataset train = runPreprocessing();
 		Dataset filteredTrain = train.filter(p -> (int) p.get("id") == 10422);
 		// Checks dimensions
@@ -184,15 +183,6 @@ public class Preprocessing {
 		Assertions.assertEquals((long)1, filteredTrain.get(0, "eventPerId"));
 		Assertions.assertEquals("event_type 11", filteredTrain.get(0, "eventType"));
 		Assertions.assertEquals((long)25, filteredTrain.get(0, "locationCount"));
-		long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println(elapsedTime);
-        Runtime runtime = Runtime.getRuntime();
-        // Run the garbage collector
-        runtime.gc();
-        // Calculate the used memory
-        long memory = runtime.totalMemory() - runtime.freeMemory();
-        System.out.println("Used memory is bytes: " + memory);
 	}
 	
 }

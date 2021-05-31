@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-from AIPredict.settings.production import TRAIN_DB
+from AIPredict.settings.development import TRAIN_DB
 
 def build_url(database:dict):
     return database["sql"]+"://"+database["username"]+":"+database["password"]+"@"+database["host"]+"/"+database["keyspace"]

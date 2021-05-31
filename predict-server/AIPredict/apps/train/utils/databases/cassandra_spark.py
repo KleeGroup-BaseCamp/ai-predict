@@ -1,5 +1,5 @@
 import pandas as pd
-from AIPredict.settings.production import TRAIN_DB
+from AIPredict.settings.development import TRAIN_DB
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.query import SimpleStatement
