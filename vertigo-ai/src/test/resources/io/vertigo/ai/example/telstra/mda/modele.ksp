@@ -1,0 +1,48 @@
+package io.vertigo.ai.example.telstra.domain
+
+create Domain DoLabel {
+    dataType: String
+    storeType: "TEXT"
+}
+
+create Domain DoDecimal {
+    dataType: BigDecimal
+    storeType: "NUMERIC(16,16)"
+}
+
+create Domain DoInteger {
+    dataType: Integer
+    storeType: "NUMERIC"
+}
+
+create DtDefinition DtLocation {
+	stereotype: "Entity"
+    id id {domain: DoInteger label:"ID"}
+    field location {domain: DoLabel label:"Location" cardinality:"1"}
+    field severityFault {domain: DoInteger label:"Severity Fault" cardinality:"1"}
+}
+
+create DtDefinition DtResourceType {
+	stereotype: "StaticMasterData"
+    id id {domain: DoInteger label:"ID" }
+    field resourceType {domain: DoLabel label:"Resource Type" cardinality:"1"}
+}
+
+create DtDefinition DtSeverityType {
+	stereotype: "StaticMasterData"
+    id id {domain: DoInteger label:"ID"}
+    field severityType {domain: DoLabel label:"Severity Type" cardinality:"1"}
+}
+
+create DtDefinition DtEventType {
+	stereotype: "StaticMasterData"
+    id id {domain: DoInteger label:"ID"}
+    field eventType {domain: DoLabel label:"Event Type" cardinality:"1"}
+}
+
+create DtDefinition DtLogFeature {
+	stereotype: "Entity"
+    id id {domain: DoInteger label:"ID" }
+    field logFeature {domain: DoLabel label:"Log Feature" cardinality:"1"}
+    field volume {domain: DoInteger label:"Volume" cardinality:"1"}
+}
