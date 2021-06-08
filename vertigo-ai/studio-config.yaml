@@ -1,5 +1,6 @@
 resources: 
   - { type: kpr, path: src/test/resources/io/vertigo/ai/example/telstra/module.kpr}
+  - { type: kpr, path: src/test/resources/io/vertigo/ai/example/iris/module.kpr}
 mdaConfig:
   projectPackageName: io.vertigo.ai.example
   targetGenDir : src/test/

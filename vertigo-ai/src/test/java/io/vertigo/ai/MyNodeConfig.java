@@ -1,12 +1,12 @@
 package io.vertigo.ai;
 
-import io.vertigo.ai.example.data.ItemDefinitionProvider;
-import io.vertigo.ai.example.data.SmartTypes;
-import io.vertigo.ai.predict.data.ItemPredictClient;
-import io.vertigo.ai.predict.data.TestPredictSmartTypes;
-import io.vertigo.ai.predict.data.domain.ItemDatasetLoader;
-import io.vertigo.ai.predict.withstore.ItemDatasetStoreLoader;
+import io.vertigo.ai.example.iris.IrisPAO;
+import io.vertigo.ai.example.iris.ItemDefinitionProvider;
+import io.vertigo.ai.example.iris.dao.IrisDAO;
+import io.vertigo.ai.example.iris.data.IrisSmartTypes;
+import io.vertigo.ai.example.iris.data.datageneration.IrisGenerator;
 import io.vertigo.commons.CommonsFeatures;
+import io.vertigo.commons.impl.transaction.VTransactionManagerImpl;
 import io.vertigo.core.node.config.BootConfig;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.core.node.config.ModuleConfig;
@@ -23,7 +23,7 @@ import io.vertigo.datastore.DataStoreFeatures;
 
 public final class MyNodeConfig {
 	
-	public static NodeConfig config(final boolean withDb, final boolean example) {
+	public static NodeConfig config(final boolean withDb, final boolean iris) {
 		
 		final AIFeatures aiFeatures = new AIFeatures()
 				.withAIPredictBackend(
@@ -39,67 +39,41 @@ public final class MyNodeConfig {
 						.withJaninoScript()
 						.build());
 		
-		if (withDb) {
-			nodeConfigBuilder
-				.addModule(new DatabaseFeatures()
-						.withSqlDataBase()
-						.withC3p0(
-								Param.of("name", "train"),
-								Param.of("dataBaseClass", PostgreSqlDataBase.class.getName()),
-								Param.of("jdbcDriver", "org.postgresql.Driver"),
-								Param.of("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/traindb?user=postgres&password=admin"))
-								//Param.of("jdbcUrl", "jdbc:postgresql://docker-vertigo.part.klee.lan.net:5432/postgres?user=postgres&password=postgres"))
-						.withC3p0(
-								Param.of("dataBaseClass", H2DataBase.class.getName()),
-								Param.of("jdbcDriver", "org.h2.Driver"),
-								Param.of("jdbcUrl", "jdbc:h2:mem:database"))
-						.build());
-		} else {
-			nodeConfigBuilder
+		nodeConfigBuilder
 			.addModule(new DatabaseFeatures()
 					.withSqlDataBase()
 					.withC3p0(
+							Param.of("name", "train"),
 							Param.of("dataBaseClass", PostgreSqlDataBase.class.getName()),
 							Param.of("jdbcDriver", "org.postgresql.Driver"),
 							Param.of("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/traindb?user=postgres&password=admin"))
-							//Param.of("jdbcUrl", "jdbc:postgresql://docker-vertigo.part.klee.lan.net:5432/postgres?user=postgres&password=postgres"))
+					.withC3p0(
+							Param.of("dataBaseClass", H2DataBase.class.getName()),
+							Param.of("jdbcDriver", "org.h2.Driver"),
+							Param.of("jdbcUrl", "jdbc:h2:mem:database"))
 					.build());
-		}
 		
 		nodeConfigBuilder.addModule(new DataModelFeatures().build());
 		
-		if (withDb) {
-			nodeConfigBuilder.addModule(new DataStoreFeatures()
+		nodeConfigBuilder.addModule(new DataStoreFeatures()
 					.withCache()
 					.withMemoryCache()
 					.withEntityStore()
 					.withSqlEntityStore()
 					.build());
-		}
+
+		nodeConfigBuilder.addModule(aiFeatures.build())
+				.addModule(ModuleConfig.builder("myApp")
+				.addComponent(ItemDefinitionProvider.class)
+				.addComponent(IrisPAO.class)
+				.addComponent(IrisDAO.class)
+				.addComponent(IrisGenerator.class)
+				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+						.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
+						.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
+						.build())
+				.build());
 		
-		if (example) {
-			nodeConfigBuilder.addModule(aiFeatures.build())
-					.addModule(ModuleConfig.builder("myApp")
-					.addComponent(ItemDefinitionProvider.class)
-					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
-							.addDefinitionResource("smarttypes", SmartTypes.class.getName())
-							.addDefinitionResource("dtobjects", "io.vertigo.ai.example.data.domain.DtDefinitions")
-							.build())
-					.build());
-			
-		} else {
-			nodeConfigBuilder.addModule(aiFeatures.build())
-			.addModule(ModuleConfig.builder("myApp")
-					.addComponent(ItemPredictClient.class)
-					.addComponent(ItemDatasetLoader.class)
-					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
-							.addDefinitionResource("smarttypes", TestPredictSmartTypes.class.getName())
-							.addDefinitionResource("dtobjects", "io.vertigo.ai.predict.data.DtDefinitions")
-							.build())
-					.addComponent(withDb ? io.vertigo.ai.predict.withstore.ItemDatasetStoreLoader.class : ItemDatasetStoreLoader.class)
-					.addDefinitionProvider(StoreCacheDefinitionProvider.class)
-					.build());
-		}
 		return nodeConfigBuilder.build();
 		
 	}

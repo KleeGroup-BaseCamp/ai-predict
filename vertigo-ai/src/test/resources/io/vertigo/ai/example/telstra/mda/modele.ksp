@@ -6,7 +6,7 @@ create Domain DoLabel {
 }
 
 create Domain DoDecimal {
-    dataType: BigDecimal
+    dataType: Double
     storeType: "NUMERIC(16,16)"
 }
 
