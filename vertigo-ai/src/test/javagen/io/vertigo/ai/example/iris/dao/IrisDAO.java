@@ -72,7 +72,7 @@ public final class IrisDAO extends DAO<Iris, java.lang.Long> implements StoreSer
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkBulkCreateIris",
 			request = "INSERT INTO IRIS (ID, SEPALLENGHT, SEPALWIDTH, PETALLENGTH, PETALWIDTH, VARIETY) values (nextval('SEQ_EQUIPEMENT'), #irisList.sepalLength#, #irisList.sepalWidth#, #irisList.petalLength#, #irisList.petalWidth#, #irisList.variety#)",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
 	public void bulkCreateIris(@io.vertigo.datamodel.task.proxy.TaskInput(name = "irisList", smartType = "STyDtIris") final io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.example.iris.domain.Iris> irisList) {
 		final Task task = createTaskBuilder("TkBulkCreateIris")
 				.addValue("irisList", irisList)

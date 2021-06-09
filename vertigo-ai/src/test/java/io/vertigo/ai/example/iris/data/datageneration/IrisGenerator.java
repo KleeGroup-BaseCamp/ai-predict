@@ -4,13 +4,15 @@ import java.math.BigDecimal;
 
 import javax.inject.Inject;
 
-import io.vertigo.ai.example.iris.IrisPAO;
 import io.vertigo.ai.example.iris.dao.IrisDAO;
+import io.vertigo.ai.example.iris.domain.Iris;
 import io.vertigo.ai.utils.CSVReaderUtil;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.resource.ResourceManager;
+import io.vertigo.database.migration.MigrationManager;
+import io.vertigo.database.sql.SqlManager;
 
 @Transactional
 public class IrisGenerator implements Component{ 
@@ -19,7 +21,10 @@ public class IrisGenerator implements Component{
 	private static final int IRIS_CSV_FILE_COLUMN_NUMBER = 5;
 	
 	@Inject
-	private IrisPAO irisPAO;
+	private IrisDAO irisDAO;
+	
+	@Inject
+	private MigrationManager migrationManager;
 	
 	@Inject
 	private ResourceManager resourceManager;
@@ -28,18 +33,18 @@ public class IrisGenerator implements Component{
 		Assertion.check().isTrue(record.length == IRIS_CSV_FILE_COLUMN_NUMBER,
 				"CSV File {0} Format not suitable for Equipment Types", csvFilePath);
 		//---
-		final Double sepalLength = Double.valueOf(record[0]);
-		final Double sepalWidth = Double.valueOf(record[1]);
-		final Double petalLength = Double.valueOf(record[2]);
-		final Double petalWidth = Double.valueOf(record[3]);
-		final String variety = record[4];
 		
-		irisPAO.createIris(sepalLength, sepalWidth, petalLength, petalWidth, variety);
+		Iris iris = new Iris();
+		iris.setPetalLength(new BigDecimal(record[2]));
+		iris.setSepalLength(new BigDecimal(record[0]));
+		iris.setPetalWidth(new BigDecimal(record[3]));
+		iris.setSepalWidth(new BigDecimal(record[1]));
+		iris.setVariety(record[4]);
+		irisDAO.create(iris);
 	}
 	
 	public void createIrisFromCSV() {
-		System.out.println(resourceManager);
-		System.out.println(irisPAO);
+		migrationManager.update(SqlManager.MAIN_CONNECTION_PROVIDER_NAME);
 		CSVReaderUtil.parseCSV(resourceManager, IRIS_CSV_FILE_PATH, this::consume);
 	}
 	

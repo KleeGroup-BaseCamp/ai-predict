@@ -18,15 +18,15 @@ create Task TkLoadIris {
 }
 
 create Task TkBulkCreateIris {  
-    className : "io.vertigo.basics.task.TaskEngineSelect"
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
     request : "
             INSERT INTO IRIS (ID, SEPALLENGHT, SEPALWIDTH, PETALLENGTH, PETALWIDTH, VARIETY) values (nextval('SEQ_EQUIPEMENT'), #irisList.sepalLength#, #irisList.sepalWidth#, #irisList.petalLength#, #irisList.petalWidth#, #irisList.variety#)   
              "
     in irisList    {domain : DoDtIris         cardinality: "*" }
 }
-
+/** 
 create Task TkCreateIris {  
-    className : "io.vertigo.basics.task.TaskEngineSelect"
+    className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
             INSERT INTO IRIS (ID, SEPALLENGHT, SEPALWIDTH, PETALLENGTH, PETALWIDTH, VARIETY) values (nextval('SEQ_EQUIPEMENT'), #sepalLength#, #sepalWidth#, #petalLength#, #petalWidth#, #variety#)   
              "
@@ -36,5 +36,7 @@ create Task TkCreateIris {
     in petalWidth   {domain : DoDecimal         cardinality: "1" }
     in variety   {domain : DoLabel         cardinality: "1" }
 }
+* 
+*/
 
 

@@ -15,10 +15,10 @@ public final class Iris implements KeyConcept {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	private Double sepalLength;
-	private Double sepalWidth;
-	private Double petalLength;
-	private Double petalWidth;
+	private java.math.BigDecimal sepalLength;
+	private java.math.BigDecimal sepalWidth;
+	private java.math.BigDecimal petalLength;
+	private java.math.BigDecimal petalWidth;
 	private String variety;
 
 	/** {@inheritDoc} */
@@ -49,76 +49,76 @@ public final class Iris implements KeyConcept {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Sepal Lenght'.
-	 * @return Double sepalLength <b>Obligatoire</b>
+	 * @return BigDecimal sepalLength <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDecimal", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Sepal Lenght")
-	public Double getSepalLength() {
+	public java.math.BigDecimal getSepalLength() {
 		return sepalLength;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Sepal Lenght'.
-	 * @param sepalLength Double <b>Obligatoire</b>
+	 * @param sepalLength BigDecimal <b>Obligatoire</b>
 	 */
-	public void setSepalLength(final Double sepalLength) {
+	public void setSepalLength(final java.math.BigDecimal sepalLength) {
 		this.sepalLength = sepalLength;
 	}
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Sepal Width'.
-	 * @return Double sepalWidth <b>Obligatoire</b>
+	 * @return BigDecimal sepalWidth <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDecimal", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Sepal Width")
-	public Double getSepalWidth() {
+	public java.math.BigDecimal getSepalWidth() {
 		return sepalWidth;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Sepal Width'.
-	 * @param sepalWidth Double <b>Obligatoire</b>
+	 * @param sepalWidth BigDecimal <b>Obligatoire</b>
 	 */
-	public void setSepalWidth(final Double sepalWidth) {
+	public void setSepalWidth(final java.math.BigDecimal sepalWidth) {
 		this.sepalWidth = sepalWidth;
 	}
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Petal Lenght'.
-	 * @return Double petalLength <b>Obligatoire</b>
+	 * @return BigDecimal petalLength <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDecimal", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Petal Lenght")
-	public Double getPetalLength() {
+	public java.math.BigDecimal getPetalLength() {
 		return petalLength;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Petal Lenght'.
-	 * @param petalLength Double <b>Obligatoire</b>
+	 * @param petalLength BigDecimal <b>Obligatoire</b>
 	 */
-	public void setPetalLength(final Double petalLength) {
+	public void setPetalLength(final java.math.BigDecimal petalLength) {
 		this.petalLength = petalLength;
 	}
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Petal Width'.
-	 * @return Double petalWidth <b>Obligatoire</b>
+	 * @return BigDecimal petalWidth <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDecimal", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Petal Width")
-	public Double getPetalWidth() {
+	public java.math.BigDecimal getPetalWidth() {
 		return petalWidth;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Petal Width'.
-	 * @param petalWidth Double <b>Obligatoire</b>
+	 * @param petalWidth BigDecimal <b>Obligatoire</b>
 	 */
-	public void setPetalWidth(final Double petalWidth) {
+	public void setPetalWidth(final java.math.BigDecimal petalWidth) {
 		this.petalWidth = petalWidth;
 	}
 	

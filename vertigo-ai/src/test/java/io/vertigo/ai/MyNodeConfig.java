@@ -1,6 +1,5 @@
 package io.vertigo.ai;
 
-import io.vertigo.ai.example.iris.IrisPAO;
 import io.vertigo.ai.example.iris.ItemDefinitionProvider;
 import io.vertigo.ai.example.iris.dao.IrisDAO;
 import io.vertigo.ai.example.iris.data.IrisSmartTypes;
@@ -51,6 +50,10 @@ public final class MyNodeConfig {
 							Param.of("dataBaseClass", H2DataBase.class.getName()),
 							Param.of("jdbcDriver", "org.h2.Driver"),
 							Param.of("jdbcUrl", "jdbc:h2:mem:database"))
+					.withMigration(Param.of("mode", "update"))
+					.withLiquibaseDataBaseMigrationPlugin(
+							Param.of("masterFile", "/liquibase/master.xml")
+							)
 					.build());
 		
 		nodeConfigBuilder.addModule(new DataModelFeatures().build());
@@ -65,7 +68,6 @@ public final class MyNodeConfig {
 		nodeConfigBuilder.addModule(aiFeatures.build())
 				.addModule(ModuleConfig.builder("myApp")
 				.addComponent(ItemDefinitionProvider.class)
-				.addComponent(IrisPAO.class)
 				.addComponent(IrisDAO.class)
 				.addComponent(IrisGenerator.class)
 				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)

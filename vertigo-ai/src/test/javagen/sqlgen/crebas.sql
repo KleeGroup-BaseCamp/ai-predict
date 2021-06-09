@@ -65,10 +65,10 @@ comment on column EVENT_TYPE.EVENT_TYPE is
 create table IRIS
 (
     ID          	 NUMERIC     	not null,
-    SEPAL_LENGTH	 NUMERIC(16,16)	not null,
-    SEPAL_WIDTH 	 NUMERIC(16,16)	not null,
-    PETAL_LENGTH	 NUMERIC(16,16)	not null,
-    PETAL_WIDTH 	 NUMERIC(16,16)	not null,
+    SEPAL_LENGTH	 NUMERIC(5,2)	not null,
+    SEPAL_WIDTH 	 NUMERIC(5,2)	not null,
+    PETAL_LENGTH	 NUMERIC(5,2)	not null,
+    PETAL_WIDTH 	 NUMERIC(5,2)	not null,
     VARIETY     	 TEXT        	not null,
     constraint PK_IRIS primary key (ID)
 );

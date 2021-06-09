@@ -20,12 +20,9 @@ import io.vertigo.core.resource.ResourceManager;
 public abstract class AbstractIrisTestManager {
 
 	DatasetDefinition datasetDefinition;
-
-	@Inject
-	private ResourceManager resourceManager;
 	
 	@Inject
-	private IrisPAO irisPAO;
+	private IrisGenerator irisGenerator;
 	
 	private AutoCloseableNode node;
 	
@@ -56,8 +53,6 @@ public abstract class AbstractIrisTestManager {
 	
 	@Test
 	public void createData() {
-		System.out.println(irisPAO);
-		IrisGenerator irisGenerator = new IrisGenerator();
 		irisGenerator.createIrisFromCSV();
 	}
 }
