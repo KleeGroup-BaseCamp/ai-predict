@@ -21,7 +21,9 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
+import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.impl.search.WritableFuture;
+import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.definitions.DtStereotype;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -34,7 +36,7 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 
 	private static final String CATEGORY = "dataset";
 	private final AnalyticsManager analyticsManager;
-	private final DatasetServicesPlugin datasetServicesPlugin;
+	//private final DatasetServicesPlugin datasetServicesPlugin;
 
 	private final ScheduledExecutorService executorService; //TODO : replace by WorkManager to make distributed work easier
 	
@@ -46,14 +48,14 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 	 */
 	@Inject
 	public DatasetManagerImpl(
-			final DatasetServicesPlugin datasetServicesPlugin,
+			/*final DatasetServicesPlugin datasetServicesPlugin,*/
 			final LocaleManager localeManager,
 			final AnalyticsManager analyticsManager) {
 		Assertion.check()
-				.isNotNull(datasetServicesPlugin)
+				//.isNotNull(datasetServicesPlugin)
 				.isNotNull(analyticsManager);
 		//-----
-		this.datasetServicesPlugin = datasetServicesPlugin;
+		//this.datasetServicesPlugin = datasetServicesPlugin;
 		this.analyticsManager = analyticsManager;
 		localeManager.add(io.vertigo.datafactory.impl.search.SearchResource.class.getName(), io.vertigo.datafactory.impl.search.SearchResource.values());
 
@@ -92,10 +94,10 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 	}
 
 	@Override
-	public Future<Long> restoreAll(DatasetDefinition datasteDefinition) {
-		final WritableFuture<Long> reindexFuture = new WritableFuture<>();
-		executorService.schedule(new RefreshAllTrainDataTask(datasteDefinition, reindexFuture, this), 5, TimeUnit.SECONDS); //une reindexation total dans max 5s
-		return reindexFuture;
+	public Future<Long> refreshAll(DatasetDefinition datasetDefinition) {
+		final WritableFuture<Long> refreshFuture = new WritableFuture<>();
+		executorService.schedule(new RefreshAllTrainDataTask(datasetDefinition, refreshFuture/*, this*/), 5, TimeUnit.SECONDS); //une reindexation total dans max 5s
+		return refreshFuture;
 	}
 
 	@Override
@@ -106,7 +108,7 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 				CATEGORY,
 				"/putAll/" + datasetDefinition.getName(),
 				tracer -> {
-					datasetServicesPlugin.putAll(datasetDefinition, datasetCollection);
+					//datasetServicesPlugin.putAll(datasetDefinition, datasetCollection);
 					tracer.setMeasure("nbModifiedRow", datasetCollection.size());
 				});
 	}
@@ -118,7 +120,7 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 				CATEGORY,
 				"/put/" + datasetDefinition.getName(),
 				tracer -> {
-					datasetServicesPlugin.put(datasetDefinition, dataset);
+					//datasetServicesPlugin.put(datasetDefinition, dataset);
 					tracer.setMeasure("nbModifiedRow", 1);
 				});
 		
@@ -129,7 +131,10 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 		return analyticsManager.traceWithReturn(
 				CATEGORY,
 				"/count/" + datasetDefinition.getName(),
-				tracer -> datasetServicesPlugin.count(datasetDefinition));
+				tracer -> {
+					//datasetServicesPlugin.count(datasetDefinition);
+					return 0l;
+				});
 	}
 
 	@Override
@@ -139,7 +144,7 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 				CATEGORY,
 				"/remove/" + datasetDefinition.getName(),
 				tracer -> {
-					datasetServicesPlugin.remove(datasetDefinition, uid);
+					//datasetServicesPlugin.remove(datasetDefinition, uid);
 					tracer.setMeasure("nbModifiedRow", 1);
 				});
 		
@@ -179,4 +184,16 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 				.filter(indexDefinition -> indexDefinition.getKeyConceptDtDefinition().equals(keyConceptDtDefinition))
 				.collect(Collectors.toList());
 	}
+
+	@Override
+	public void removeAll(SearchIndexDefinition indexDefinition, ListFilter listFilter) {
+		analyticsManager.trace(
+				CATEGORY,
+				"/removeAll/" + indexDefinition.getName(),
+				tracer -> {
+					//datasetServicesPlugin.remove(indexDefinition, listFilter);
+				});
+		
+	}
+	
 }

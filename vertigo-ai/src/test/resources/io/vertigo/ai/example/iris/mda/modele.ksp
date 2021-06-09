@@ -15,3 +15,15 @@ create DtDefinition DtIris {
     field variety {domain: DoLabel label:"Label" cardinality:"1"}
 }
 
+
+create DtDefinition DtIrisTrain {
+	stereotype: "KeyConcept"
+	storeName: "train"
+	id id {domain: DoId label:"ID"}
+    field sepalLength {domain: DoDecimal label:"Sepal Lenght" cardinality:"1"}
+    field sepalWidth {domain: DoDecimal label:"Sepal Width" cardinality:"1"}
+    field petalLength {domain: DoDecimal label:"Petal Lenght" cardinality:"1"}
+    field petalWidth {domain: DoDecimal label:"Petal Width" cardinality:"1"}
+    field variety {domain: DoLabel label:"Label" cardinality:"1"}
+}
+

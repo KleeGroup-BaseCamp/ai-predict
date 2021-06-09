@@ -1,5 +1,6 @@
 package io.vertigo.ai.structure.record.definitions;
 
+import java.util.Collection;
 import java.util.List;
 
 import io.vertigo.ai.structure.record.models.Dataset;
@@ -22,4 +23,16 @@ public interface RecordLoader<K extends KeyConcept, I extends DtObject> extends 
 	 * @return Iterator of chunk
 	 */
 	Iterable<RecordChunk<K>> chunk(final Class<K> keyConceptClass);
+	
+	
+	/**
+	 * Remove all data from a list of keyConcepts.
+	 */
+	void removeData();
+
+	/**
+	 * 
+	 * @param datasets
+	 */
+	void insertData(Collection<Dataset<K, I>> datasets);
 }

@@ -80,7 +80,7 @@ public final class Dataset<K extends KeyConcept, I extends DtObject> {
 	 * @param datasetDto  DTO représentant l'index
 	 * @return  Objet permettant de créer l'index
 	 */
-	public static <S extends KeyConcept, I extends DtObject> Dataset<S, I> createIndex(final DatasetDefinition datasetDefinition, final UID<S> uid, final I datasetDtObject) {
+	public static <S extends KeyConcept, I extends DtObject> Dataset<S, I> createDataset(final DatasetDefinition datasetDefinition, final UID<S> uid, final I datasetDtObject) {
 		return new Dataset<>(datasetDefinition, uid, datasetDtObject);
 	}
 }

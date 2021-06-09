@@ -2,8 +2,13 @@ package io.vertigo.ai;
 
 import io.vertigo.ai.example.iris.ItemDefinitionProvider;
 import io.vertigo.ai.example.iris.dao.IrisDAO;
+import io.vertigo.ai.example.iris.dao.IrisTrainDAO;
 import io.vertigo.ai.example.iris.data.IrisSmartTypes;
 import io.vertigo.ai.example.iris.data.datageneration.IrisGenerator;
+import io.vertigo.ai.example.iris.loader.IrisDatasetLoader;
+import io.vertigo.ai.example.iris.services.IrisServices;
+import io.vertigo.ai.example.train.TrainPAO;
+import io.vertigo.ai.structure.record.definitions.RecordLoader;
 import io.vertigo.commons.CommonsFeatures;
 import io.vertigo.commons.impl.transaction.VTransactionManagerImpl;
 import io.vertigo.core.node.config.BootConfig;
@@ -50,10 +55,13 @@ public final class MyNodeConfig {
 							Param.of("dataBaseClass", H2DataBase.class.getName()),
 							Param.of("jdbcDriver", "org.h2.Driver"),
 							Param.of("jdbcUrl", "jdbc:h2:mem:database"))
+
 					.withMigration(Param.of("mode", "update"))
 					.withLiquibaseDataBaseMigrationPlugin(
-							Param.of("masterFile", "/liquibase/master.xml")
-							)
+							Param.of("masterFile", "/liquibase/master.xml"))
+					/*.withLiquibaseDataBaseMigrationPlugin(
+							Param.of("masterFile", "/liquibase/train.xml")/*,
+							Param.of("connectionName", "train"))*/
 					.build());
 		
 		nodeConfigBuilder.addModule(new DataModelFeatures().build());
@@ -62,6 +70,7 @@ public final class MyNodeConfig {
 					.withCache()
 					.withMemoryCache()
 					.withEntityStore()
+					.withSqlEntityStore(Param.of("dataSpace", "train"))
 					.withSqlEntityStore()
 					.build());
 
@@ -69,7 +78,11 @@ public final class MyNodeConfig {
 				.addModule(ModuleConfig.builder("myApp")
 				.addComponent(ItemDefinitionProvider.class)
 				.addComponent(IrisDAO.class)
+				.addComponent(IrisTrainDAO.class)
+				.addComponent(TrainPAO.class)
 				.addComponent(IrisGenerator.class)
+				.addComponent(RecordLoader.class, IrisDatasetLoader.class)
+				.addComponent(IrisServices.class)
 				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
 						.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
 						.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
@@ -77,6 +90,5 @@ public final class MyNodeConfig {
 				.build());
 		
 		return nodeConfigBuilder.build();
-		
 	}
 }

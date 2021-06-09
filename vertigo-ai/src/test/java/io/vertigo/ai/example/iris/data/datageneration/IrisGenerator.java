@@ -15,7 +15,7 @@ import io.vertigo.database.migration.MigrationManager;
 import io.vertigo.database.sql.SqlManager;
 
 @Transactional
-public class IrisGenerator implements Component{ 
+public class IrisGenerator implements Component { 
 
 	private static final String IRIS_CSV_FILE_PATH = "io/vertigo/ai/datageneration/iris.csv";
 	private static final int IRIS_CSV_FILE_COLUMN_NUMBER = 5;
@@ -40,6 +40,7 @@ public class IrisGenerator implements Component{
 		iris.setPetalWidth(new BigDecimal(record[3]));
 		iris.setSepalWidth(new BigDecimal(record[1]));
 		iris.setVariety(record[4]);
+
 		irisDAO.create(iris);
 	}
 	

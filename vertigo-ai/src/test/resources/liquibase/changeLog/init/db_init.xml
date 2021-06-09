@@ -6,6 +6,7 @@
 	<!-- Création de la BDD -->
 	<changeSet author="vertigo" id="init">
 		<sqlFile encoding="utf8" path="/sqlgen/crebas.sql" /> <!--  initial crebas.sql -->
+		<sqlFile encoding="utf8" path="/sqlgen/crebas_train.sql" /> <!--  initial crebas.sql -->
 		<sqlFile encoding="utf8" path="/sqlgen/init_masterdata_event_type.sql" />
 		<sqlFile encoding="utf8" path="/sqlgen/init_masterdata_resource_type.sql" />
 		<sqlFile encoding="utf8" path="/sqlgen/init_masterdata_severity_type.sql" />

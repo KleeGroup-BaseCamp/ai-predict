@@ -162,4 +162,7 @@ public abstract class AbstractPostgresqlTrainManagerTest {
 		//predictionManager.delete("iris-classification-cassandra-spark", 1);
 		Assertions.assertEquals(204, response);
 	}
+
+	
+	
 }

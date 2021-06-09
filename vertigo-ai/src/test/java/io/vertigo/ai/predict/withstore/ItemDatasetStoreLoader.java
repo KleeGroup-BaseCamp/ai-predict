@@ -39,8 +39,7 @@ public final class ItemDatasetStoreLoader extends AbstractSqlDatasetLoader<Long,
 	}
 
 	@Override
-	public Dataset loadData(
-			RowChunk<BostonRegressionItem> itemChunk, String datasetName) {
+	public Dataset loadData(RowChunk<BostonRegressionItem> itemChunk, String datasetName) {
 		final DatasetDefinition datasetDefinition = datasetManager.findDatasetDefinition(datasetName);
 		final RowDefinition datasetItemDefinition = datasetManager.findFirstRowDefinitionByKeyConcept(BostonItem.class);
 		final Class<?> clazz = itemChunk.getRowClass();

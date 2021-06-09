@@ -7,6 +7,8 @@ import java.util.concurrent.Future;
 import io.vertigo.ai.structure.record.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.record.models.Dataset;
 import io.vertigo.core.node.component.Manager;
+import io.vertigo.datafactory.collections.ListFilter;
+import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
@@ -34,7 +36,7 @@ public interface DatasetManager extends Manager {
 	 * @param datasteDefinition Type du dataset
 	 * @return Future of number elements stored
 	 */
-	Future<Long> restoreAll(DatasetDefinition datasteDefinition);
+	Future<Long> refreshAll(DatasetDefinition datasteDefinition);
 
 	/**
 	 * Ajout de plusieurs ressources au dataset.
@@ -68,5 +70,13 @@ public interface DatasetManager extends Manager {
 	 * @param uid UID de la ressource à supprimer
 	 */
 	<K extends KeyConcept> void remove(DatasetDefinition datasetDefinition, final UID<K> uid);
+	
+	
+	/**
+	 * Suppression des données correspondant à un filtre.
+	 * @param indexDefinition Type de l'index
+	 * @param listFilter Filtre des éléments à supprimer
+	 */
+	void removeAll(SearchIndexDefinition indexDefinition, final ListFilter listFilter);
 
 }

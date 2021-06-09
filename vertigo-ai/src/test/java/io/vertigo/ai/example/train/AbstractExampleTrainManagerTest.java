@@ -164,4 +164,6 @@ public abstract class AbstractExampleTrainManagerTest {
 		Assertions.assertEquals(1, response.getScore().getScoreMean().compareTo(BigDecimal.valueOf(0.70)));
 		predictionManager.delete("telstra", 0);
 	}
+
+	
 }

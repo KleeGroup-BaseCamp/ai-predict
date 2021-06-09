@@ -3,10 +3,6 @@ package io.vertigo.ai.example.iris.dao;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
@@ -54,66 +50,4 @@ public final class IrisDAO extends DAO<Iris, java.lang.Long> implements StoreSer
 	public Iris readOneForUpdate(final java.lang.Long id) {
 		return readOneForUpdate(createDtObjectUID(id));
 	}
-
-	/**
-	 * Creates a taskBuilder.
-	 * @param name  the name of the task
-	 * @return the builder 
-	 */
-	private static TaskBuilder createTaskBuilder(final String name) {
-		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
-		return Task.builder(taskDefinition);
-	}
-
-	/**
-	 * Execute la tache TkBulkCreateIris.
-	 * @param irisList DtList de Iris
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkBulkCreateIris",
-			request = "INSERT INTO IRIS (ID, SEPALLENGHT, SEPALWIDTH, PETALLENGTH, PETALWIDTH, VARIETY) values (nextval('SEQ_EQUIPEMENT'), #irisList.sepalLength#, #irisList.sepalWidth#, #irisList.petalLength#, #irisList.petalWidth#, #irisList.variety#)",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
-	public void bulkCreateIris(@io.vertigo.datamodel.task.proxy.TaskInput(name = "irisList", smartType = "STyDtIris") final io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.example.iris.domain.Iris> irisList) {
-		final Task task = createTaskBuilder("TkBulkCreateIris")
-				.addValue("irisList", irisList)
-				.build();
-		getTaskManager().execute(task);
-	}
-
-	/**
-	 * Execute la tache TkGetIris.
-	 * @return DtList de Iris dtcIris
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkGetIris",
-			request = "select * from IRIS",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtIris")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.example.iris.domain.Iris> getIris() {
-		final Task task = createTaskBuilder("TkGetIris")
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
-	/**
-	 * Execute la tache TkLoadIris.
-	 * @param irisIds List de Long
-	 * @return DtList de Iris dtcIris
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkLoadIris",
-			request = "select * from IRIS where ID in (#irisIds.rownum#);",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtIris")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.example.iris.domain.Iris> loadIris(@io.vertigo.datamodel.task.proxy.TaskInput(name = "irisIds", smartType = "STyId") final java.util.List<Long> irisIds) {
-		final Task task = createTaskBuilder("TkLoadIris")
-				.addValue("irisIds", irisIds)
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
 }
