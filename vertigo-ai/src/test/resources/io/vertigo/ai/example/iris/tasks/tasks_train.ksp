@@ -13,7 +13,7 @@ create Task TkLoadIris {
 create Task TkBulkCreateIris {  
     className : "io.vertigo.basics.task.TaskEngineProcBatch"
     request : "
-            INSERT INTO IRIS_TRAIN (ID, SEPALLENGHT, SEPALWIDTH, PETALLENGTH, PETALWIDTH, VARIETY) values (#irisTrainList.id#, #irisTrainList.sepalLength#, #irisTrainList.sepalWidth#, #irisTrainList.petalLength#, #irisTrainList.petalWidth#, #irisTrainList.variety#)   
+            INSERT INTO IRIS_TRAIN (ID, SEPAL_LENGTH, SEPAL_WIDTH, PETAL_LENGTH, PETAL_WIDTH, VARIETY) values (#irisTrainList.id#, #irisTrainList.sepalLength#, #irisTrainList.sepalWidth#, #irisTrainList.petalLength#, #irisTrainList.petalWidth#, #irisTrainList.variety#)   
              "
     in irisTrainList    {domain : DoDtIrisTrain         cardinality: "*" }
 }

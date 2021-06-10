@@ -71,7 +71,7 @@ public final class IrisTrainDAO extends DAO<IrisTrain, java.lang.Long> implement
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkBulkCreateIris",
-			request = "INSERT INTO IRIS_TRAIN (ID, SEPALLENGHT, SEPALWIDTH, PETALLENGTH, PETALWIDTH, VARIETY) values (#irisTrainList.id#, #irisTrainList.sepalLength#, #irisTrainList.sepalWidth#, #irisTrainList.petalLength#, #irisTrainList.petalWidth#, #irisTrainList.variety#)",
+			request = "INSERT INTO IRIS_TRAIN (ID, SEPAL_LENGTH, SEPAL_WIDTH, PETAL_LENGTH, PETAL_WIDTH, VARIETY) values (#irisTrainList.id#, #irisTrainList.sepalLength#, #irisTrainList.sepalWidth#, #irisTrainList.petalLength#, #irisTrainList.petalWidth#, #irisTrainList.variety#)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
 	public void bulkCreateIris(@io.vertigo.datamodel.task.proxy.TaskInput(name = "irisTrainList", smartType = "STyDtIrisTrain") final io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.example.iris.domain.IrisTrain> irisTrainList) {
 		final Task task = createTaskBuilder("TkBulkCreateIris")

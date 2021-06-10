@@ -87,7 +87,7 @@ public abstract class AbstractIrisTestManager {
 		}
 		Assertions.assertNotEquals(appSize, trainSize);
 
-		//on reindex
+		//on refresh la base de train
 		trainSize = datasetManager.refreshAll(datasetDefinition).get(10, TimeUnit.SECONDS);
 		
 		//on attend 10s + le temps de reindexation

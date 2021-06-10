@@ -17,7 +17,7 @@ public class ItemDefinitionProvider implements Component, DefinitionProvider {
 		definitions.add(
 				new DatasetDefinitionSupplier("DsIris")
 				.withKeyConcept("DtIris")
-				.withDatasetDtDefinition("DtIris")
+				.withDatasetDtDefinition("DtIrisTrain")
 				.withLoaderId("RecordLoader"));
 		return definitions;
 	}
