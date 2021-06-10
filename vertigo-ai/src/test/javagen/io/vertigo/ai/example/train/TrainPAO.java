@@ -44,11 +44,13 @@ public final class TrainPAO implements StoreServices {
 	 * Execute la tache TkRemoveIris.
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			dataSpace = "train",
 			name = "TkRemoveIris",
 			request = "TRUNCATE TABLE IRIS_TRAIN;",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeIris() {
 		final Task task = createTaskBuilder("TkRemoveIris")
+				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("train"))
 				.build();
 		getTaskManager().execute(task);
 	}

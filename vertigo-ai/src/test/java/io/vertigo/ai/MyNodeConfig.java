@@ -59,9 +59,9 @@ public final class MyNodeConfig {
 					.withMigration(Param.of("mode", "update"))
 					.withLiquibaseDataBaseMigrationPlugin(
 							Param.of("masterFile", "/liquibase/master.xml"))
-					/*.withLiquibaseDataBaseMigrationPlugin(
-							Param.of("masterFile", "/liquibase/train.xml")/*,
-							Param.of("connectionName", "train"))*/
+					.withLiquibaseDataBaseMigrationPlugin(
+							Param.of("masterFile", "/liquibase/train.xml"),
+							Param.of("connectionName", "train"))
 					.build());
 		
 		nodeConfigBuilder.addModule(new DataModelFeatures().build());
@@ -70,7 +70,9 @@ public final class MyNodeConfig {
 					.withCache()
 					.withMemoryCache()
 					.withEntityStore()
-					.withSqlEntityStore(Param.of("dataSpace", "train"))
+					.withSqlEntityStore(
+							Param.of("dataSpace", "train"),
+							Param.of("connectionName", "train"))
 					.withSqlEntityStore()
 					.build());
 

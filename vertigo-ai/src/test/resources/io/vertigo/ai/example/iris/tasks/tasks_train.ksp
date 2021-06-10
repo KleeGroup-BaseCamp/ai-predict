@@ -12,6 +12,7 @@ create Task TkLoadIris {
 
 create Task TkBulkCreateIris {  
     className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    storeName : "train"
     request : "
             INSERT INTO IRIS_TRAIN (ID, SEPAL_LENGTH, SEPAL_WIDTH, PETAL_LENGTH, PETAL_WIDTH, VARIETY) values (#irisTrainList.id#, #irisTrainList.sepalLength#, #irisTrainList.sepalWidth#, #irisTrainList.petalLength#, #irisTrainList.petalWidth#, #irisTrainList.variety#)   
              "
@@ -21,6 +22,7 @@ create Task TkBulkCreateIris {
 
 create Task TkRemoveIris {  
     className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
     request : "
             TRUNCATE TABLE IRIS_TRAIN;
              "
