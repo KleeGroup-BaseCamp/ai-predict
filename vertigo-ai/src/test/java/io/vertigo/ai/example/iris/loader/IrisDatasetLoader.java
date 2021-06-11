@@ -66,4 +66,11 @@ public final class IrisDatasetLoader extends AbstractSqlRecordLoader<Serializabl
 		irisServices.insertIrisTrain(datasets);
 	}
 
+
+	@Override
+	public void removeData(long id) {
+		irisServices.removeIrisTrain(id);
+		
+	}
+
 }

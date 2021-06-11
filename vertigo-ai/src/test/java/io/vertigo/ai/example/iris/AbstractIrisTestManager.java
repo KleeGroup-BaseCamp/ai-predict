@@ -1,5 +1,10 @@
 package io.vertigo.ai.example.iris;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -14,8 +19,10 @@ import org.junit.jupiter.api.Test;
 import io.vertigo.ai.example.iris.data.datageneration.IrisGenerator;
 import io.vertigo.ai.example.iris.domain.Iris;
 import io.vertigo.ai.example.iris.domain.IrisTrain;
+import io.vertigo.ai.example.iris.services.IrisServices;
 import io.vertigo.ai.structure.record.DatasetManager;
 import io.vertigo.ai.structure.record.definitions.DatasetDefinition;
+import io.vertigo.ai.structure.record.models.Dataset;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -23,6 +30,8 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.model.KeyConcept;
+import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 
@@ -41,6 +50,9 @@ public abstract class AbstractIrisTestManager {
 	
 	@Inject
 	private VTransactionManager transactionManager;
+	
+	@Inject
+	private IrisServices irisServices;
 	
 	private AutoCloseableNode node;
 	
@@ -67,6 +79,7 @@ public abstract class AbstractIrisTestManager {
 	@AfterEach
 	public final void tearDown() {
 		if (node != null) {
+			//irisServices.removeIrisTrain();
 			node.close();
 		}
 	}
@@ -85,10 +98,11 @@ public abstract class AbstractIrisTestManager {
 			appSize = entityStoreManager.count(dtDefinitionIris);
 			trainSize = entityStoreManager.count(dtDefinitionIrisTrain);
 		}
-		Assertions.assertNotEquals(appSize, trainSize);
+		//Assertions.assertNotEquals(appSize, trainSize);
 
 		//on refresh la base de train
-		trainSize = datasetManager.refreshAll(datasetDefinition).get(10, TimeUnit.SECONDS);
+		
+		datasetManager.refreshAll(datasetDefinition).get(10, TimeUnit.SECONDS);
 		
 		//on attend 10s + le temps de reindexation
 		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
@@ -98,4 +112,55 @@ public abstract class AbstractIrisTestManager {
 		Assertions.assertEquals(appSize, trainSize);
 
 	}
+	
+	@Test
+	public void testRefresh() throws InterruptedException, ExecutionException, TimeoutException {
+		
+		long appSize;
+		long trainSize;
+		
+		datasetManager.refreshAll(datasetDefinition).get(10, TimeUnit.SECONDS);
+		
+		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
+			appSize = entityStoreManager.count(dtDefinitionIris);
+			trainSize = entityStoreManager.count(dtDefinitionIrisTrain);
+		}
+		
+		Assertions.assertEquals(appSize, trainSize);
+		
+		Iris newIris = new Iris();
+		newIris.setPetalLength(BigDecimal.TEN);
+		newIris.setPetalWidth(BigDecimal.TEN);
+		newIris.setSepalLength(BigDecimal.TEN);
+		newIris.setSepalWidth(BigDecimal.TEN);
+		newIris.setVariety("test");
+		irisServices.create(newIris);
+		
+		Iris firstIris = irisServices.getFirst();
+		firstIris.setVariety("test");
+		irisServices.update(firstIris);
+		
+		Set<UID<? extends KeyConcept>> uidSet = new LinkedHashSet<UID<? extends KeyConcept>>(2);
+		uidSet.add(UID.of(newIris));
+		uidSet.add(UID.of(firstIris));
+		
+		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
+			appSize = entityStoreManager.count(dtDefinitionIris);
+			trainSize = entityStoreManager.count(dtDefinitionIrisTrain);
+		}
+
+		Assertions.assertNotEquals(appSize, trainSize);
+		
+		datasetManager.putAll(datasetDefinition, uidSet);
+		
+		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
+			appSize = entityStoreManager.count(dtDefinitionIris);
+			trainSize = entityStoreManager.count(dtDefinitionIrisTrain);
+		}
+
+		Assertions.assertEquals(appSize, trainSize);
+		
+		datasetManager.refreshAll(datasetDefinition).get(10, TimeUnit.SECONDS);
+	}
 }
+

@@ -6,7 +6,6 @@ import io.vertigo.core.node.config.NodeConfig;
 public class IrisTestManager extends AbstractIrisTestManager {
 
 	private static final String DS_DATASET = "DsIris";
-	
 	@Override
 	protected void doSetUp() {
 		init(DS_DATASET);

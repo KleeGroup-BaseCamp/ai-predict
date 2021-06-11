@@ -60,7 +60,6 @@ public class RefreshAllTrainDataTask<S extends KeyConcept> implements Runnable {
 			try {
 				final Class<S> keyConceptClass = (Class<S>) ClassUtil.classForName(datasetDefinition.getKeyConceptDtDefinition().getClassCanonicalName(), KeyConcept.class);
 				final RecordLoader<S, DtObject> recordLoader = Node.getNode().getComponentSpace().resolve(datasetDefinition.getRecordLoaderId(), RecordLoader.class);
-				Serializable lastUID = null;
 				LOGGER.info("Refresh training data of {} started", datasetDefinition.getName());
 
 				recordLoader.removeData();
@@ -106,17 +105,6 @@ public class RefreshAllTrainDataTask<S extends KeyConcept> implements Runnable {
 
 	private static long getRefreshCount() {
 		return REFRESH_COUNT;
-	}
-
-	private static ListFilter urisRangeToListFilter(final Serializable firstUri, final Serializable lastUri) {
-		final String filterValue = new StringBuilder()
-				.append("docId").append(":{") //{ for exclude min
-				.append(firstUri != null ? escapeStringId(firstUri) : "*")
-				.append(" TO ")
-				.append(lastUri != null ? escapeStringId(lastUri) : "*")
-				.append("]")
-				.toString();
-		return ListFilter.of(filterValue);
 	}
 
 	private static Serializable escapeStringId(final Serializable id) {

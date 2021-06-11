@@ -19,12 +19,7 @@ public interface DatasetServicesPlugin extends Plugin {
 
 	<K extends KeyConcept, I extends DtObject> void remove(DatasetDefinition datasetDefinition, UID<K> uid);
 
-	/**
-	 * Suppression des données correspondant à un filtre.
-	 * @param datasetDefinition Type de l'index
-	 * @param listFilter Filtre des éléments à supprimer
-	 */
-	void remove(DatasetDefinition datasetDefinition, final ListFilter listFilter);
+	void remove(DatasetDefinition datasetDefinition);
 	
 	
 	long count(DatasetDefinition datasetDefinition);

@@ -2,6 +2,7 @@ package io.vertigo.ai.structure.record;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import io.vertigo.ai.structure.record.definitions.DatasetDefinition;
@@ -46,7 +47,7 @@ public interface DatasetManager extends Manager {
 	 * @param datasetDefinition Type du dataset
 	 * @param datasetCollection Liste des objets à pousser dans le dataset
 	 */
-	<K extends KeyConcept, I extends DtObject> void putAll(DatasetDefinition datasetDefinition, Collection<Dataset<K, I>> datasetCollection);
+	<K extends KeyConcept, I extends DtObject> void putAll(DatasetDefinition datasetDefinition, Set<UID<? extends KeyConcept>> uids);
 
 	/**
 	 * Ajout d'une ressource au dataset.
@@ -75,8 +76,7 @@ public interface DatasetManager extends Manager {
 	/**
 	 * Suppression des données correspondant à un filtre.
 	 * @param indexDefinition Type de l'index
-	 * @param listFilter Filtre des éléments à supprimer
 	 */
-	void removeAll(SearchIndexDefinition indexDefinition, final ListFilter listFilter);
+	void removeAll(DatasetDefinition indexDefinition);
 
 }

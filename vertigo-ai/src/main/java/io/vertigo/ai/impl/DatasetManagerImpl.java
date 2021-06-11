@@ -2,8 +2,10 @@ package io.vertigo.ai.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -103,14 +105,18 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 	@Override
 	public <K extends KeyConcept, I extends DtObject> void putAll(
 			DatasetDefinition datasetDefinition,
-			Collection<Dataset<K, I>> datasetCollection) {
-		analyticsManager.trace(
-				CATEGORY,
-				"/putAll/" + datasetDefinition.getName(),
-				tracer -> {
-					//datasetServicesPlugin.putAll(datasetDefinition, datasetCollection);
-					tracer.setMeasure("nbModifiedRow", datasetCollection.size());
-				});
+			Set<UID<? extends KeyConcept>> uids) {
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println(uids);
+		RefreshTask task = new RefreshTask(datasetDefinition, uids, this);
+		task.run();
+		//une reindexation total dans max 5s
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
 	}
 
 	@Override
@@ -186,7 +192,7 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 	}
 
 	@Override
-	public void removeAll(SearchIndexDefinition indexDefinition, ListFilter listFilter) {
+	public void removeAll(DatasetDefinition indexDefinition) {
 		analyticsManager.trace(
 				CATEGORY,
 				"/removeAll/" + indexDefinition.getName(),

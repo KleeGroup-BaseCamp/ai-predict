@@ -7,6 +7,7 @@ import io.vertigo.ai.structure.record.models.Dataset;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
+import io.vertigo.datamodel.structure.model.UID;
 
 public interface RecordLoader<K extends KeyConcept, I extends DtObject> extends Component {
 
@@ -29,10 +30,16 @@ public interface RecordLoader<K extends KeyConcept, I extends DtObject> extends 
 	 * Remove all data from a list of keyConcepts.
 	 */
 	void removeData();
+	
+	/**
+	 * Remove some data from a list of keyConcepts.
+	 */
+	void removeData(long id);
 
 	/**
 	 * 
 	 * @param datasets
 	 */
 	void insertData(Collection<Dataset<K, I>> datasets);
+	
 }
