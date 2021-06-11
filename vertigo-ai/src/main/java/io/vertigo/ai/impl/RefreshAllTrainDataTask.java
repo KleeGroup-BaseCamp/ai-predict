@@ -1,15 +1,10 @@
 package io.vertigo.ai.impl;
 
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.vertigo.ai.example.iris.domain.Iris;
-import io.vertigo.ai.example.iris.domain.IrisTrain;
-import io.vertigo.ai.structure.record.DatasetManager;
 import io.vertigo.ai.structure.record.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.record.definitions.RecordChunk;
 import io.vertigo.ai.structure.record.definitions.RecordLoader;
@@ -18,11 +13,16 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.ClassUtil;
-import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.impl.search.WritableFuture;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 
+/**
+ * Refresh all training data task.
+ * @author dcouillard, xdurand
+ *
+ * @param <S> KeyConcept type
+ */
 public class RefreshAllTrainDataTask<S extends KeyConcept> implements Runnable {
  
 	private static final Logger LOGGER = LogManager.getLogger(RefreshAllTrainDataTask.class);
@@ -30,18 +30,18 @@ public class RefreshAllTrainDataTask<S extends KeyConcept> implements Runnable {
 	private static volatile long REFRESH_COUNT;
 	private final WritableFuture<Long> refreshFuture;
 	private final DatasetDefinition datasetDefinition;
-	//private final DatasetManager datasetManager;
 
-	public RefreshAllTrainDataTask(DatasetDefinition datasetDefinition,
-			WritableFuture<Long> refreshFuture/*,
-			DatasetManager datasetManager*/) {
+	/**
+	 * Constructor.
+	 * @param datasetDefinition DataSet definition
+	 * @param refreshFuture Future for result
+	 */
+	public RefreshAllTrainDataTask(DatasetDefinition datasetDefinition, WritableFuture<Long> refreshFuture) {
 		Assertion.check()
-		.isNotNull(datasetDefinition)
-		.isNotNull(refreshFuture)
-		/*.isNotNull(datasetManager)*/;
+			.isNotNull(datasetDefinition)
+			.isNotNull(refreshFuture);
 		
 		this.datasetDefinition = datasetDefinition;
-		//this.datasetManager = datasetManager;
 		this.refreshFuture = refreshFuture;
 	}
 
@@ -60,7 +60,7 @@ public class RefreshAllTrainDataTask<S extends KeyConcept> implements Runnable {
 			try {
 				final Class<S> keyConceptClass = (Class<S>) ClassUtil.classForName(datasetDefinition.getKeyConceptDtDefinition().getClassCanonicalName(), KeyConcept.class);
 				final RecordLoader<S, DtObject> recordLoader = Node.getNode().getComponentSpace().resolve(datasetDefinition.getRecordLoaderId(), RecordLoader.class);
-				LOGGER.info("Refresh training data of {} started", datasetDefinition.getName());
+				LOGGER.info("Refreshing training data of {} started", datasetDefinition.getName());
 
 				recordLoader.removeData();
 				for (final RecordChunk<S> recordChunk : recordLoader.chunk(keyConceptClass)) {
@@ -73,16 +73,14 @@ public class RefreshAllTrainDataTask<S extends KeyConcept> implements Runnable {
 					refreshCount += recordChunk.getAllUIDs().size();
 					updateRefreshCount(refreshCount);
 				}
-				//On vide la suite, pour le cas ou les dernières données ne sont plus là
-				//datasetManager.removeAll(datasetDefinition, urisRangeToListFilter(lastUID, null));
-				//On ne retire pas la fin, il y a un risque de retirer les données ajoutées depuis le démarrage de l'indexation
+				
 				refreshFuture.success(refreshCount);
 			} catch (final Exception e) {
-				LOGGER.error("Reindexation error", e);
+				LOGGER.error("Refresh error", e);
 				refreshFuture.fail(e);
 			} finally {
 				stopRefresh();
-				LOGGER.info("Reindexation of {} finished in {} ms ({} elements done)", datasetDefinition.getName(), System.currentTimeMillis() - startTime, refreshCount);
+				LOGGER.info("Refresh of {} finished in {} ms ({} elements done)", datasetDefinition.getName(), System.currentTimeMillis() - startTime, refreshCount);
 			}
 		}
 	}
@@ -105,13 +103,6 @@ public class RefreshAllTrainDataTask<S extends KeyConcept> implements Runnable {
 
 	private static long getRefreshCount() {
 		return REFRESH_COUNT;
-	}
-
-	private static Serializable escapeStringId(final Serializable id) {
-		if (id instanceof String) {
-			return "\"" + id + "\"";
-		}
-		return id;
 	}
 
 }
