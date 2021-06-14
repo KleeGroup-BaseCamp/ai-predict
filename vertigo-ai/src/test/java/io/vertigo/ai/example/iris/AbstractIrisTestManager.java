@@ -140,27 +140,12 @@ public abstract class AbstractIrisTestManager {
 		firstIris.setVariety("test");
 		irisServices.update(firstIris);
 		
-		Set<UID<? extends KeyConcept>> uidSet = new LinkedHashSet<UID<? extends KeyConcept>>(2);
-		uidSet.add(UID.of(newIris));
-		uidSet.add(UID.of(firstIris));
-		
-		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
-			appSize = entityStoreManager.count(dtDefinitionIris);
-			trainSize = entityStoreManager.count(dtDefinitionIrisTrain);
-		}
-
-		Assertions.assertNotEquals(appSize, trainSize);
-		
-		datasetManager.putAll(datasetDefinition, uidSet);
-		
 		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
 			appSize = entityStoreManager.count(dtDefinitionIris);
 			trainSize = entityStoreManager.count(dtDefinitionIrisTrain);
 		}
 
 		Assertions.assertEquals(appSize, trainSize);
-		
-		datasetManager.refreshAll(datasetDefinition).get(10, TimeUnit.SECONDS);
 	}
 }
 

@@ -31,26 +31,19 @@ public final class RefreshTask implements Runnable {
 
 	private final DatasetDefinition recordDefinition;
 	private final Set<UID<? extends KeyConcept>> dirtyElements;
-	private final DatasetManager recordManager;
 
-	public RefreshTask(final DatasetDefinition recordDefinition, final Set<UID<? extends KeyConcept>> dirtyElements, final DatasetManager recordManager) {
+	public RefreshTask(final DatasetDefinition recordDefinition, final Set<UID<? extends KeyConcept>> dirtyElements) {
 		Assertion.check()
 				.isNotNull(recordDefinition)
-				.isNotNull(dirtyElements)
-				.isNotNull(recordManager);
+				.isNotNull(dirtyElements);
 		//-----
 		this.recordDefinition = recordDefinition;
 		this.dirtyElements = dirtyElements; //On ne fait pas la copie ici
-		this.recordManager = recordManager;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void run() {
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
 		long dirtyElementsCount = 0;
 		do {
 			final long startTime = System.currentTimeMillis();
@@ -69,11 +62,6 @@ public final class RefreshTask implements Runnable {
 					final RecordLoader recordLoader = Node.getNode().getComponentSpace().resolve(recordDefinition.getRecordLoaderId(), RecordLoader.class);
 					RecordChunk recordChunk = new RecordChunk(refreshUris);
 					Collection<Dataset<KeyConcept, DtObject>> records = recordLoader.loadData(recordChunk);
-					System.out.println();
-					System.out.println();
-					System.out.println(records);
-					System.out.println();
-					System.out.println();
 					if (!records.isEmpty()) {
 						List<Long> ids = new ArrayList<Long>((int)dirtyElementsCount);
 						refreshUris.forEach(uid -> {

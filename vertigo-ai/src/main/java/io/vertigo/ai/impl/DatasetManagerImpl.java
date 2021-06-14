@@ -2,8 +2,10 @@ package io.vertigo.ai.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -41,6 +43,7 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 	//private final DatasetServicesPlugin datasetServicesPlugin;
 
 	private final ScheduledExecutorService executorService; //TODO : replace by WorkManager to make distributed work easier
+	private final Map<String, Set<UID<? extends KeyConcept>>> dirtyElementsPerIndexName = new HashMap<>();
 	
 	/**
 	 * Constructor.
@@ -59,7 +62,6 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 		//-----
 		//this.datasetServicesPlugin = datasetServicesPlugin;
 		this.analyticsManager = analyticsManager;
-		localeManager.add(io.vertigo.datafactory.impl.search.SearchResource.class.getName(), io.vertigo.datafactory.impl.search.SearchResource.values());
 
 		executorService = Executors.newSingleThreadScheduledExecutor();
 	}
@@ -67,11 +69,21 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 	/** {@inheritDoc} */
 	@Override
 	public void start() {
-		
+
+		for (final DatasetDefinition recordDefinition : Node.getNode().getDefinitionSpace().getAll(DatasetDefinition.class)) {
+			final Set<UID<? extends KeyConcept>> dirtyElements = new LinkedHashSet<>();
+			dirtyElementsPerIndexName.put(recordDefinition.getName(), dirtyElements);
+			executorService.scheduleWithFixedDelay(new RefreshTask(recordDefinition, dirtyElements), 1, 1, TimeUnit.SECONDS); //on dépile les dirtyElements toutes les 1 secondes
+		}
 	}
 
 	@Override
 	public void stop() {
+		for (final DatasetDefinition recordDefinition : Node.getNode().getDefinitionSpace().getAll(DatasetDefinition.class)) {
+			final Set<UID<? extends KeyConcept>> dirtyElements = new LinkedHashSet<>();
+			dirtyElementsPerIndexName.put(recordDefinition.getName(), dirtyElements);
+			executorService.scheduleWithFixedDelay(new RefreshTask(recordDefinition, dirtyElements), 1, 1, TimeUnit.SECONDS); //on dépile les dirtyElements toutes les 1 secondes
+		}
 		executorService.shutdown();		
 	}
 
@@ -91,8 +103,22 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 
 	@Override
 	public void markAsDirty(List<UID<? extends KeyConcept>> keyConceptUIDs) {
-		// TODO Auto-generated method stub
-		
+		Assertion.check()
+		.isNotNull(keyConceptUIDs)
+		.isFalse(keyConceptUIDs.isEmpty(), "dirty keyConceptUris cant be empty");
+		//-----
+		final DtDefinition keyConceptDefinition = keyConceptUIDs.get(0).getDefinition();
+		final List<DatasetDefinition> recordDefinitions = findIndexDefinitionByKeyConcept(keyConceptDefinition);
+		Assertion.check().isFalse(recordDefinitions.isEmpty(), "No SearchIndexDefinition was defined for this keyConcept : {0}", keyConceptDefinition.getName());
+		//-----
+		for (final DatasetDefinition recordDefinition : recordDefinitions) {
+			final Set<UID<? extends KeyConcept>> dirtyElements = dirtyElementsPerIndexName.get(recordDefinition.getName());
+			RefreshTask task = new RefreshTask(recordDefinition, dirtyElements);
+			task.run();
+			synchronized (dirtyElements) {
+				dirtyElements.addAll(keyConceptUIDs);
+			}
+		}
 	}
 
 	@Override
@@ -106,17 +132,6 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 	public <K extends KeyConcept, I extends DtObject> void putAll(
 			DatasetDefinition datasetDefinition,
 			Set<UID<? extends KeyConcept>> uids) {
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println(uids);
-		RefreshTask task = new RefreshTask(datasetDefinition, uids, this);
-		task.run();
-		//une reindexation total dans max 5s
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
 	}
 
 	@Override
@@ -175,6 +190,7 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 			final List<UID<? extends KeyConcept>> list = Collections.singletonList(uid);
 			markAsDirty(list);
 		}
+		
 	}
 
 	@Override
@@ -200,6 +216,12 @@ public final class DatasetManagerImpl implements DatasetManager, Activeable{
 					//datasetServicesPlugin.remove(indexDefinition, listFilter);
 				});
 		
+	}
+	
+	private static List<DatasetDefinition> findIndexDefinitionByKeyConcept(final DtDefinition keyConceptDtDefinition) {
+		return Node.getNode().getDefinitionSpace().getAll(DatasetDefinition.class).stream()
+				.filter(recordDefinition -> recordDefinition.getKeyConceptDtDefinition().equals(keyConceptDtDefinition))
+				.collect(Collectors.toList());
 	}
 	
 }
