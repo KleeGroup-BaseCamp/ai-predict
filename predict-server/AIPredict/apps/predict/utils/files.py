@@ -17,7 +17,6 @@ except:
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from AIPredict.settings.production import BUNDLE_PATH
 from AIPredict.apps.predict.validators import validate_archive_content, validate_bundle, validate_auto_deployed_bundle
-from AIPredict.apps.predict.models import Bundle
 from django.core.exceptions import ValidationError
 
 try:
@@ -91,20 +90,6 @@ def upload_files(archive:InMemoryUploadedFile):
     # and extracts the needed data to generate the bundle model
     name, version = store_bundle(temp_path)
     return name, version
-
-def remove_files(name:str, path:Path):
-    """Remove the stored files of a bundle
-
-    Args:
-        name (str): bundle name
-        path (Path): bundle path
-    """
-    # deletes the version folder (but keep the bundle folder)
-    shutil.rmtree(path / "")
-    bundle_path = build_bundle_path(name)
-    # if the bundle has no other imported version, deletes it
-    if os.listdir(bundle_path) == []:
-        shutil.rmtree(bundle_path)
 
 def get_model(path:Path) -> object:
     """Read the binarized model from the stored bundle
@@ -183,10 +168,7 @@ def build_bundle_path(bundle:str=None, version:int=None, target:str=None, auto:b
         Path: built path
     """
     #build the path to a given bundle
-    if auto:
-        path = Path(".", "bundles", "auto_deploy")
-    else:
-        path = Path(".", "bundles", "predict")
+    path = Path(".", "bundles")
     if bundle:
         path = path / bundle
         if version != None:
@@ -219,3 +201,18 @@ def get_auto_deployed_bundles() -> List[Tuple[str, int]]:
                 if not e == ValidationError("The bundle name and version must be unique together"):
                     raise e 
     return bundles
+
+def modify_bundle_item(name:str, version:int, category:str, item:str, value):
+    v = "v" + str(version)
+    path = BUNDLE_PATH / name / v / "bundle.json"
+
+    with open(path, "r") as f:
+        bundle = json.load(f)
+        bundle[category][item] = value
+    
+    with open(path, "w") as f:
+        json.dump(bundle, f)
+
+
+
+    

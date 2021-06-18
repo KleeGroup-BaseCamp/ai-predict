@@ -9,6 +9,8 @@ drop table IF EXISTS EVENT_TYPE cascade;
 drop sequence IF EXISTS SEQ_EVENT_TYPE;
 drop table IF EXISTS IRIS cascade;
 drop sequence IF EXISTS SEQ_IRIS;
+drop table IF EXISTS IRIS_PREDICT cascade;
+drop sequence IF EXISTS SEQ_IRIS_PREDICT;
 drop table IF EXISTS LOCATION cascade;
 drop sequence IF EXISTS SEQ_LOCATION;
 drop table IF EXISTS LOG_FEATURE cascade;
@@ -28,6 +30,9 @@ create sequence SEQ_EVENT_TYPE
 	start with 1000 cache 20; 
 
 create sequence SEQ_IRIS
+	start with 1000 cache 20; 
+
+create sequence SEQ_IRIS_PREDICT
 	start with 1000 cache 20; 
 
 create sequence SEQ_LOCATION
@@ -90,6 +95,34 @@ comment on column IRIS.PETAL_WIDTH is
 
 comment on column IRIS.VARIETY is
 'Label';
+
+-- ============================================================
+--   Table : IRIS_PREDICT                                        
+-- ============================================================
+create table IRIS_PREDICT
+(
+    ID          	 NUMERIC     	not null,
+    SEPAL_LENGTH	 NUMERIC(5,2)	not null,
+    SEPAL_WIDTH 	 NUMERIC(5,2)	not null,
+    PETAL_LENGTH	 NUMERIC(5,2)	not null,
+    PETAL_WIDTH 	 NUMERIC(5,2)	not null,
+    constraint PK_IRIS_PREDICT primary key (ID)
+);
+
+comment on column IRIS_PREDICT.ID is
+'ID';
+
+comment on column IRIS_PREDICT.SEPAL_LENGTH is
+'Sepal Lenght';
+
+comment on column IRIS_PREDICT.SEPAL_WIDTH is
+'Sepal Width';
+
+comment on column IRIS_PREDICT.PETAL_LENGTH is
+'Petal Lenght';
+
+comment on column IRIS_PREDICT.PETAL_WIDTH is
+'Petal Width';
 
 -- ============================================================
 --   Table : LOCATION                                        

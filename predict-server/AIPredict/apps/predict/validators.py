@@ -11,8 +11,6 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.datastructures import MultiValueDict
 
-from AIPredict.apps.predict.models import Bundle
-
 
 def validate_file(file:MultiValueDict):
     if not "archive" in file:
@@ -56,7 +54,7 @@ def validate_bundle_meta(meta:Dict[str, object]) -> Dict[str, object]:
         raise ValidationError("The bundle name (in the configuration meta) supports only alphanumeric, _ and -.")
     #checks unicity of name and version together
     version = meta["version"]
-    instances = Bundle.objects.filter(name=name, version=version)
+    instances = None
     if instances:
         raise ValidationError("The bundle name and version must be unique together")
     return meta

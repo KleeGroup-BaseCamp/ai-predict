@@ -11,22 +11,36 @@ import requests
 from AIPredict.apps.predict.views import DeployBundle
 
 def create_folder(config, version):
+    # gets name to build path
     name = config["meta"]["name"]
-    path = Path(".", "bundles", "train", name)
-    if path.exists() and len(os.listdir(path)) > version:
-        version = len(os.listdir(path))
-    v = "v"+str(version)
-    path = path / v
-    path.mkdir(parents=True, exist_ok=True)
+    path = Path(".", "bundles", name)
+    # checks if the version is already trained or activated, then create a new version, else update the version  
+    status = config["algorithm"]["status"]
+    if status == "trained" or status=="active":
+        last_version = os.listdir(path)[-1]
+        #create new version
+        version = int(last_version[1:]) + 1 
+        v = "v" + str(version)
+        path  = path / v
+        os.mkdir(path)
+    else:
+        v = "v" + str(version)
+        path = path / v
+        shutil.rmtree(path)
+        os.mkdir(path)
     return path, name, version
 
-def save_model(path, model, config):
+def save_model(path:Path, model, config:dict):
+    """
+        Save a pickled trained machine learning model
+    """
     with open(path / "model.pkl", "wb") as p:
         pickle.dump(model, p)
 
 def save_config(path, config, version, score):
     config["meta"]["version"] = version
     config["algorithm"]["score"] = score
+    config["algorithm"]["status"] = "trained"
     with open(path / "bundle.json", "w") as p:
         json.dump(config, p)
 

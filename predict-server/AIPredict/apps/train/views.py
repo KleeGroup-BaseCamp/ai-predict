@@ -17,6 +17,7 @@ from AIPredict.apps.train.utils.train import async_train, async_score, sync_trai
 from AIPredict.apps.train.utils.tools import build_model_class, get_data, train_response, score_response
 from AIPredict.apps.train.utils.files import save, send, get_config, delete_files
 from AIPredict.apps.predict.utils.files import get_model
+from AIPredict.utils.bundle import Bundle
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ class TrainModel(viewsets.ViewSet):
         config = request.data
         try:
             validate_config(config)
-        except ValidationError as e:
+        except Exception as e:
             response = train_response(modelName=config["meta"]["name"], status="failed", response=str(e))
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
         res = self.train(config)
@@ -37,52 +38,55 @@ class TrainModel(viewsets.ViewSet):
     
     def retrain(self, request, *args, **kwargs):
         # gets the request bundle version
-        bundle = kwargs["bundle"]
+        name = kwargs["bundle"]
         version = kwargs["version"]
-        validate_request(bundle, version)
-        path = Path(".", "bundles", "train", bundle, "v"+str(version))
-        config = get_config(path)
-        res = self.train(config)
+        try:
+            validate_request(name, version)
+        except Exception as e:
+            response = train_response(modelName=name, status="failed", response=str(e))
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+        bundle = Bundle(name, version)
+        res = self.train(bundle.get_bundle())
         return res
 
     def score(self, request, *args, **kwargs):
         # gets the request bundle version
-        bundle = kwargs["bundle"]
+        name = kwargs["bundle"]
         version = kwargs["version"]
         try:
-            validate_request(bundle, version)
+            validate_request(name, version)
         except ValidationError as e:
-            response = score_response(modelName=bundle, status="failed", version=version)
+            response = score_response(modelName=name, status="failed", version=version)
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            path = Path(".", "bundles", "train", bundle, "v"+str(version))
-            config = get_config(path)
-            model = get_model(path)
+            bundle = Bundle(name, version)
+            config = bundle.get_bundle()
+            model = bundle.get_model()
             #get dataset
-            X, y = get_data(config["dataset"])
+            X, y = get_data(bundle.get_category("dataset"))
             #get parameters
-            params = config["parameters"]
+            params = bundle.get_category("parameters")
             cv = params["cv"]
             metrics = params["metrics"]
-            preprocessing = config["preprocessing"]
+            preprocessing = bundle.get_category("preprocessing")
             start = time.time()
             score = async_score(model, metrics, cv, X, y, preprocessing)
             t = time.time() - start
-            response = score_response(modelName=bundle, status="succeed", version=version, time=t, score=score)
+            response = score_response(modelName=name, status="succeed", version=version, time=t, score=score)
         except Exception as e:
-            logger.exception('Error while scoring model: %s version: %s', bundle, version)
-            response = score_response(modelName=bundle, status="failed", version=version)
+            logger.exception('Error while scoring model: %s version: %s', name, version)
+            response = score_response(modelName=name, status="failed", version=version)
             return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(response, status=status.HTTP_200_OK)
     
     def destroy(self, request, *args, **kwargs):
-        bundle = kwargs["bundle"]
+        name = kwargs["bundle"]
         version = kwargs["version"]
-        validate_request(bundle, version)
-        path = Path(".", "bundles", "train", bundle, "v"+str(version))
-        delete_files(path)
+        validate_request(name, version)
+        bundle = Bundle(name, version)
+        bundle.remove()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def train(self, config):
@@ -107,16 +111,3 @@ class TrainModel(viewsets.ViewSet):
         path, name, version = save(model, config, 0, score)
         response = train_response(time=t, modelName=name, version=version, status="deployed", response="Trained in %ds" %t, score=score)
         return Response( response, status=status.HTTP_201_CREATED)
-
-        #if  score >= aim:
-            #response = send(path)
-            #content = response.json()
-            #if response.ok:
-            #    response = train_response(time=t, modelName=name, version=version, status="deployed", response="Train in %ds and deployed to the prediction server" %t, score=score, deploy_status="deployed", deploy_response=content)
-            #    return Response( response, status=status.HTTP_201_CREATED)
-            #else:
-            #    response = train_response(time=t, modelName=name, version=version, status="trained", response="Train  in %d but not deployed to the prediction server (deployement failed)" %t, score=score, deploy_status="failed", deploy_response=content)
-            #    return Response(response, status=status.HTTP_201_CREATED)
-        #else:
-        #    response = train_response(time=t, modelName=config["meta"]["name"], status="trained", response="Train  in %d but not saved (low score)" %t, score=score)
-        #    return Response(response, status=status.HTTP_200_OK)

@@ -129,7 +129,7 @@ def validate_config(config:Dict[str, object]) -> Dict[str, object]:
     return config
 
 def validate_request(bundle, version):
-    path = "./bundles/train/%s/v%s" %(bundle, version)
+    path = "./bundles/%s/v%s" %(bundle, version)
     if not os.path.exists(path):
         raise ValidationError("The model %s v%d can not be found" %(bundle, version))
 

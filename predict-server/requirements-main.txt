@@ -8,6 +8,7 @@ pytz==2021.1
 sqlparse==0.4.1
 typing-extensions==3.7.4.3
 urllib3==1.26.4
+django-cors-headers==3.7.0
 
 #DRF dependencies
 django-rest-framework==0.1.0
