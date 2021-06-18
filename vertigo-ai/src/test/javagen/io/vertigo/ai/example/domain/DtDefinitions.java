@@ -21,6 +21,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		EventType(io.vertigo.ai.example.telstra.domain.EventType.class),
 		/** Objet de données Iris. */
 		Iris(io.vertigo.ai.example.iris.domain.Iris.class),
+		/** Objet de données IrisPredict. */
+		IrisPredict(io.vertigo.ai.example.iris.domain.IrisPredict.class),
 		/** Objet de données IrisTrain. */
 		IrisTrain(io.vertigo.ai.example.iris.domain.IrisTrain.class),
 		/** Objet de données Location. */
@@ -72,6 +74,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		petalWidth,
 		/** Propriété 'Label'. */
 		variety	}
+
+	/**
+	 * Enumération des champs de IrisPredict.
+	 */
+	public enum IrisPredictFields implements DtFieldName<io.vertigo.ai.example.iris.domain.IrisPredict> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Sepal Lenght'. */
+		sepalLength,
+		/** Propriété 'Sepal Width'. */
+		sepalWidth,
+		/** Propriété 'Petal Lenght'. */
+		petalLength,
+		/** Propriété 'Petal Width'. */
+		petalWidth	}
 
 	/**
 	 * Enumération des champs de IrisTrain.

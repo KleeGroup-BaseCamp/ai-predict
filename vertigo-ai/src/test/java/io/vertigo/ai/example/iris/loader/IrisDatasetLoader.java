@@ -10,10 +10,10 @@ import javax.inject.Inject;
 import io.vertigo.ai.example.iris.domain.Iris;
 import io.vertigo.ai.example.iris.domain.IrisTrain;
 import io.vertigo.ai.example.iris.services.IrisServices;
-import io.vertigo.ai.impl.loader.AbstractSqlRecordLoader;
-import io.vertigo.ai.structure.record.definitions.DatasetDefinition;
+import io.vertigo.ai.impl.structure.record.loader.AbstractSqlRecordLoader;
+import io.vertigo.ai.structure.record.definitions.RecordDefinition;
 import io.vertigo.ai.structure.record.definitions.RecordChunk;
-import io.vertigo.ai.structure.record.models.Dataset;
+import io.vertigo.ai.structure.record.models.Record;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -34,13 +34,13 @@ public final class IrisDatasetLoader extends AbstractSqlRecordLoader<Serializabl
 
 	
 	@Override
-	public List<Dataset<Iris, IrisTrain>> loadData(final RecordChunk<Iris> recordChunk) {
-		final DatasetDefinition datasetDefinition = Node.getNode().getDefinitionSpace().resolve("DsIris", DatasetDefinition.class);
+	public List<Record<Iris, IrisTrain>> loadData(final RecordChunk<Iris> recordChunk) {
+		final RecordDefinition datasetDefinition = Node.getNode().getDefinitionSpace().resolve("DsIris", RecordDefinition.class);
 		final List<Long> irisIds = getIdsFromRecord(recordChunk);
 		final DtList<IrisTrain> irisList = irisServices.loadIris(irisIds);
-		final List<Dataset<Iris, IrisTrain>> irisDatasets = new ArrayList<>(recordChunk.getAllUIDs().size());
+		final List<Record<Iris, IrisTrain>> irisDatasets = new ArrayList<>(recordChunk.getAllUIDs().size());
 		for (final IrisTrain iris : irisList) {
-			irisDatasets.add(Dataset.<Iris, IrisTrain> createDataset(datasetDefinition, UID.of(datasetDefinition.getKeyConceptDtDefinition(), iris.getId()), iris));
+			irisDatasets.add(Record.<Iris, IrisTrain> createDataset(datasetDefinition, UID.of(datasetDefinition.getKeyConceptDtDefinition(), iris.getId()), iris));
 		}
 		return irisDatasets;
 	}
@@ -62,7 +62,7 @@ public final class IrisDatasetLoader extends AbstractSqlRecordLoader<Serializabl
 
 
 	@Override
-	public void insertData(Collection<Dataset<Iris, IrisTrain>> datasets) {
+	public void insertData(Collection<Record<Iris, IrisTrain>> datasets) {
 		irisServices.insertIrisTrain(datasets);
 	}
 

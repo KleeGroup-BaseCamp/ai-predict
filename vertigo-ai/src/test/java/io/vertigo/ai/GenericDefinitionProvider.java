@@ -1,4 +1,4 @@
-package io.vertigo.ai.example.iris;
+package io.vertigo.ai;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,17 +9,18 @@ import io.vertigo.core.node.definition.DefinitionProvider;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.DefinitionSupplier;
 
-public class ItemDefinitionProvider implements Component, DefinitionProvider {
-
+public final class GenericDefinitionProvider implements Component, DefinitionProvider  {
+	
 	@Override
 	public List<DefinitionSupplier> get(DefinitionSpace definitionSpace) {
 		List<DefinitionSupplier> definitions = new ArrayList<DefinitionSupplier>();
 		definitions.add(
-				new RecordDefinitionSupplier("DsIris")
+				new RecordDefinitionSupplier("DsRIrisItem")
 				.withKeyConcept("DtIris")
-				.withDatasetDtDefinition("DtIrisTrain")
-				.withLoaderId("RecordLoader"));
+				.withDatasetDtDefinition("DtIris")
+				.withLoaderId("DatasetLoader"));
 		return definitions;
 	}
+
 
 }

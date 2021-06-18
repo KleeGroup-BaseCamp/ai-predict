@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import io.vertigo.ai.impl.structure.dataset.loader.AbstractSqlDatasetLoader;
 import io.vertigo.ai.predict.data.domain.boston.BostonItem;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
 import io.vertigo.ai.structure.dataset.DatasetManager;
@@ -12,7 +13,6 @@ import io.vertigo.ai.structure.dataset.models.Dataset;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.ai.structure.row.models.Row;
-import io.vertigo.ai.impl.AbstractSqlDatasetLoader;
 import io.vertigo.basics.task.TaskEngineSelect;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;

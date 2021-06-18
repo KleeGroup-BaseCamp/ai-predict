@@ -79,6 +79,7 @@ public final class MyNodeConfig {
 		nodeConfigBuilder.addModule(aiFeatures.build())
 				.addModule(ModuleConfig.builder("myApp")
 				.addComponent(ItemDefinitionProvider.class)
+				.addComponent(GenericDefinitionProvider.class)
 				.addComponent(IrisDAO.class)
 				.addComponent(IrisTrainDAO.class)
 				.addComponent(TrainPAO.class)

@@ -13,13 +13,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-import io.vertigo.ai.predict.PredictionManager;
-import io.vertigo.ai.predict.models.PredictResponse;
 import io.vertigo.ai.structure.dataset.DatasetManager;
 import io.vertigo.ai.structure.dataset.models.Dataset;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
+import io.vertigo.ai.mlmodel.ModelManager;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionDatabase;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
+import io.vertigo.ai.server.models.PredictResponse;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -43,7 +43,7 @@ public abstract class AbstractPredictionManagerStoreTest {
 	@Inject
 	private VTransactionManager transactionManager;
 	@Inject
-	private PredictionManager predictionManager;
+	private ModelManager predictionManager;
 	@Inject
 	private DatasetManager datasetManager;
 	@Inject

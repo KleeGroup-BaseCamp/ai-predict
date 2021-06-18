@@ -28,9 +28,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.vertigo.ai.predict.PredictionManager;
+import io.vertigo.ai.mlmodel.ModelManager;
+import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.ai.train.data.Iris;
-import io.vertigo.ai.train.models.TrainResponse;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -42,7 +42,7 @@ public abstract class AbstractSparkCassandraTrainManagerTest {
 	protected SqlManager dataBaseManager;
 	
 	@Inject
-	protected PredictionManager predictionManager;
+	protected ModelManager modelManager;
 	
 	private AutoCloseableNode node;
 	private SparkConf conf;
@@ -147,12 +147,12 @@ public abstract class AbstractSparkCassandraTrainManagerTest {
 	@Test
 	public void testTrainCassandraSpark() throws JsonParseException, JsonMappingException, IOException {
 		HashMap<String,Object> config = createConfig("cassandra_spark");
-		TrainResponse response = predictionManager.train(config);
+		TrainResponse response = modelManager.train("", 0);
 		Assertions.assertEquals(1, response.getScore().getScoreMean().compareTo(BigDecimal.valueOf(0.9)));
 	}
 	@Test
 	public void testDelete() {
-		long response = predictionManager.delete("iris-classification-cassandra-spark", 1);
+		long response = modelManager.delete("iris-classification-cassandra-spark", 1);
 		Assertions.assertEquals(204, response);
 	}
 }

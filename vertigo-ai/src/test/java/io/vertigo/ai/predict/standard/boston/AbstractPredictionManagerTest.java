@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.ai.predict.PredictionManager;
-import io.vertigo.ai.predict.models.PredictResponse;
 import io.vertigo.ai.structure.dataset.DatasetManager;
 import io.vertigo.ai.structure.dataset.models.Dataset;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
@@ -22,14 +20,16 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.ai.mlmodel.ModelManager;
 import io.vertigo.ai.predict.data.domain.ItemDatasetLoader;
 import io.vertigo.ai.predict.data.domain.boston.BostonDatabase;
 import io.vertigo.ai.predict.data.domain.boston.BostonItem;
+import io.vertigo.ai.server.models.PredictResponse;
 
 public abstract class AbstractPredictionManagerTest {
     
 	@Inject
-	private PredictionManager predictionManager;
+	private ModelManager predictionManager;
 	
 	@Inject
 	private DatasetManager datasetManager;

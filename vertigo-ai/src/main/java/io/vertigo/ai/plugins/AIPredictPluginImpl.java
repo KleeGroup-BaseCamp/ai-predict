@@ -1,6 +1,23 @@
+/**
+ * vertigo - application development platform
+ *
+ * Copyright (C) 2013-2021, Vertigo.io, team@vertigo.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.vertigo.ai.plugins;
 
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,18 +29,17 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.gson.Gson;
-
-import io.vertigo.ai.impl.PredictionPlugin;
-import io.vertigo.ai.predict.models.PredictResponse;
-import io.vertigo.ai.train.models.AIPredictScoreResponse;
-import io.vertigo.ai.train.models.TrainResponse;
+import io.vertigo.ai.impl.server.PredictionPlugin;
+import io.vertigo.ai.server.models.AIPredictScoreResponse;
+import io.vertigo.ai.server.models.PredictResponse;
+import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 
-
-
+/**
+ * Implémentation standard du plugin de connection à AIPredict.
+ */
 public class AIPredictPluginImpl implements PredictionPlugin {
 		
 	private String server;
@@ -33,8 +49,9 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 		this.server = serverName;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version) {
+	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<D> data, String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(server+"predict/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
@@ -46,19 +63,19 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
-	public TrainResponse train(
-			HashMap<String,Object> config) {
-	
+	public TrainResponse train(String modelName, Integer version) {		
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"deploy-train/");
+		WebTarget target = client.target(server+"train/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.post(Entity.entity(config, MediaType.APPLICATION_JSON));
+		Response response = invocationBuilder.post(null);
 		TrainResponse output = response.readEntity(TrainResponse.class);	
 		response.close();
 		return output;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AIPredictScoreResponse score(String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
@@ -70,6 +87,7 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 		return output;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer delete(String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();

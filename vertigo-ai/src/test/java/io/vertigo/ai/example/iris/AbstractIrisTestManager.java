@@ -1,5 +1,6 @@
 package io.vertigo.ai.example.iris;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -16,13 +17,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import io.vertigo.ai.example.iris.data.datageneration.IrisGenerator;
 import io.vertigo.ai.example.iris.domain.Iris;
 import io.vertigo.ai.example.iris.domain.IrisTrain;
 import io.vertigo.ai.example.iris.services.IrisServices;
-import io.vertigo.ai.structure.record.DatasetManager;
-import io.vertigo.ai.structure.record.definitions.DatasetDefinition;
-import io.vertigo.ai.structure.record.models.Dataset;
+import io.vertigo.ai.example.iris.train.IrisTrainTest;
+import io.vertigo.ai.mlmodel.ModelManager;
+import io.vertigo.ai.structure.record.RecordManager;
+import io.vertigo.ai.structure.record.definitions.RecordDefinition;
+import io.vertigo.ai.structure.record.models.Record;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -30,26 +36,28 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
+import io.vertigo.ai.example.iris.predict.IrisPredictionTest;
 
 public abstract class AbstractIrisTestManager {
 
-	private DatasetDefinition datasetDefinition;
+	private RecordDefinition datasetDefinition;
 	
 	@Inject
 	private IrisGenerator irisGenerator;
 	
 	@Inject
-	private DatasetManager datasetManager;
+	private RecordManager datasetManager;
 
 	@Inject
 	private EntityStoreManager entityStoreManager;
 	
 	@Inject
 	private VTransactionManager transactionManager;
+	
+	@Inject
+	private ModelManager modelManager;
 	
 	@Inject
 	private IrisServices irisServices;
@@ -62,7 +70,7 @@ public abstract class AbstractIrisTestManager {
 	protected final void init(final String datasetName) {
 		final DefinitionSpace definitionSpace = node.getDefinitionSpace();
 
-		datasetDefinition = definitionSpace.resolve(datasetName, DatasetDefinition.class);
+		datasetDefinition = definitionSpace.resolve(datasetName, RecordDefinition.class);
 		dtDefinitionIris = DtObjectUtil.findDtDefinition(Iris.class);
 		dtDefinitionIrisTrain = DtObjectUtil.findDtDefinition(IrisTrain.class);
 	}
@@ -146,6 +154,18 @@ public abstract class AbstractIrisTestManager {
 		}
 
 		Assertions.assertEquals(appSize, trainSize);
+	}
+	
+	@Test
+	public void testIrisTrain() throws JsonParseException, JsonMappingException, IOException {
+		IrisTrainTest.testTrainPostgresql(modelManager);
+		IrisTrainTest.testScore(modelManager);
+	}
+	
+	@Test
+	public void testIrisPredict() {
+		IrisPredictionTest irisPredict = new IrisPredictionTest(modelManager);
+		irisPredict.testPredictXGBClassifier();
 	}
 }
 
