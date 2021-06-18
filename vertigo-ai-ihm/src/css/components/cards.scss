@@ -1,0 +1,28 @@
+.bundle-card {
+  max-height: 200px;
+  min-width: 400px;
+  max-width: 528px;
+}
+
+.bundle-items {
+  min-width: 400px;
+}
+
+.overview-card {
+  min-width: 200px;
+}
+
+.overview-items {
+  border-left: 2px solid;
+  border-bottom: 2px solid;
+  border-color: #2a9d8f;
+}
+
+.select-sort {
+  min-width: 150px;
+}
+
+.filter-items {
+  min-width: 150px;
+  margin-left: 10px;
+}

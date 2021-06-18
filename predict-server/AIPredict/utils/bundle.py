@@ -1,15 +1,18 @@
 from pathlib import Path
 import json
 from typing import List, Tuple, Dict
-import dill, pickle
-import os, shutil
+import dill
+import pickle
+import os
+import shutil
 
 from AIPredict.utils.imports import *
 from AIPredict.settings.production import BUNDLE_PATH
 
+
 class Bundle:
 
-    def __init__(self, name:str, version:int, load_bundle:bool=True) -> None:
+    def __init__(self, name: str, version: int, load_bundle: bool = True) -> None:
         """Constructor
 
         Args:
@@ -17,23 +20,24 @@ class Bundle:
             version (int): version of the bundle
             load_bundle (bool): load the bundle.json
         """
-        #set basic parameters
+        # set basic parameters
         self.name = name
         self.version = version
-        self.path = Path(".", BUNDLE_PATH, name, str("v"+str(version)))
+        self.path = Path(".", BUNDLE_PATH, "standard",
+                         name, str("v"+str(version)))
 
-        #extract bundle
+        # extract bundle
         self.bundle = None
         self.status = None
         if load_bundle:
             with open(self.path / "bundle.json", "r") as jsonBundle:
-                self.bundle = json.load(jsonBundle)   
-            #get status
+                self.bundle = json.load(jsonBundle)
+            # get status
             self.status = self.bundle["algorithm"]["status"]
 
     def get_path(self) -> Path:
         return self.path
-    
+
     def get_bundle(self) -> Dict:
         return self.bundle
 
@@ -41,11 +45,11 @@ class Bundle:
         return self.status
 
     def is_active(self) -> bool:
-        return self.status=="active"
+        return self.status == "active"
 
     def load_bundle(self):
         with open(self.path, "r") as jsonBundle:
-                self.bundle = json.load(jsonBundle)
+            self.bundle = json.load(jsonBundle)
 
     def get_model(self):
         """Read the binarized model from the stored bundle
@@ -73,7 +77,7 @@ class Bundle:
                 raise ImportError("No module is imported to read the model")
         return model
 
-    def get_category(self, category:str):
+    def get_category(self, category: str):
         """get a category from bundle.json.
 
         Args:
@@ -83,8 +87,8 @@ class Bundle:
         Dict[str, object]: the corresponding bundle category
         """
         return self.bundle[category]
-    
-    def get_item(self, category:str, item:str):
+
+    def get_item(self, category: str, item: str):
         """get an item from bundle.json.
 
         Args:
@@ -95,8 +99,8 @@ class Bundle:
         Dict[str, object]: the corresponding bundle category
         """
         return self.bundle[category][item]
-    
-    def set_item(self, category:str, item:str, value):
+
+    def set_item(self, category: str, item: str, value):
         """updates an item of bundle.json.
 
         Args:
@@ -110,12 +114,12 @@ class Bundle:
         self.bundle[category][item] = value
         with open(path, "w") as f:
             json.dump(self.bundle, f)
-    
+
     def deactivate(self):
         self.set_item("algorithm", "status", "deployed")
 
     def activate(self):
-        root_path = Path(BUNDLE_PATH, name)
+        root_path = Path(BUNDLE_PATH, "standard", name)
         versions = os.listdir(path)
         for version in versions:
             v = int(version[1:])
@@ -123,7 +127,7 @@ class Bundle:
                 other = Bundle(self.name, v)
                 other.deactivate()
         self.set_item("algorithm", "status", "active")
-    
+
     def build_model_class(self):
         """Build the model associated to the bundle.
 
@@ -134,17 +138,17 @@ class Bundle:
 
         Returns:
         Dict[str, object]: the corresponding bundle category
-        """      
+        """
         package = self.get_item("algorithm", "package")
         model = self.get_item("algorithm", "name")
         modules = package.split(".")
         if modules[0] in ["sklearn", "keras", "xgboost"]:
             modules = modules[1:]
         else:
-            raise ImportError("The package %s is not imported" %modules[0])
+            raise ImportError("The package %s is not imported" % modules[0])
         modules.append(model)
         return ".".join(modules)
-    
+
     def remove(self):
         shutil.rmtree(self.path)
 
