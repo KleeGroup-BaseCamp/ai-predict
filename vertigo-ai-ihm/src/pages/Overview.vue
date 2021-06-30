@@ -1,22 +1,21 @@
 <template>
-  <q-page class="row page">
-    <div class="col-auto">
-      <div>
-        <overview-card :count="count()" :active="countActive()"></overview-card>
-        <sort-card @sort="getSort($event)"></sort-card>
-        <filters-card @filters="getFilters($event)"></filters-card>
-      </div>
-    </div>
-    <div class="col row">
+  <q-page class="row q-pa-sm">
+    <section class="col-auto column q-pa-sm">
+        <OverviewCard :count="count()" :active="countActive()" />
+        <SortCard @sort="getSort($event)" />
+        <FiltersCard @filters="getFilters($event)" />
+    </section>
+    <section class="col row justify-between q-pa-md">
       <div v-for="bundle in bundles" :key="bundle.name">
-        <bundle-card
+        <BundleCard
           :title="bundle.name"
           :active="bundle.active"
           v-bind:performance="bundle.performance"
           v-bind:use="bundle.use"
-        ></bundle-card>
+          @deletedBundle="deleteBundle"
+        />
       </div>
-    </div>
+    </section>
   </q-page>
 </template>
 
@@ -94,6 +93,21 @@ export default {
         } else if (filters.deactive) {
           return numericFilters && !bundle.active;
         }
+      });
+    },
+    deleteBundle(e) {
+      this.input_bundles = this.input_bundles.filter(function(bundle) {
+        return bundle.name != e;
+      });
+      this.bundles = this.bundles.filter(function(bundle) {
+        return bundle.name != e;
+      });
+      this.deleteAllNotifySuccess(e);
+    },
+    deleteAllNotifySuccess(name) {
+      this.$q.notify({
+        message: "All version of".concat(" ", name).concat(" ", "are deleted."),
+        color: "positive"
       });
     }
   }

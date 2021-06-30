@@ -40,7 +40,7 @@ Most of the AIPredict server's functionality rely on a json file, hereinafter re
         "version": 0,
         "language": "python",
         "framework": "scikit-learn",
-        "URLDataSources": "",
+        "datasource": "",
         "SearchLoaderID": "",
         "secret": ""
     },
@@ -54,7 +54,7 @@ Most of the AIPredict server's functionality rely on a json file, hereinafter re
     {
         "db_config":
          {
-             "db_type": "postgresql",
+             "key": "postgresql",
              "table": "iris",
              "database": "traindb",
              "user": "postgres",
@@ -138,7 +138,7 @@ This example uses the [Iris Dataset]("https://archive.ics.uci.edu/ml/datasets/ir
 - The *meta* field must contains a name for the model to train/predict. Only alphanumeric characters and dashes can be use. The name and the version (an integer) of the model must be unique together because they constitute the key to retrieve the model once imported.
 - The *algorithm* field refers to the model algorithm by giving the exact module name and package (here ``DecisionTreeClassifier`` and ``sklearn.tree``)
 - Three items are required in the *dataset* field : the database configuration *db_config*, the dataset scheme *data_config* and the data domains *domains*. 
-    - The *db_config* gives all the details required by the server to access the training data. The field *db_type* is always required to indicates which type of database is used (refers to this section to see the compatible solutions).
+    - The *db_config* gives all the details required by the server to access the training data. The field *key* is always required to indicates which type of database is used (refers to this section to see the compatible solutions).
     - The *data_config* field indicates how the dataset is built by naming and typing the data fields, making the distinction between feature and label and by providing a value if a feature is empty (can be set as ``"_required"`` also)
     - The *domains* is the data typing dictionary to make the link between your application types and python.
 - The *parameters* field contains all the required information for training. Four fields are required : a *metric*, a minimal score to allow the model deployment *min_score* and the *hyperparameters* dictionary which could be configured either for grid search or not as it is indicated in the boolean *grid_search*.

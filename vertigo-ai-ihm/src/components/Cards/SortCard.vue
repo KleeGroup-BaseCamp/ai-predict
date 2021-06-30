@@ -5,29 +5,29 @@
         <div class="text-h6 text-primary">Sort</div>
       </div>
       <div class="row overview-items">
-      <q-select
-        borderless
-        class="col"
-        type="text"
-        v-model="sortForm.sort"
-        :options="options"
-      />
-      <q-btn flat color="primary">
-        <q-icon
-              v-if="sortForm.order=='DESC'"
-              name="expand_less"
-              class="text"
-              style="font-size: 1.5em;"
-              @click="changeOrder()"
-            />
-        <q-icon
-              v-else
-              name="expand_more"
-              class="text"
-              style="font-size: 1.5em;"
-              @click="changeOrder()"
-            />
-      </q-btn>
+        <q-select
+          borderless
+          class="col"
+          type="text"
+          v-model="sortForm.sort"
+          :options="options"
+        />
+        <q-btn flat color="primary">
+          <q-icon
+            v-if="sortForm.order == 'DESC'"
+            name="expand_less"
+            class="text"
+            style="font-size: 1.5em;"
+            @click="changeOrder()"
+          />
+          <q-icon
+            v-else
+            name="expand_more"
+            class="text"
+            style="font-size: 1.5em;"
+            @click="changeOrder()"
+          />
+        </q-btn>
       </div>
     </div>
   </q-item>
@@ -42,12 +42,12 @@ export default {
       options: ["Performance", "Use"]
     };
   },
-  methods: { 
+  methods: {
     changeOrder() {
-      if (this.sortForm.order=="ASC"){
-        this.sortForm.order="DESC";
+      if (this.sortForm.order == "ASC") {
+        this.sortForm.order = "DESC";
       } else {
-        this.sortForm.order="ASC";
+        this.sortForm.order = "ASC";
       }
     }
   },

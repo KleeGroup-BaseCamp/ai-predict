@@ -1,51 +1,45 @@
+from AIPredict.utils.parsers import ModelJSONEncoder, TrainingParser
+from AIPredict.utils.preprocessing import FeatureEngineering, pick_encoder_from_label
+from AIPredict.utils.version import VersionController
+from AIPredict.apps.train.utils.files import save
+from AIPredict.apps.train.utils.tools import get_data, train_response, score_response
+from AIPredict.apps.train.utils.train import async_train, async_score
+from AIPredict.utils.validators import BundleCreationValidator
+
+from rest_framework.response import Response
+from rest_framework import viewsets, status
+from django.core.validators import ValidationError
+
 import json
-from pathlib import Path
 import time
 import logging
+import shap
+import numpy as np
 
-from django.shortcuts import render
-from django.core.exceptions import ValidationError
-from django.http.response import JsonResponse
-
-from django_q.tasks import AsyncTask
-
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-
-from AIPredict.apps.train.validators import validate_config, validate_request
-from AIPredict.apps.train.utils.train import async_train, async_score, sync_train, sync_score
-from AIPredict.apps.train.utils.tools import build_model_class, get_data, train_response, score_response
-from AIPredict.apps.train.utils.files import save, send, get_config, delete_files
-from AIPredict.apps.predict.utils.files import get_model
-from AIPredict.utils.bundle import Bundle
+# import the logging library
+import logging
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+
 class TrainModel(viewsets.ViewSet):
 
     def deploy(self, request):
-        #zip pour plus général
+        # zip pour plus général
         config = request.data
         try:
-            validate_config(config)
-        except Exception as e:
-            response = train_response(modelName=config["meta"]["name"], status="failed", response=str(e))
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            BundleCreationValidator(config).validate()
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
         res = self.train(config)
         return res
-        
-    
+
     def retrain(self, request, *args, **kwargs):
         # gets the request bundle version
         name = kwargs["bundle"]
         version = kwargs["version"]
-        try:
-            validate_request(name, version)
-        except Exception as e:
-            response = train_response(modelName=name, status="failed", response=str(e))
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
-        bundle = Bundle(name, version)
+        bundle = VersionController(name, version)
         res = self.train(bundle.get_bundle())
         return res
 
@@ -53,61 +47,123 @@ class TrainModel(viewsets.ViewSet):
         # gets the request bundle version
         name = kwargs["bundle"]
         version = kwargs["version"]
-        try:
-            validate_request(name, version)
-        except ValidationError as e:
-            response = score_response(modelName=name, status="failed", version=version)
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            bundle = Bundle(name, version)
-            config = bundle.get_bundle()
-            model = bundle.get_model()
-            #get dataset
-            X, y = get_data(bundle.get_category("dataset"))
-            #get parameters
-            params = bundle.get_category("parameters")
-            cv = params["cv"]
-            metrics = params["metrics"]
-            preprocessing = bundle.get_category("preprocessing")
-            start = time.time()
-            score = async_score(model, metrics, cv, X, y, preprocessing)
-            t = time.time() - start
-            response = score_response(modelName=name, status="succeed", version=version, time=t, score=score)
-        except Exception as e:
-            logger.exception('Error while scoring model: %s version: %s', name, version)
-            response = score_response(modelName=name, status="failed", version=version)
-            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #get bundle to score
+        bundle = VersionController(name, version)
+        config = bundle.get_bundle()
+        model = bundle.get_model()
+        # get dataset
+        X, y = get_data(bundle.get_category("dataset"))
+        # get parameters
+        params = bundle.get_category("parameters")
+        cv = params["cv"]
+        metrics = params["metrics"]
+        preprocessing = bundle.get_category("preprocessing")
+        start = time.time()
+        score = async_score(model, metrics, cv, X, y, preprocessing)
+        t = time.time() - start
+        response = score_response(
+            modelName=name, status="succeed", version=version, time=t, score=score)
 
         return Response(response, status=status.HTTP_200_OK)
-    
-    def destroy(self, request, *args, **kwargs):
-        name = kwargs["bundle"]
-        version = kwargs["version"]
-        validate_request(name, version)
-        bundle = Bundle(name, version)
-        bundle.remove()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def train(self, config):
-        #start time
+        # start time
         start = time.time()
-        #get model class
+        # get model class
         algo = config["algorithm"]
         package = algo["package"]
         modelClass = algo["name"]
-        #prepare parameters and preprocessing dictionaries
+        # prepare parameters and preprocessing dictionaries
         params = config["parameters"]
-        preprocessing = config["preprocessing"]
-        #get dataset
-        X_train, y_train = get_data(config["dataset"])
-        #train
-        model = async_train(package=package, modelClass=modelClass, X=X_train, y=y_train, preprocessing=preprocessing, **params)
-        #if the score is greater than a threshold value, the bundle is saved
-        aim = params["min_score"]
-        score = async_score(model, X=X_train, y=y_train, preprocessing=preprocessing, **params)
-        t = time.time() - start
+        # get dataset
+        try:
+            X_train, y_train = get_data(config["dataset"])
+        except Exception as e:
+            logger.error("Cannot extract data from the database: " + str(e))
+            return Response({"error": "Cannot extract data from the database"}, status=status.HTTP_400_BAD_REQUEST)
 
-        path, name, version = save(model, config, 0, score)
-        response = train_response(time=t, modelName=name, version=version, status="deployed", response="Trained in %ds" %t, score=score)
-        return Response( response, status=status.HTTP_201_CREATED)
+        # configure preprocessing
+        try:
+            X_fe = FeatureEngineering(data=X_train)
+            y_fe = FeatureEngineering(data=y_train)
+            for feature in config["dataset"]["data_config"]:
+                if feature["preprocessing"] != "":
+                    if feature["is_label"]:
+                        y_fe.add(feature["name"], pick_encoder_from_label(
+                        feature["preprocessing"]))
+                    else:
+                        X_fe.add(feature["name"], pick_encoder_from_label(
+                            feature["preprocessing"]))
+            preprocessing = {}
+            preprocessing.update(X_fe.get_bundle())
+            preprocessing.update(y_fe.get_bundle())
+            config["preprocessing"] = preprocessing
+            X_fe.transform()
+            y_fe.transform()
+            X_process = X_fe.get_data()
+            y_process = y_fe.get_data()
+        except Exception as e:
+            print(e)
+            logger.error("Cannot apply preprocessing properly: " + str(e))
+            return Response({"error": "Cannot apply preprocessing properly. See logs for details"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # train
+        model = async_train(package=package, modelClass=modelClass,
+                                X=X_process, y=y_process, **params)
+        if isinstance(model, str):
+            logger.error(model)
+            return Response({"error": model}, status=status.HTTP_400_BAD_REQUEST)
+        # score
+        score = async_score(model, X=X_process, y=y_process, **params)
+        if isinstance(score, str):
+            return Response({"error": model}, status=status.HTTP_400_BAD_REQUEST)
+        # write parameters
+        model_params = json.loads(json.dumps(
+            model.get_params(), cls=ModelJSONEncoder))
+        if config["parameters"]["grid_search"]:
+            config["training_parameters"] = TrainingParser(model_params).parse()
+        else:
+            config["training_parameters"] = {"estimator": TrainingParser(model_params).parse()}
+        
+        
+        # write training data
+        t = time.time() - start
+        training_data = {
+            "time": t, "x_shape": X_process.shape, "y_shape": y_process.shape}
+        config["training_data"] = training_data
+
+        # explanation
+        # init explanation
+        if config["parameters"]["grid_search"]:
+            explainer = shap.Explainer(model.best_estimator_)
+        else:
+            explainer = shap.Explainer(model)
+        shap_values = explainer(X_process)
+        # compute features importance
+        if len(shap_values.shape) == 2:
+            shap_exp = shap_values.abs.mean(0)
+            exp_array = shap_exp.values
+        elif len(shap_values.shape) == 3:
+            shap_exp = []
+            shap_values_transpose = shap_values.values.transpose(2, 0, 1)
+            for i in range(len(shap_values_transpose)):
+                shap_exp.append(
+                    np.mean(np.absolute(shap_values_transpose[i]), 0))
+            exp_array = np.sum(shap_exp, 0)
+
+        # sort features
+        tuples_exp = sorted(
+            zip(exp_array, shap_values.feature_names), reverse=True)
+        values = []
+        feature_names = []
+        for value, name in tuples_exp:
+            values.append(float(value))
+            feature_names.append(name)
+        config["explanation"] = {
+            "feature": feature_names, "importance": values}
+        # save model
+        path, name, version = save(
+            model, config, config["meta"]["version"], score)
+        response = train_response(time=t, modelName=name, version=version,
+                                  status="deployed", response="Trained in %ds" % t, score=score)
+        return Response(response, status=status.HTTP_201_CREATED)

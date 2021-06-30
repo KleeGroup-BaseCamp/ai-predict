@@ -32,7 +32,7 @@ def cassandra_connect(db_name:str, table:str, fetch_size:int):
     return df
 
 def get_data(db_config:dict, features:list, labels:list):
-    data = cassandra_connect(db_config["db_type"], db_config["table"], db_config["fetch_size"])
+    data = cassandra_connect(db_config["key"], db_config["table"], db_config["fetch_size"])
     #split features and labels
     X, y = data[features], data[labels]
     return X, y

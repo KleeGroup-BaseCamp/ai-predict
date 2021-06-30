@@ -26,7 +26,8 @@ module.exports = function (/* ctx */) {
     // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: [
       'app.scss',
-      'components/cards.scss'
+      'components/cards.scss',
+      'components/charts.scss'
     ],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
@@ -98,7 +99,7 @@ module.exports = function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: ['Notify']
     },
 
     // animations: 'all', // --- includes all animations

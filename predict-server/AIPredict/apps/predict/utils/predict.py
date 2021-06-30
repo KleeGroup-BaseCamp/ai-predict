@@ -1,24 +1,9 @@
-from AIPredict.apps.predict.utils.preprocessing import FeatureEngineering
+from AIPredict.utils.imports import *
+from AIPredict.utils.preprocessing import FeatureEngineering
 from AIPredict.apps.predict.utils.response import parse_response, PredictResponseEncoder
+
 import numpy as np
 import json
-
-try:
-    import keras
-except:
-    keras = None
-try:
-    import sklearn
-except:
-    sklearn = None
-try:
-    import shap
-except:
-    shap = None
-try:
-    import xgboost
-except:
-    xgboost = None
 
 class Predictor(object):
     """Wraps a model and a preprocessing dictionnary to 

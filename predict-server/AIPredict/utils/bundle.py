@@ -5,14 +5,18 @@ import dill
 import pickle
 import os
 import shutil
+import random
+import numpy as np
+import zipfile
 
 from AIPredict.utils.imports import *
 from AIPredict.settings.production import BUNDLE_PATH
+from AIPredict.utils.version import VersionController
 
 
-class Bundle:
+class BundleController:
 
-    def __init__(self, name: str, version: int, load_bundle: bool = True) -> None:
+    def __init__(self, name: str) -> None:
         """Constructor
 
         Args:
@@ -22,132 +26,24 @@ class Bundle:
         """
         # set basic parameters
         self.name = name
-        self.version = version
         self.path = Path(".", BUNDLE_PATH, "standard",
-                         name, str("v"+str(version)))
-
-        # extract bundle
-        self.bundle = None
-        self.status = None
-        if load_bundle:
-            with open(self.path / "bundle.json", "r") as jsonBundle:
-                self.bundle = json.load(jsonBundle)
-            # get status
-            self.status = self.bundle["algorithm"]["status"]
+                         name)
 
     def get_path(self) -> Path:
         return self.path
 
-    def get_bundle(self) -> Dict:
-        return self.bundle
+    def get_performance(self, scores: List) -> float:
+        return np.round(100 * np.mean(scores)/(1+np.std(scores)*len(scores)))
 
-    def get_status(self) -> str:
-        return self.status
+    def get_versions(self):
+        return [int(v[1:]) for v in os.listdir(self.path)]
 
     def is_active(self) -> bool:
-        return self.status == "active"
-
-    def load_bundle(self):
-        with open(self.path, "r") as jsonBundle:
-            self.bundle = json.load(jsonBundle)
-
-    def get_model(self):
-        """Read the binarized model from the stored bundle
-
-        Returns:
-            object: the trained model. Can be for instance a sklearn model like RandomForestClassifier()
-        """
-        framework = self.bundle["meta"]["framework"]
-        if framework == "custom":
-            with open(self.path / "model.pkl", "rb") as m:
-                model = dill.load(m)
-            return model
-
-        elif framework == "keras":
-            if kmodel:
-                return keras.models.load_model(self.path / "model.h5")
-            else:
-                raise ImportError("No module name keras")
-
-        else:
-            if sklearn or xgboost:
-                with open(self.path / "model.pkl", "rb") as m:
-                    model = pickle.load(m)
-            else:
-                raise ImportError("No module is imported to read the model")
-        return model
-
-    def get_category(self, category: str):
-        """get a category from bundle.json.
-
-        Args:
-            category (str): the category to get from the bundle. Must be one of : meta, algorithm, data, preprocessing
-
-        Returns:
-        Dict[str, object]: the corresponding bundle category
-        """
-        return self.bundle[category]
-
-    def get_item(self, category: str, item: str):
-        """get an item from bundle.json.
-
-        Args:
-            category (str): the category to get from the bundle.
-            item (str): the item to get from the category.
-
-        Returns:
-        Dict[str, object]: the corresponding bundle category
-        """
-        return self.bundle[category][item]
-
-    def set_item(self, category: str, item: str, value):
-        """updates an item of bundle.json.
-
-        Args:
-            category (str): the category of the item to update get from the bundle.
-            item (str): the item to update from the category.
-            value (object): the new value
-
-        Returns:
-        Dict[str, object]: the corresponding bundle category
-        """
-        self.bundle[category][item] = value
-        with open(path, "w") as f:
-            json.dump(self.bundle, f)
-
-    def deactivate(self):
-        self.set_item("algorithm", "status", "deployed")
-
-    def activate(self):
-        root_path = Path(BUNDLE_PATH, "standard", name)
-        versions = os.listdir(path)
-        for version in versions:
-            v = int(version[1:])
-            if self.version != v:
-                other = Bundle(self.name, v)
-                other.deactivate()
-        self.set_item("algorithm", "status", "active")
-
-    def build_model_class(self):
-        """Build the model associated to the bundle.
-
-        Args:
-            category (str): the category of the item to update get from the bundle.
-            item (str): the item to update from the category.
-            value (object): the new value
-
-        Returns:
-        Dict[str, object]: the corresponding bundle category
-        """
-        package = self.get_item("algorithm", "package")
-        model = self.get_item("algorithm", "name")
-        modules = package.split(".")
-        if modules[0] in ["sklearn", "keras", "xgboost"]:
-            modules = modules[1:]
-        else:
-            raise ImportError("The package %s is not imported" % modules[0])
-        modules.append(model)
-        return ".".join(modules)
+        for version in self.get_versions():
+            bundle = BundleController(self.name, version)
+            if bundle.is_active():
+                return True
+        return False
 
     def remove(self):
         shutil.rmtree(self.path)
@@ -155,7 +51,56 @@ class Bundle:
     def serialize(self):
         res = {
             "name": self.name,
-            "version": self.version,
-            "status": self.status
+            "performance": None,
+            "use":  random.randint(0, 100),
+            "active": False,
+            "activeVersion": None,
+            "versions": self.get_versions(),
+            "scores": []
         }
+        raw_scores = []
+        best_score = 0
+        for version in res["versions"]:
+            bundle = VersionController(self.name, version)
+            res["datasource"] = bundle.get_item("meta", "datasource")
+            res["description"] = bundle.get_item("meta", "description")
+            score = bundle.get_item(
+                "algorithm", "score")["scoreMean"]
+            raw_scores.append(score)
+            if score >= best_score:
+                best_score = score
+                res["bestVersion"] = version
+            if bundle.is_active():
+                res["active"] = True
+                res["activeVersion"] = version
+        res["performance"] = self.get_performance(raw_scores)
+        res["scores"] = np.round(raw_scores, 2)
         return res
+
+    def version_serialize(self):
+        res = []
+        for version in self.get_versions():
+            res.append(VersionController(self.name, version).serialize())
+        return res
+
+    def archive(self):
+        zipname = self.name + ".zip"
+        zip_path = self.path / zipname
+        with zipfile.ZipFile(zip_path, 'w') as zipObj:
+            zipObj.write(self.path, self.name)
+            for version_folder in os.listdir(self.path):
+                if not (len(version_folder) > 4 and version_folder[-3:] == "zip"):
+                    pathObj = Path(self.path, version_folder)
+                    pathArc = Path(self.name, version_folder)
+                    zipObj.write(pathObj, pathArc)
+                    zipObj.write(pathObj / "bundle.json",
+                                 pathArc / "bundle.json")
+                    if os.path.exists(pathObj / "model.pkl"):
+                        zipObj.write(pathObj / "model.pkl",
+                                     pathArc / "model.pkl")
+                    if os.path.exists(pathObj / "model.h5"):
+                        zipObj.write(pathObj / "model.h5",
+                                     pathArc / "model.h5")
+
+    def remove_archive(self):
+        os.remove(self.path / str(self.name+".zip"))
