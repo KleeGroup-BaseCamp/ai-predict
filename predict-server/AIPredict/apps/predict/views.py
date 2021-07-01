@@ -3,6 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 
+import logging
 import pandas as pd
 import shutil
 import os
@@ -12,7 +13,7 @@ from AIPredict.apps.predict.utils.predict import Predictor
 from AIPredict.apps.predict.utils.deploy import BundleDeployer
 from AIPredict.utils.validators import DeployBundleValidator, DataValidator
 
-
+logger = logging.getLogger(__name__)
 class DeployBundle(viewsets.ViewSet):
 
     def create(self, request):
@@ -23,7 +24,7 @@ class DeployBundle(viewsets.ViewSet):
         except ValidationError as e:
             shutil.rmtree("./bundles/temp/")
             os.mkdir("./bundles/temp/")
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
         # create bundle
         bundle = VersionController(name, version)
         bundle.set_item("algorithm", "status", "deployed")

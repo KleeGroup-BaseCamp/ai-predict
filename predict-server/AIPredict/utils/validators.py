@@ -91,7 +91,7 @@ class BundleCreationValidator:
         is_valid = self.validator.validate(dataset["db_config"], db_config_scheme)
         if not is_valid:
             raise ValidationError(self._parse_error(self.validator.errors))
-        if not dataset["db_config"]["key"] in TRAIN_DB:
+        if not dataset["db_config"]["database"] in TRAIN_DB:
             raise ValidationError("The database key %s is unknown." %dataset["db_config"]["key"])
         #check data_config scheme
         is_valid = self.validator.validate({"data": dataset["data_config"]}, data_config_scheme)

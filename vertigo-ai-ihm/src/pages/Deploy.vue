@@ -10,6 +10,7 @@
           <q-uploader
             class=""
             url="http://127.0.0.1:8000/deploy/"
+            @failed="fileFailed"
             color="primary"
             flat
             bordered
@@ -22,11 +23,19 @@
 
 <script>
 export default {
-  // name: 'PageName',
+  name: 'Deploy',
   data() {
     return {
-      model: null
     };
+  },
+  methods: {
+    fileFailed(info){
+      const response = JSON.parse(info.xhr.response)
+      this.$q.notify({
+        message: response.error,
+        color: "negative"
+      });
+    }
   }
 };
 </script>

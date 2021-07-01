@@ -1,4 +1,6 @@
 from pathlib import Path
+import os
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -110,38 +112,49 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'console': {
-            'format': '%(name)-12s %(levelname)-8s %(message)s'
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
         },
-        'file': {
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
-        }
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
     },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'console'
+            'formatter' : 'verbose'
         },
         'file': {
-            'level': 'INFO',
             'class': 'logging.FileHandler',
-            'formatter': 'file',
-            'filename': '../logs/logging.log'
+            'filename': os.path.join(BASE_DIR, 'logs', 'info.log'),
+            'formatter' : 'verbose'
+        },
+        'http': {
+            'class': 'logging.handlers.HTTPHandler',
+            'formatter' : 'verbose',
+            'host': '127.0.0.1:8000',
+            'url': '/deploy',
+            'method': 'POST'
         }
     },
     'loggers': {
-        '': {
-            'level': 'DEBUG',
-            'handlers': ['console', 'file']
-        }
-    }
+        'AIPredict.apps': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
 }
+
 
 Q_CLUSTER = {
     'name': 'DjangORM',
