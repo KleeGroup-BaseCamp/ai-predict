@@ -9,7 +9,7 @@
         <q-card-section class="row justify-center">
           <q-uploader
             class=""
-            url="http://127.0.0.1:8000/deploy/"
+            url="/deploy/"
             @failed="fileFailed"
             color="primary"
             flat

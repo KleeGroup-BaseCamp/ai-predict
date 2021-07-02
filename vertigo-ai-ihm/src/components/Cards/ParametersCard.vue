@@ -131,7 +131,7 @@ export default {
   },
   methods: {
     activateBundle() {
-      const url = "http://127.0.0.1:8000/activate"
+      const url = "/activate"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version);
       axios
@@ -166,7 +166,7 @@ export default {
       this.activationError = false;
     },
     deleteVersion() {
-      const url = "http://127.0.0.1:8000/remove"
+      const url = "/remove"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version);
       axios
@@ -200,7 +200,7 @@ export default {
       });
     },
     downloadVersion() {
-      const url = "http://127.0.0.1:8000/download"
+      const url = "/download"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version);
       axios({
@@ -227,7 +227,7 @@ export default {
       });
     },
     async trainVersion() {
-      const url = "http://127.0.0.1:8000/train"
+      const url = "/train"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version);
       let response = await axios

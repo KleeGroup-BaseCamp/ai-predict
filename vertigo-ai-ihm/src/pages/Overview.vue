@@ -38,7 +38,7 @@ export default {
     };
   },
   mounted() {
-    axios.get("http://127.0.0.1:8000/bundles/").then(response => {
+    axios.get("/bundles/").then(response => {
       this.input_bundles = response.data;
       this.bundles = response.data;
     });

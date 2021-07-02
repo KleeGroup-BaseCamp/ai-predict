@@ -108,13 +108,13 @@ export default {
     return {
       hover: false,
       deleteError: false,
-      downloadURL: "http://127.0.0.1:8000/download".concat("/", this.title),
+      downloadURL: "/download".concat("/", this.title),
       exploreURL: "/explore".concat("/", this.title)
     };
   },
   methods: {
     deleteBundle() {
-      const url = "http://127.0.0.1:8000/remove".concat("/", this.title);
+      const url = "/remove".concat("/", this.title);
       axios
         .delete(url)
         .catch(error => {
@@ -146,7 +146,7 @@ export default {
       })
         .then(response => {
           const link = document.createElement("a");
-          link.href = "http://127.0.0.1:8000/download/".concat("", this.title);
+          link.href = "/download/".concat("", this.title);
           document.body.appendChild(link);
           link.click();
         })

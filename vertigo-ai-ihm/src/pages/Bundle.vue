@@ -68,7 +68,7 @@ export default {
       this.getVersionData();
     },
     getVersionData() {
-      const url = "http://127.0.0.1:8000/bundle"
+      const url = "/bundle"
         .concat("/", this.$route.params.bundle)
         .concat("/", this.selectedVersion);
       axios.get(url).then(response => (this.versionData = response.data));
@@ -90,7 +90,7 @@ export default {
       this.getData();
     },
     async getData() {
-      const url = "http://127.0.0.1:8000/bundle".concat(
+      const url = "/bundle".concat(
         "/",
         this.$route.params.bundle
       );
