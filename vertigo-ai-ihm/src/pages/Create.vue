@@ -47,7 +47,8 @@ export default {
     if (this.$route.params.bundle) {
       const url = "http://127.0.0.1:8000/bundle"
         .concat("/", this.$route.params.bundle)
-        .concat("/", this.$route.params.version);
+        .concat("/", this.$route.params.version)
+        .concat("", "/");
       let repsonse = await axios
         .get(url)
         .then(response => (this.forkData = response.data));

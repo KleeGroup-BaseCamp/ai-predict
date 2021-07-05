@@ -172,7 +172,7 @@ class VersionController:
                 zipObj.write(self.path / "model.pkl", "model.pkl")
             if os.path.exists(self.path / "model.h5"):
                 zipObj.write(self.path / "model.h5", "model.h5")
-        return zipname, zip_path
+        return zip_path
 
     def remove_archive(self):
         os.remove(self.path / str(self.name + "-v" + str(self.version) + ".zip"))

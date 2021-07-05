@@ -133,7 +133,8 @@ export default {
     activateBundle() {
       const url = "http://127.0.0.1:8000/activate"
         .concat("/", this.data.meta.name)
-        .concat("/", this.data.meta.version);
+        .concat("/", this.data.meta.version)
+        .concat("", "/");
       axios
         .put(url)
         .catch(error => {
@@ -168,7 +169,8 @@ export default {
     deleteVersion() {
       const url = "http://127.0.0.1:8000/remove"
         .concat("/", this.data.meta.name)
-        .concat("/", this.data.meta.version);
+        .concat("/", this.data.meta.version)
+        .concat("", "/");
       axios
         .delete(url)
         .catch(error => {
@@ -202,7 +204,8 @@ export default {
     downloadVersion() {
       const url = "http://127.0.0.1:8000/download"
         .concat("/", this.data.meta.name)
-        .concat("/", this.data.meta.version);
+        .concat("/", this.data.meta.version)
+        .concat("", "/");
       axios({
         method: "get",
         url: url,
@@ -229,7 +232,8 @@ export default {
     async trainVersion() {
       const url = "http://127.0.0.1:8000/train"
         .concat("/", this.data.meta.name)
-        .concat("/", this.data.meta.version);
+        .concat("/", this.data.meta.version)
+        .concat("", "/");
       let response = await axios
         .post(url)
         .then(response => {

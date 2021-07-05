@@ -1,10 +1,10 @@
 from AIPredict.utils.parsers import ModelJSONEncoder, TrainingParser
 from AIPredict.utils.preprocessing import FeatureEngineering, pick_encoder_from_label
 from AIPredict.utils.version import VersionController
-from AIPredict.apps.train.utils.files import save
+from AIPredict.apps.train.utils.files import save, save_config, create_folder
 from AIPredict.apps.train.utils.tools import get_data, train_response, score_response
 from AIPredict.apps.train.utils.train import async_train, async_score
-from AIPredict.utils.validators import BundleCreationValidator
+from AIPredict.utils.validators import BundleCreationValidator, BundleRequestValidator
 
 from rest_framework.response import Response
 from rest_framework import viewsets, status
@@ -26,27 +26,63 @@ logger = logging.getLogger(__name__)
 class TrainModel(viewsets.ViewSet):
 
     def deploy(self, request):
-        # zip pour plus général
+        """
+        Handle a request to deploy and train a bundle.
+        
+        Used by the AI Predict Manager UI.
+
+        Endpoint:
+            POST: deploy-train/'
+        
+        """
+        # get the new bundle data
         config = request.data
         try:
             BundleCreationValidator(config).validate()
         except ValidationError as e:
             return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+        #train the bundle
         res = self.train(config)
         return res
 
     def retrain(self, request, *args, **kwargs):
-        # gets the request bundle version
-        name = kwargs["bundle"]
-        version = kwargs["version"]
+        """
+        Handle a train request.
+        
+        Used by the AI Predict Manager UI.
+
+        Endpoint:
+            POST: train/<str:bundle>/<int:version>/'
+        
+        """
+        try:
+            BundleRequestValidator(True, **kwargs).validate()
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+
+        # gets the request bundle name and version
+        name = kwargs.pop("bundle")
+        version = kwargs.pop("version")
         bundle = VersionController(name, version)
         res = self.train(bundle.get_bundle())
         return res
 
     def score(self, request, *args, **kwargs):
-        # gets the request bundle version
-        name = kwargs["bundle"]
-        version = kwargs["version"]
+        """
+        Handle a score request.
+        
+        Endpoint:
+            POST: score/<str:bundle>/<int:version>/'
+        
+        """
+        try:
+            BundleRequestValidator(True, **kwargs).validate()
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+
+        # gets the request bundle name and version
+        name = kwargs.pop("bundle")
+        version = kwargs.pop("version")
         #get bundle to score
         bundle = VersionController(name, version)
         config = bundle.get_bundle()
@@ -67,6 +103,7 @@ class TrainModel(viewsets.ViewSet):
         return Response(response, status=status.HTTP_200_OK)
 
     def train(self, config):
+        logger.info("Start training of %s v%s" %(config["meta"]["name"], config["meta"]["version"]))
         # start time
         start = time.time()
         # get model class
@@ -78,6 +115,7 @@ class TrainModel(viewsets.ViewSet):
         # get dataset
         try:
             X_train, y_train = get_data(config["dataset"])
+            logger.info("Data extracted")
         except Exception as e:
             logger.error("Cannot extract data from the database: " + str(e))
             return Response({"error": "Cannot extract data from the database"}, status=status.HTTP_400_BAD_REQUEST)
@@ -102,8 +140,8 @@ class TrainModel(viewsets.ViewSet):
             y_fe.transform()
             X_process = X_fe.get_data()
             y_process = y_fe.get_data()
+            logger.info("Preprocessing applyed")
         except Exception as e:
-            print(e)
             logger.error("Cannot apply preprocessing properly: " + str(e))
             return Response({"error": "Cannot apply preprocessing properly. See logs for details"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -111,11 +149,12 @@ class TrainModel(viewsets.ViewSet):
         model = async_train(package=package, modelClass=modelClass,
                                 X=X_process, y=y_process, **params)
         if isinstance(model, str):
-            logger.error(model)
+            logger.error("Training failed : %s" %model)
             return Response({"error": model}, status=status.HTTP_400_BAD_REQUEST)
         # score
         score = async_score(model, X=X_process, y=y_process, **params)
         if isinstance(score, str):
+            logger.error("Training failed : %s" %model)
             return Response({"error": model}, status=status.HTTP_400_BAD_REQUEST)
         # write parameters
         model_params = json.loads(json.dumps(
@@ -125,7 +164,7 @@ class TrainModel(viewsets.ViewSet):
         else:
             config["training_parameters"] = {"estimator": TrainingParser(model_params).parse()}
         
-        
+        logger.info("Training succeeded. Starting explanation computation.")
         # write training data
         t = time.time() - start
         training_data = {
@@ -161,9 +200,11 @@ class TrainModel(viewsets.ViewSet):
             feature_names.append(name)
         config["explanation"] = {
             "feature": feature_names, "importance": values}
+        logger.info("Explanation successfully computed. Start model saving.")
         # save model
         path, name, version = save(
             model, config, config["meta"]["version"], score)
         response = train_response(time=t, modelName=name, version=version,
                                   status="deployed", response="Trained in %ds" % t, score=score)
+        logger.info("Model successfully saved.")
         return Response(response, status=status.HTTP_201_CREATED)

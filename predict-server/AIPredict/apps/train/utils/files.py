@@ -6,11 +6,6 @@ import pickle
 from zipfile import ZipFile
 import shutil
 
-import requests
-
-from AIPredict.apps.predict.views import DeployBundle
-
-
 def create_folder(config, version):
     # gets name to build path
     name = config["meta"]["name"]
@@ -49,8 +44,10 @@ def save_model(path: Path, model, config: dict):
         pickle.dump(model, p)
 
 
-def save_config(path, config, version, score):
+def save_config(path, config, version, score=None):
     config["meta"]["version"] = version
+    if not score:
+        score = {"scoreMean": None, "scoreStd": None}
     config["algorithm"]["score"] = score
     config["meta"]["status"] = "trained"
     with open(path / "bundle.json", "w") as p:
@@ -68,14 +65,6 @@ def archive_files(path):
     with ZipFile(path/'bundle.zip', 'w') as zipObj:
         zipObj.write(path/"bundle.json", "bundle.json")
         zipObj.write(path/"model.pkl", "model.pkl")
-
-
-def send(path):
-    archive_files(path)
-    with open(path/"bundle.zip", 'rb') as f:
-        response = requests.post('http://127.0.0.1:8000/deploy/',
-                                 files={'archive': ("bundle.zip", f, 'application/zip')})
-    return response
 
 
 def get_config(path):

@@ -1,18 +1,4 @@
-from sklearn.datasets import load_boston, load_iris
-from sklearn.model_selection import train_test_split
-import pandas as pd
-
 from AIPredict.apps.train.utils.databases import postgresql
-
-
-def build_model_class(package: str, model: str):
-    modules = package.split(".")
-    if modules[0] in ["sklearn", "keras", "xgboost"]:
-        modules = modules[1:]
-    else:
-        raise ImportError("The package %s is not imported" % modules[0])
-    modules.append(model)
-    return ".".join(modules)
 
 
 def get_data(dataset_config: int):

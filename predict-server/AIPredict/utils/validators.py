@@ -5,12 +5,15 @@ from cerberus import Validator
 import builtins
 import numpy as np
 from pandas import DataFrame
+from pathlib import Path
+import os
 
 from django.core.validators import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.datastructures import MultiValueDict
 
 from AIPredict.settings.development import TRAIN_DB
+from AIPredict.settings.production import BUNDLE_PATH
 
 logger = logging.getLogger(__name__)
 class BundleCreationValidator:
@@ -247,3 +250,24 @@ class DataValidator:
             "str": np.dtype(str)
         }
         return types_to_dtypes[key_type]
+
+class BundleRequestValidator:
+
+    def __init__(self,  with_version:bool=False, **kwargs):
+        if not "bundle" in kwargs:
+            raise ValidationError("A bundle name must be provided.")
+        self.name = kwargs.pop("bundle")
+        self.version = None
+        if with_version:
+            if not "version" in kwargs:
+                raise ValidationError("A version number must be provided.")
+            self.version = kwargs.pop("version")
+        
+    def validate(self):
+        path = Path(BUNDLE_PATH, "standard", self.name)
+        if self.version:
+            path = path / str("v" + str(self.version))
+        if not os.path.exists(path):
+            if self.version:
+                raise ValidationError("The bundle %s v%s does not exist." %(self.name, self.version))
+            raise ValidationError("The bundle %s does not exist." %(self.name))
