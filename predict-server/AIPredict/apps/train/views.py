@@ -5,6 +5,7 @@ from AIPredict.apps.train.utils.files import save, save_config, create_folder
 from AIPredict.apps.train.utils.tools import get_data, train_response, score_response
 from AIPredict.apps.train.utils.train import async_train, async_score
 from AIPredict.utils.validators import BundleCreationValidator, BundleRequestValidator
+from AIPredict.utils.models import get_major_parameters
 
 from rest_framework.response import Response
 from rest_framework import viewsets, status
@@ -109,7 +110,8 @@ class TrainModel(viewsets.ViewSet):
         # get model class
         algo = config["algorithm"]
         package = algo["package"]
-        modelClass = algo["name"]
+        model_name = algo["name"]
+        grid_search = config["parameters"]["grid_search"]
         # prepare parameters and preprocessing dictionaries
         params = config["parameters"]
         # get dataset
@@ -146,20 +148,20 @@ class TrainModel(viewsets.ViewSet):
             return Response({"error": "Cannot apply preprocessing properly. See logs for details"}, status=status.HTTP_400_BAD_REQUEST)
 
         # train
-        model = async_train(package=package, modelClass=modelClass,
+        model = async_train(package=package, model_name=model_name,
                                 X=X_process, y=y_process, **params)
         if isinstance(model, str):
             logger.error("Training failed : %s" %model)
             return Response({"error": model}, status=status.HTTP_400_BAD_REQUEST)
         # score
-        score = async_score(model, X=X_process, y=y_process, **params)
+        score = async_score(model, X=X_process, y=y_process,**params)
         if isinstance(score, str):
             logger.error("Training failed : %s" %model)
             return Response({"error": model}, status=status.HTTP_400_BAD_REQUEST)
         # write parameters
         model_params = json.loads(json.dumps(
             model.get_params(), cls=ModelJSONEncoder))
-        if config["parameters"]["grid_search"]:
+        if grid_search:
             config["training_parameters"] = TrainingParser(model_params).parse()
         else:
             config["training_parameters"] = {"estimator": TrainingParser(model_params).parse()}
@@ -173,7 +175,7 @@ class TrainModel(viewsets.ViewSet):
 
         # explanation
         # init explanation
-        if config["parameters"]["grid_search"]:
+        if grid_search:
             explainer = shap.Explainer(model.best_estimator_)
         else:
             explainer = shap.Explainer(model)
@@ -201,6 +203,8 @@ class TrainModel(viewsets.ViewSet):
         config["explanation"] = {
             "feature": feature_names, "importance": values}
         logger.info("Explanation successfully computed. Start model saving.")
+        #set moajor parameters
+        config["major_parameters"] = get_major_parameters(package, model_name, model, grid_search)
         # save model
         path, name, version = save(
             model, config, config["meta"]["version"], score)

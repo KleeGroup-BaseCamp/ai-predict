@@ -75,8 +75,8 @@
       <div class="row text-primary text-center">
         <section class="col-4 column">
           <div class="col-auto text-subtitle1">Parameters</div>
-          <div v-for="(item, key, index) in parametersSelector()" class="col column text-body2" :key="index">
-            <div class="row q-gutter-lg ">
+          <div v-for="(item, key, index) in data.major_parameters" class="col column text-body2 q-mt-md"  :key="index">
+            <div class="row">
               <p class="col row self-start">{{key}}</p>
               <p class="col row justify-center text-accent">{{item}}</p>
             </div>
@@ -268,9 +268,9 @@ export default {
       this.activationError = false;
     },
     parametersSelector(){
-      if (this.data.training_parameters.estimator){
-        const estimator = this.data.training_parameters.estimator
-        return Object.fromEntries(Object.entries(estimator).filter(([_, v]) => (v != null && typeof v != "object")).slice(0, 5));
+      if (this.data.major_parameters){
+        console.log(this.data.major_parameters)
+        return this.data.major_parameters;
       }
     }
   }

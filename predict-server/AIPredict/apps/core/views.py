@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from AIPredict.settings.production import BUNDLE_PATH
+from AIPredict.settings.production import BUNDLE_PATH, BASE_DIR
 from AIPredict.utils.version import VersionController
 from AIPredict.utils.bundle import BundleController
 from AIPredict.utils.validators import BundleRequestValidator

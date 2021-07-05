@@ -74,7 +74,7 @@ class BundleController:
                 res["active"] = True
                 res["activeVersion"] = version
         res["performance"] = self.get_performance(raw_scores)
-        res["scores"] = np.round(raw_scores, 2)
+        res["scores"] = np.round(raw_scores, 3)
         return res
 
     def version_serialize(self):

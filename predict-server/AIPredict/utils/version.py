@@ -159,7 +159,7 @@ class VersionController:
             "name": self.name,
             "version": self.version,
             "status": self.status,
-            "score": np.round(self.get_item("algorithm", "score")["scoreMean"], 2)
+            "score": np.round(self.get_item("algorithm", "score")["scoreMean"], 3)
         }
         return res
 
