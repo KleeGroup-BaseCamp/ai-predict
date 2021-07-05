@@ -45,7 +45,7 @@ export default {
   },
   async mounted() {
     if (this.$route.params.bundle) {
-      const url = "http://127.0.0.1:8000/bundle"
+      const url = "/bundle"
         .concat("/", this.$route.params.bundle)
         .concat("/", this.$route.params.version)
         .concat("", "/");
@@ -90,7 +90,7 @@ export default {
         },
         parameters: parameters
       };
-      let response = await axios.post("http://127.0.0.1:8000/deploy-train/", bundle)
+      let response = await axios.post("/deploy-train/", bundle)
       .catch(error => {
         this.error = true;
         this.notifyError(error);

@@ -6,6 +6,10 @@ Une IHM pour le serveur d'entrainement et de prédiction de Vertigo AI
 ```bash
 npm install
 ```
+## Install the Quasar CLI
+```bash
+npm install -g @quasar/cli
+```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
