@@ -129,18 +129,6 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
             'formatter' : 'verbose'
-        },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'info.log'),
-            'formatter' : 'verbose'
-        },
-        'http': {
-            'class': 'logging.handlers.HTTPHandler',
-            'formatter' : 'verbose',
-            'host': '127.0.0.1:8000',
-            'url': '/deploy',
-            'method': 'POST'
         }
     },
     'loggers': {

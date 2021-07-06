@@ -12,8 +12,16 @@ MAJOR_PARAMETERS_MAP = {
     "sklearn.ensemble.ExtraTreesClassifier": {"max_depth": "Depth", "n_estimators": "Trees", "min_samples_split": "Samples", "criterion": "Criterion"},
     "sklearn.ensemble.GradientBoostingClassifier": {"max_depth": "Depth", "n_estimators": "Trees", "min_samples_split": "Samples", "criterion": "Criterion", "learning_rate": "Learning rate"},
     "sklearn.neural_network.MLPClassifier": {"hidden_layer_sizes": "Hidden Layers", "activation": "Activation", "alpha": "Alpha", "solver": "Solver"},
+    "sklearn.linear_model.LinearRegression" : {},
+    "sklearn.tree.DecisionTreeRegressor": {"max_depth": "Depth", "min_samples_split": "Samples", "criterion": "Criterion"},
+    "sklearn.ensemble.RandomForestRegressor": {"max_depth": "Depth", "n_estimators": "Trees", "min_samples_split": "Samples", "criterion": "Criterion"},
+    "sklearn.svm.SVR": {"C": "C", "kernel": "Kernel", "degree": "Degree", "gamma": "Gamma"},
+    "sklearn.ensemble.ExtraTreesRegressor": {"max_depth": "Depth", "n_estimators": "Trees", "min_samples_split": "Samples", "criterion": "Criterion"},
+    "sklearn.neural_network.MLPRegressor": {"hidden_layer_sizes": "Hidden Layers", "activation": "Activation", "alpha": "Alpha", "solver": "Solver"},
+    "sklearn.ensemble.GradientBoostingRegressor": {"max_depth": "Depth", "n_estimators": "Trees", "min_samples_split": "Samples", "criterion": "Criterion", "learning_rate": "Learning rate"},
+    "sklearn.cluster.KMeans": {"n_clusters": "Clusters", "n_init": "Seeds", "max_iter": "Max Iterations"},
     "xgboost.XGBClassifier": {"max_depth": "Depth", "n_estimators": "Trees", "learning_rate": "Learning rate"},
-    "sklearn.cluster.KMeans": {"n_clusters": "Clusters", "n_init": "Seeds", "max_iter": "Max Iterations"}
+    "xgboost.XGBRegressor": {"max_depth": "Depth", "n_estimators": "Trees", "learning_rate": "Learning rate"},
 }
 
 def get_major_parameters(package:str, modelName:str, model, grid_search:bool):

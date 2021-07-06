@@ -4,7 +4,7 @@ from AIPredict.utils.version import VersionController
 from AIPredict.apps.train.utils.files import save, save_config, create_folder
 from AIPredict.apps.train.utils.tools import get_data, train_response, score_response
 from AIPredict.apps.train.utils.train import async_train, async_score
-from AIPredict.utils.validators import BundleCreationValidator, BundleRequestValidator
+from AIPredict.utils.validators import BundleCreationValidator, BundleRequestValidator, TrainDataValidator
 from AIPredict.utils.models import get_major_parameters
 
 from rest_framework.response import Response
@@ -41,9 +41,12 @@ class TrainModel(viewsets.ViewSet):
         try:
             BundleCreationValidator(config).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
         #train the bundle
-        res = self.train(config)
+        try:
+            res = self.train(config)
+        except Exception as e:
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
         return res
 
     def retrain(self, request, *args, **kwargs):
@@ -59,13 +62,16 @@ class TrainModel(viewsets.ViewSet):
         try:
             BundleRequestValidator(True, **kwargs).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # gets the request bundle name and version
         name = kwargs.pop("bundle")
         version = kwargs.pop("version")
         bundle = VersionController(name, version)
-        res = self.train(bundle.get_bundle())
+        try:
+            res = self.train(bundle.get_bundle())
+        except Exception as e:
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
         return res
 
     def score(self, request, *args, **kwargs):
@@ -79,17 +85,20 @@ class TrainModel(viewsets.ViewSet):
         try:
             BundleRequestValidator(True, **kwargs).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # gets the request bundle name and version
         name = kwargs.pop("bundle")
         version = kwargs.pop("version")
         #get bundle to score
         bundle = VersionController(name, version)
-        config = bundle.get_bundle()
         model = bundle.get_model()
         # get dataset
         X, y = get_data(bundle.get_category("dataset"))
+        try:
+            TrainDataValidator( X, y, bundle.get_bundle()).validate()
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
         # get parameters
         params = bundle.get_category("parameters")
         cv = params["cv"]
@@ -122,6 +131,10 @@ class TrainModel(viewsets.ViewSet):
             logger.error("Cannot extract data from the database: " + str(e))
             return Response({"error": "Cannot extract data from the database"}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            TrainDataValidator( X_train, y_train, config).validate()
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
         # configure preprocessing
         try:
             X_fe = FeatureEngineering(data=X_train)
@@ -156,8 +169,10 @@ class TrainModel(viewsets.ViewSet):
         # score
         score = async_score(model, X=X_process, y=y_process,**params)
         if isinstance(score, str):
-            logger.error("Training failed : %s" %model)
+            logger.error("Scoring failed : %s" %model)
             return Response({"error": model}, status=status.HTTP_400_BAD_REQUEST)
+        elif np.isnan(score["scoreMean"]) or np.isnan(score["scoreStd"]):
+            score = {"scoreMean": None, "scoreStd": None}
         # write parameters
         model_params = json.loads(json.dumps(
             model.get_params(), cls=ModelJSONEncoder))

@@ -51,7 +51,7 @@ class BundleCreationValidator:
             "package": {"required":True, "type": "string"},
             "score": {"type": "dict", 'schema': {'scoreMean': {'type': 'float'}, 'scoreStd': {'type': 'float'}}}
         }
-        #check scheme
+        #check schema
         is_valid = self.validator.validate(algorithm, schema)
         if not is_valid:
             raise ValidationError(self._parse_error(self.validator.errors))
@@ -69,12 +69,12 @@ class BundleCreationValidator:
         return algorithm
 
     def _validate_dataset(self, dataset:Dict[str, Dict[str, object]]) -> Dict[str, Dict[str, object]]:
-        db_config_scheme = {
+        db_config_schema = {
             "key": {"required":True, "type": "string"},
             "table": {"required":True, "type": "string"},
             "database": {"required":True, "type": "string"}
         }
-        data_config_scheme = {
+        data_config_schema = {
             "data": {
             "type": "list", 
             "schema":{
@@ -90,16 +90,16 @@ class BundleCreationValidator:
                 }
             }
         }
-        #check db_config scheme
-        is_valid = self.validator.validate(dataset["db_config"], db_config_scheme)
+        #check db_config schema
+        is_valid = self.validator.validate(dataset["db_config"], db_config_schema)
         if not is_valid:
             raise ValidationError(self._parse_error(self.validator.errors))
         if not dataset["db_config"]["database"] in TRAIN_DB:
             raise ValidationError("The database key %s is unknown." %dataset["db_config"]["key"])
-        #check data_config scheme
-        is_valid = self.validator.validate({"data": dataset["data_config"]}, data_config_scheme)
+        #check data_config schema
+        is_valid = self.validator.validate({"data": dataset["data_config"]}, data_config_schema)
         if not is_valid:
-            raise ValidationError(self._parse_error())
+            raise ValidationError(self._parse_error(self.validator.errors))
         
         #checks domain and ifna values
         for feature in dataset["data_config"]:
@@ -166,91 +166,6 @@ class DeployBundleValidator:
         if self.file.content_type != "application/zip":
             raise ValidationError("An zip archive must be attached to the POST request")
 
-def validate_data(data:DataFrame, bundle:Dict[str, object]):
-    domains = bundle["dataset"]["domains"]
-    features = bundle["dataset"]["data_config"]
-    columns = []
-    dtypes = []
-    nan = []
-    for feature in features.keys():
-        item = features[feature]
-        if not item["is_label"]:
-            columns.append(feature)
-            domain = domains[item["domain"]]
-            dtypes.append(domains_to_dtypes[domain])
-            nan.append(item["ifna"])
-
-    data_col = data.columns
-    for col in data_col:
-        if not col in columns:
-            data = data.drop(columns=[col]) 
-    #check data types and columns
-    data = data[columns]
-    to_check = DataFrame(data.dtypes).transpose()
-    scheme = DataFrame([dtypes], columns=columns)
-    if not scheme.equals(to_check):
-        raise ValidationError("The input data does not match the prerequisite.")
-    for i in range(0, len(columns)):
-        column = columns[i]
-        na = nan[i]
-        if na == "_required":
-            if data[[column]].isnull().values.any():
-                raise ValidationError("%s is required but NaN.")
-        else:
-            data[[column]] = data[[column]].fillna(na)
-    return data
-
-
-
-
-class DataValidator:
-
-    def __init__(self, data:DataFrame, bundle:Dict[str, object]):
-        self.data = data
-        self.bundle = bundle
-    
-    def validate(self):
-        domains = self.bundle["dataset"]["domains"]
-        features = self.bundle["dataset"]["data_config"]
-        columns = []
-        dtypes = []
-        nan = []
-        for feature in features.keys():
-            item = features[feature]
-            if not item["is_label"]:
-                columns.append(feature)
-                domain = domains[item["domain"]]
-                dtypes.append(self._convert_to_dtype(domain))
-                nan.append(item["ifna"])
-
-        data_col = self.data.columns
-        for col in data_col:
-            if not col in columns:
-                data = data.drop(columns=[col]) 
-        #check data types and columns
-        data = data[columns]
-        to_check = DataFrame(data.dtypes).transpose()
-        scheme = DataFrame([dtypes], columns=columns)
-        if not scheme.equals(to_check):
-            raise ValidationError("The input data does not match the prerequisite.")
-        for i in range(0, len(columns)):
-            column = columns[i]
-            na = nan[i]
-            if na == "_required":
-                if data[[column]].isnull().values.any():
-                    raise ValidationError("%s is required but NaN.")
-            else:
-                data[[column]] = data[[column]].fillna(na)
-        return data
-    
-    def _convert_to_dtype(self, key_type:str):
-        types_to_dtypes = {
-            "int": np.dtype(np.int64),
-            "float": np.dtype(np.float64),
-            "str": np.dtype(str)
-        }
-        return types_to_dtypes[key_type]
-
 class BundleRequestValidator:
 
     def __init__(self,  with_version:bool=False, **kwargs):
@@ -271,3 +186,67 @@ class BundleRequestValidator:
             if self.version:
                 raise ValidationError("The bundle %s v%s does not exist." %(self.name, self.version))
             raise ValidationError("The bundle %s does not exist." %(self.name))
+
+class DataValidator:
+
+    def __init__(self, data:DataFrame, config:Dict[str, object]):
+        self.data = data
+        self.data_schema = config["dataset"]["data_config"]
+        self.domain = config["dataset"]["domains"]
+    
+    def validate(self):
+        self._validate_schema()
+        print("Done")
+
+    def _validate_schema(self) -> DataFrame:
+        length = len(self.data)
+        schema = {}
+        for column in self.data_schema:
+            value_schema = self._get_value_schema(column)
+            column_schema = {"type": "dict", "schema":{}}
+            for i in range(length):
+                column_schema["schema"][i] = value_schema
+            schema[column["name"]] = column_schema
+
+        validator = Validator()
+        is_valid = validator.validate(self.data.to_dict(), schema)
+        if not is_valid:
+            raise ValidationError(self._parse_error(validator.errors))
+
+    def _get_value_schema(self, value_conf:Dict[str, object]) -> Dict[str, object]:
+        value_schema = {"required": True}
+        value_type = self.domain[value_conf["domain"]]
+        #typing
+        if value_type == "str":
+            value_schema["type"] = "string"
+        elif value_type == "int":
+            value_schema["type"] = "integer"
+        elif value_type == "float":
+            value_schema["type"] = "number"
+        elif value_type == "bool":
+            value_schema["type"] = "boolean"
+        else:
+            raise ValidationError("The domain of %s does not match any data type. Type is %s but must be linked to int, float, str or bool." %(value_conf["name"], value_type))
+        
+        #required
+        if not value_conf["ifna"] == "_required":
+            value_schema["nullable"] = True
+        return value_schema
+    
+    def _parse_error(self, errors:Dict[str, List[str]]) -> str:
+        return str(errors)
+    
+
+class TrainDataValidator(DataValidator):
+
+    def __init__(self, X:DataFrame, y:DataFrame, config:Dict[str, object]):
+        self.data_schema = config["dataset"]["data_config"]
+        self.domain = config["dataset"]["domains"]
+        self.data = X.copy(deep=True)
+        y_size = len(y.columns)
+        x_size = len(X.columns)
+        y_values = y.values.transpose()
+        y_columns = y.columns
+        for i in range(y_size):
+            self.data.insert(x_size, column=y_columns[i], value=y_values[i])
+            x_size += 1

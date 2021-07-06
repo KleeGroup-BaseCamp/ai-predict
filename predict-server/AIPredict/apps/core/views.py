@@ -102,7 +102,7 @@ class BundlesView(viewsets.ViewSet):
         try:
             BundleRequestValidator("version" in kwargs, **kwargs).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
             
         name = kwargs.pop('bundle')
         # single version
@@ -132,7 +132,7 @@ class BundlesView(viewsets.ViewSet):
         try:
             BundleRequestValidator("version" in kwargs, **kwargs).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         try:
             name = kwargs.pop("bundle")
@@ -171,7 +171,7 @@ class BundlesView(viewsets.ViewSet):
         try:
             BundleRequestValidator("version" in kwargs, **kwargs).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         try:
             name = kwargs.pop("bundle")

@@ -101,6 +101,7 @@ class BundleController:
                     if os.path.exists(pathObj / "model.h5"):
                         zipObj.write(pathObj / "model.h5",
                                      pathArc / "model.h5")
+        return zip_path
 
     def remove_archive(self):
         os.remove(self.path / str(self.name+".zip"))

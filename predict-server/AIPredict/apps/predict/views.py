@@ -34,7 +34,7 @@ class DeployBundle(viewsets.ViewSet):
             shutil.rmtree("./bundles/temp/")
             os.mkdir("./bundles/temp/")
             logger.error("Bundle deployement failed : " + e)
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         logger.info("The bundle %s v%s has been deployed successfully" %(name, version))
         return JsonResponse(bundle.serialize(), status=status.HTTP_201_CREATED)
@@ -51,7 +51,7 @@ class DeployBundle(viewsets.ViewSet):
         try:
             BundleRequestValidator(True, **kwargs).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # gets the request bundle name and version
         name = kwargs.pop("bundle")
@@ -87,7 +87,7 @@ class Prediction(viewsets.ViewSet):
         try:
             BundleRequestValidator(True, **kwargs).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # gets the request bundle name and version
         name = kwargs.pop("bundle")
@@ -106,11 +106,10 @@ class Prediction(viewsets.ViewSet):
             "meta", "framework"), model=model)
         # extracts data from the request
         data = pd.DataFrame(request.data)
-        """TODO
         try:
-            data = DataValidator(data, bundle.get_bundle()).validate()
+            DataValidator(data, bundle.get_bundle()).validate()
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)"""
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         try:
             prediction = predictor.predict(data=data)
