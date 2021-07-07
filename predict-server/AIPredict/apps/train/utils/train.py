@@ -38,7 +38,6 @@ def sync_score(model, metrics, cv, X, y, preprocessing, *args, **kwargs):
     else:
         X_score, y_score = X, y
     scores = cross_val_score(model, X_score, y_score, scoring=metrics, cv=cv)
-    print(scores)
     res = {"scoreMean": scores.mean(), "scoreStd": scores.std()}
     return res
 

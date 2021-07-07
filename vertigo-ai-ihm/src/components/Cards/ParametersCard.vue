@@ -72,44 +72,39 @@
     </q-card-section>
     <q-separator color="accent" inset />
     <q-card-section>
-      <div class="row text-primary text-center">
-        <section class="col-4 column">
-          <div class="col-auto text-subtitle1">Parameters</div>
-          <div v-for="(item, key, index) in data.major_parameters" class="col column text-body2 q-mt-md"  :key="index">
-            <div class="row">
-              <p class="col row self-start">{{key}}</p>
-              <p class="col row justify-center text-accent">{{item}}</p>
+      <section class="row text-subtitle1 text-center">
+          <div class="col-4">Parameters</div>
+          <div class="col-4">Feature Importance</div>
+          <div class="col-4">Training Data</div>
+      </section>
+      <section class="row" style="min-height: 200px;">
+        <div class="col-4 text-body2 column justify-center">
+         <div v-for="(item, key, index) in data.major_parameters" :key="index">
+            <div class="row" style="max-height: 36px;">
+              <p class="offset-3 col">{{key}}</p>
+              <p class="col text-accent">{{item}}</p>
+            </div>
+         </div>
+        </div>
+        <FeatureImportancesChart
+        class="col-4 text-body2"
+        :explanation="data.explanation"
+      />
+        <div class="col-4 text-body2 column justify-center" >
+          <div class="row" style="max-height: 36px;"> 
+            <p class="offset-3 col">Data shape</p>
+            <div class="col text-accent">
+              <p>{{ data.training_data.x_shape[0] }}x{{ data.training_data.x_shape[1] +  data.training_data.y_shape[1]}}</p>
             </div>
           </div>
-        </section>
-        <section class="col-4 column">
-          <div class="col-auto text-subtitle1">Feature Importance</div>
-          <FeatureImportancesChart
-          class="col text-body2"
-          :explanation="data.explanation"
-        />
-        </section>
-        <section class="col-4 column">
-          <div class="col-auto text-subtitle1">Training Data</div>
-          <div class="col column text-body2 justify-center">
-            <div class="row self-center q-gutter-lg">
-              <p class="col-auto">Data shape</p>
-              <div class="col-auto row">
-                <p>{{ data.training_data.x_shape[0] }}</p>
-                <p>x</p>
-                <p>{{ data.training_data.x_shape[1] +  data.training_data.y_shape[1]}}</p>
-              </div>
-            </div>
-            <div class="row self-center q-gutter-lg">
-              <p class="col-auto">Training time</p>
-              <div class="col-auto row">
-                <p>{{ data.training_data.time.toPrecision(3) }}</p>
-                <p>s</p>
-              </div>
+          <div class="row" style="max-height: 36px;"> 
+            <p class="offset-3 col">Training time</p>
+            <div class="col text-accent ">
+              <p>{{ data.training_data.time.toPrecision(3) }}s</p>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </q-card-section>
   </q-card>
 </template>

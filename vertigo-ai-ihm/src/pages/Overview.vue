@@ -5,8 +5,8 @@
         <SortCard @sort="getSort($event)" />
         <FiltersCard @filters="getFilters($event)" />
     </section>
-    <section class="col row justify-between q-pa-md">
-      <div v-for="bundle in bundles" :key="bundle.name">
+    <section class="col row justify-evenly q-pa-md q-gutter-md" style="max-height: 220px">
+      <div v-for="bundle in bundles" :key="bundle.name" >
         <BundleCard
           :title="bundle.name"
           :active="bundle.active"

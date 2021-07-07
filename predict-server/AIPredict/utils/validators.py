@@ -196,7 +196,6 @@ class DataValidator:
     
     def validate(self):
         self._validate_schema()
-        print("Done")
 
     def _validate_schema(self) -> DataFrame:
         length = len(self.data)

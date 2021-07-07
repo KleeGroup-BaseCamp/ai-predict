@@ -43,10 +43,9 @@ class TrainModel(viewsets.ViewSet):
         except ValidationError as e:
             return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
         #train the bundle
-        try:
-            res = self.train(config)
-        except Exception as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+        res = self.train(config)
+        """except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)"""
         return res
 
     def retrain(self, request, *args, **kwargs):
@@ -71,7 +70,7 @@ class TrainModel(viewsets.ViewSet):
         try:
             res = self.train(bundle.get_bundle())
         except Exception as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return res
 
     def score(self, request, *args, **kwargs):
@@ -181,27 +180,36 @@ class TrainModel(viewsets.ViewSet):
         else:
             config["training_parameters"] = {"estimator": TrainingParser(model_params).parse()}
         
-        logger.info("Training succeeded. Starting explanation computation.")
         # write training data
         t = time.time() - start
         training_data = {
             "time": t, "x_shape": X_process.shape, "y_shape": y_process.shape}
         config["training_data"] = training_data
 
+        logger.info("Training succeeded. Starting explanation computation.")
         # explanation
         # init explanation
         if grid_search:
-            explainer = shap.Explainer(model.best_estimator_)
+            estimator = model.best_estimator_
         else:
-            explainer = shap.Explainer(model)
-        shap_values = explainer(X_process)
+            estimator = model
+        # compute features importance
+        if "predict_proba" in dir(estimator):
+            try:
+                explainer = shap.KernelExplainer(estimator.predict_proba, X_process)
+            except:
+                explainer = shap.KernelExplainer(estimator.predict, X_process)
+        else:
+            explainer = shap.KernelExplainer(model.predict, X_process)
+        shap_values = np.asarray(explainer.shap_values(X_process))
         # compute features importance
         if len(shap_values.shape) == 2:
-            shap_exp = shap_values.abs.mean(0)
-            exp_array = shap_exp.values
+            shap_exp =np.mean(np.absolute(shap_values), 0)
+            exp_array = shap_exp
         elif len(shap_values.shape) == 3:
             shap_exp = []
-            shap_values_transpose = shap_values.values.transpose(2, 0, 1)
+            shap_values_transpose = shap_values
+            print(shap_values_transpose.shape)
             for i in range(len(shap_values_transpose)):
                 shap_exp.append(
                     np.mean(np.absolute(shap_values_transpose[i]), 0))
@@ -209,7 +217,7 @@ class TrainModel(viewsets.ViewSet):
 
         # sort features
         tuples_exp = sorted(
-            zip(exp_array, shap_values.feature_names), reverse=True)
+            zip(exp_array, X_train.columns), reverse=True)
         values = []
         feature_names = []
         for value, name in tuples_exp:

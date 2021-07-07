@@ -15,7 +15,6 @@ export default {
       chartOptions: {
         colors: ["#264653"],
         chart: {
-          align: "top",
           type: "bar",
           toolbar: {
             show: false
