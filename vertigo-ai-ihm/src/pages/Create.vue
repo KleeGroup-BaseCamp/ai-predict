@@ -45,7 +45,7 @@ export default {
   },
   async mounted() {
     if (this.$route.params.bundle) {
-      const url = "/bundle"
+      const url = "/api/bundle"
         .concat("/", this.$route.params.bundle)
         .concat("/", this.$route.params.version)
         .concat("", "/");
@@ -90,7 +90,7 @@ export default {
         },
         parameters: parameters
       };
-      let response = await axios.post("/deploy-train/", bundle)
+      let response = await axios.post("/api/deploy-train/", bundle)
       .catch(error => {
         this.error = true;
         this.notifyError(error);

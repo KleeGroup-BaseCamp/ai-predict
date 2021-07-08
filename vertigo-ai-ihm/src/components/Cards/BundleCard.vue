@@ -108,13 +108,13 @@ export default {
     return {
       hover: false,
       deleteError: false,
-      downloadURL: "/download".concat("/", this.title),
+      downloadURL: "/api/download".concat("/", this.title).concat("/", ""),
       exploreURL: "/explore".concat("/", this.title)
     };
   },
   methods: {
     deleteBundle() {
-      const url = "/remove".concat("/", this.title);
+      const url = "/api/remove".concat("/", this.title);
       axios
         .delete(url)
         .catch(error => {
@@ -139,6 +139,7 @@ export default {
     },
     downloadBundle() {
       const url = this.downloadURL;
+      console.log(url);
       axios({
         method: "get",
         url: url,
@@ -146,9 +147,10 @@ export default {
       })
         .then(response => {
           const link = document.createElement("a");
-          link.href = "/download/".concat("", this.title);
+          link.href = "/api/download/".concat("", this.title).concat("/", "");
           document.body.appendChild(link);
           link.click();
+          console.log(link.href)
         })
         .catch(error => {
           this.downloadNotifyError(error);

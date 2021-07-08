@@ -68,7 +68,7 @@ export default {
       this.getVersionData();
     },
     getVersionData() {
-      const url = "/bundle"
+      const url = "/api/bundle"
         .concat("/", this.$route.params.bundle)
         .concat("/", this.selectedVersion)
         .concat("", "/");
@@ -91,10 +91,10 @@ export default {
       this.getData();
     },
     async getData() {
-      const url = "/bundle".concat(
+      const url = "/api/bundle".concat(
         "/",
         this.$route.params.bundle
-      );
+      ).concat("/", "");
       await axios.get(url).then(response => {
         this.bundle = response.data.bundle;
         this.versions = response.data.versions.sort(function(a, b) {

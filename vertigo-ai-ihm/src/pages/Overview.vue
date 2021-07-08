@@ -38,7 +38,7 @@ export default {
     };
   },
   mounted() {
-    axios.get("/bundles/").then(response => {
+    axios.get("/api/bundles/").then(response => {
       this.input_bundles = response.data;
       this.bundles = response.data;
     });

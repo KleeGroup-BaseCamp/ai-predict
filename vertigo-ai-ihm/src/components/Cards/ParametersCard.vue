@@ -81,7 +81,7 @@
         <div class="col-4 text-body2 column justify-center">
          <div v-for="(item, key, index) in data.major_parameters" :key="index">
             <div class="row" style="max-height: 36px;">
-              <p class="offset-3 col">{{key}}</p>
+              <p class="offset-2 col">{{key}}</p>
               <p class="col text-accent">{{item}}</p>
             </div>
          </div>
@@ -126,7 +126,7 @@ export default {
   },
   methods: {
     activateBundle() {
-      const url = "/activate"
+      const url = "/api/activate"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version)
         .concat("", "/");
@@ -162,7 +162,7 @@ export default {
       this.activationError = false;
     },
     deleteVersion() {
-      const url = "/remove"
+      const url = "/api/remove"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version)
         .concat("", "/");
@@ -197,7 +197,7 @@ export default {
       });
     },
     downloadVersion() {
-      const url = "/download"
+      const url = "/api/download"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version)
         .concat("", "/");
@@ -225,7 +225,7 @@ export default {
       });
     },
     async trainVersion() {
-      const url = "/train"
+      const url = "/api/train"
         .concat("/", this.data.meta.name)
         .concat("/", this.data.meta.version)
         .concat("", "/");

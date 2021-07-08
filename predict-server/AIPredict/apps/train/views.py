@@ -209,7 +209,6 @@ class TrainModel(viewsets.ViewSet):
         elif len(shap_values.shape) == 3:
             shap_exp = []
             shap_values_transpose = shap_values
-            print(shap_values_transpose.shape)
             for i in range(len(shap_values_transpose)):
                 shap_exp.append(
                     np.mean(np.absolute(shap_values_transpose[i]), 0))
