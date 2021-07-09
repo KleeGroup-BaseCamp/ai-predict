@@ -46,3 +46,5 @@ dill==0.3.3
 
 #Cerberus vlidation
 cerberus==1.3.4
+
+gunicorn==20.1.0

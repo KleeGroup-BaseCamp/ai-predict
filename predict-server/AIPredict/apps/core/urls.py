@@ -4,7 +4,7 @@ from django.http import HttpRequest
 
 
 urlpatterns = [
-    path('bundles/', views.BundlesView.as_view({'get': 'bundles'})),
+    path('api/bundles/', views.BundlesView.as_view({'get': 'bundles'})),
     path('bundle/<str:bundle>/', views.BundlesView.as_view({'get': 'bundle'})),
     path('bundle/<str:bundle>/<int:version>/',
          views.BundlesView.as_view({'get': 'bundle'})),

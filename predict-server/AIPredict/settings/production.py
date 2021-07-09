@@ -160,3 +160,6 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:8081',
     'http://localhost:8080',
 )
+
+#Bundle upload path
+STATIC_ROOT = Path("frontend", "dist")
