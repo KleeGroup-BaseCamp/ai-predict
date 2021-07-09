@@ -1,52 +1,13 @@
-version: '3' # 2.4 is the last version that supports depends_on conditions for service health
+version: "3.9"
+
 services:
-  cassandra:
-    image: bitnami/cassandra:3.11.10   # better to use a specific version, if you want to control upgrades
-    hostname: cassandra
-    container_name: cassandra
-    ports:
-      - '7000:7000'
-      - '9042:9042'
-    volumes:
-      - 'cassandra_data:/bitnami'
 
-  spark-master:
-    image: spark-master:latest
-    hostname: spark-master
-    container_name: spark-master
-    ports:
-      - "9090:8080"
-      - "7077:7077"
-    volumes:
-        - ./docker/spark-cassandra-master/apps:/opt/spark-apps
-        - ./docker/spark-cassandra-master/data:/opt/spark-data
-    environment:
-      - "SPARK_LOCAL_IP=spark-master"
-    depends_on: 
-      - cassandra
-    
-
-  spark-worker:
-    image: spark-worker:latest
-    hostname: spark-worker
-    container_name: spark-worker
-    ports:
-      - "9091:8081"
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_MASTER=spark://spark-master:7077
-      - SPARK_WORKER_CORES=1
-      - SPARK_WORKER_MEMORY=1G
-      - SPARK_DRIVER_MEMORY=128m
-      - SPARK_EXECUTOR_MEMORY=256m
-    volumes:
-        - ./docker/spark-cassandra-worker/apps:/opt/spark-apps
-        - ./docker/spark-cassandra-worker/data:/opt/spark-data
-    depends_on: 
-      - spark-master
-    
-
-volumes:
-  cassandra_data:
-    driver: local
+    ihm:
+      image: "ihm:latest"
+      ports:
+        - "8080:8080"
+    api:
+      build: ./predict-server
+      command: python ./scripts/manage.py runserver
+      ports:
+        - "8000:8000"
