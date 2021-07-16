@@ -270,7 +270,7 @@ If the prediction succeeds, the server send a response 200 and a json with the f
 <table>
     <thead>
         <tr>
-            <th>Librairy</th>
+            <th>Library</th>
             <th>Type</th>
             <th>Model</th>
             <th>Explanation</th>
