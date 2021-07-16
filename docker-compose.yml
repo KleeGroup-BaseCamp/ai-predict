@@ -3,11 +3,18 @@ version: "3.9"
 services:
 
     ihm:
-      image: "ihm:latest"
+      image: "vertigo-ai-ihm:latest"
+      build: ./vertigo-ai-ihm
+      hostname: vertigo-ai-ihm
       ports:
-        - "8080:8080"
+        - "8080:80"
     api:
+      image: "predict-server:latest"
       build: ./predict-server
-      command: python ./scripts/manage.py runserver
+      hostname: ai-predict-api
+      environment: 
+        - ALLOWED_HOSTS=ai-predict-api
+        - DJANGO_SETTINGS_MODULE=AIPredict.settings.development
       ports:
         - "8000:8000"
+

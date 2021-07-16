@@ -154,7 +154,11 @@ Q_CLUSTER = {
     'orm': 'default'
 }
 
+
 ALLOWED_HOSTS=['http://localhost:8081', 'http://localhost:8080']
+if os.getenv('ALLOWED_HOSTS') is not None:
+    ALLOWED_HOSTS.append(os.getenv('ALLOWED_HOSTS'))
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8081',
