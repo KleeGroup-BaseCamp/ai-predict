@@ -7,7 +7,7 @@ from django.http import HttpRequest
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('', include('AIPredict.apps.predict.urls')),
-    path('', include('AIPredict.apps.train.urls')),
-    path('', include('AIPredict.apps.core.urls')),
+    path('api/', include('AIPredict.apps.predict.urls')),
+    path('api/', include('AIPredict.apps.train.urls')),
+    path('api/', include('AIPredict.apps.core.urls')),
 ]
