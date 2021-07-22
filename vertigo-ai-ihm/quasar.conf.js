@@ -83,10 +83,7 @@ module.exports = function (/* ctx */) {
           target: 'http://127.0.0.1:8000',
           hostRewrite: "localhost:8080",
           changeOrigin: true,
-          logLevel: 'debug' ,
-          pathRewrite: {
-            '^/api': ''
-          }
+          logLevel: 'debug'
         }
       },
     },
