@@ -69,5 +69,14 @@ public interface PredictionPlugin extends Plugin {
 	 * @return le code http de la réponse serveur
 	 */
 	Integer delete(String modelName, Integer version);
+	
+	
+	/**
+	 * 
+	 * @param modelName
+	 * @param version
+	 * @return
+	 */
+	Integer activate(String modelName, Integer version);
 
 }

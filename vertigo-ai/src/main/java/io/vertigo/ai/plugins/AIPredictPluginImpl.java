@@ -53,21 +53,20 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 	@Override
 	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<D> data, String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"predict/"+modelName+"/"+version+"/");
+		WebTarget target = client.target(server + "api/predict/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Entity<String> test = Entity.entity(data.toString(), MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(test);
 		PredictResponse output = response.readEntity(PredictResponse.class);	
 		response.close();
 		return output;
-		
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	public TrainResponse train(String modelName, Integer version) {		
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"train/"+modelName+"/"+version+"/");
+		WebTarget target = client.target(server+"api/train/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(null);
 		TrainResponse output = response.readEntity(TrainResponse.class);	
@@ -79,7 +78,7 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 	@Override
 	public AIPredictScoreResponse score(String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"score/"+modelName+"/"+version+"/");
+		WebTarget target = client.target(server+"api/score/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(null);
 		AIPredictScoreResponse output = response.readEntity(AIPredictScoreResponse.class);
@@ -91,9 +90,22 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 	@Override
 	public Integer delete(String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"delete-train/"+modelName+"/"+version+"/");
+		WebTarget target = client.target(server+"api/delete-train/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.delete();
+		Integer output = response.getStatus();
+		response.close();
+		return output;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public Integer activate(String modelName, Integer version) {
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(server+"api/activate/"+modelName+"/"+version+"/");
+		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+		Entity<String> test = Entity.entity("", MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.put(test);
 		Integer output = response.getStatus();
 		response.close();
 		return output;

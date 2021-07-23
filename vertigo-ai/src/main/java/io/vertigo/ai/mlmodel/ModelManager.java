@@ -65,4 +65,12 @@ public interface ModelManager extends Manager {
  	 */
 	Integer delete(String modelName, Integer version);
 
+	/**
+	 * Active un modèle
+	 * @param modelName Nom du modèle
+	 * @param version Version du modèle
+	 * @return le code http de la réponse du serveur
+	 */
+	Integer activate(String modelName, Integer version);
+
 }
