@@ -17,4 +17,8 @@ services:
         - DJANGO_SETTINGS_MODULE=AIPredict.settings.development
       ports:
         - "8000:8000"
-
+    
+    qcluster: 
+      image: "predict-server:latest"
+      build: ./predict-server
+      command: "python scripts/manage.py qcluster"

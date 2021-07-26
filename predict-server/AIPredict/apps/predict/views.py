@@ -113,6 +113,7 @@ class Prediction(viewsets.ViewSet):
 
         try:
             prediction = predictor.predict(data=data)
+            bundle.used()
             return Response(prediction, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)

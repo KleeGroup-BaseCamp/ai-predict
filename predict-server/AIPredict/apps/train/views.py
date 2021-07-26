@@ -227,6 +227,7 @@ class TrainModel(viewsets.ViewSet):
         logger.info("Explanation successfully computed. Start model saving.")
         #set moajor parameters
         config["major_parameters"] = get_major_parameters(package, model_name, model, grid_search)
+        config["use"] = 0
         # save model
         path, name, version = save(
             model, config, config["meta"]["version"], score)

@@ -176,3 +176,12 @@ class VersionController:
 
     def remove_archive(self):
         os.remove(self.path / str(self.name + "-v" + str(self.version) + ".zip"))
+    
+    def used(self):
+        with open(self.path, "r") as jsonBundle:
+            bundle = json.load(jsonBundle)
+        
+        bundle["use"] += 1
+
+        with open(self.path, "w") as jsonBundle:
+            json.dump(bundle, jsonBundle)

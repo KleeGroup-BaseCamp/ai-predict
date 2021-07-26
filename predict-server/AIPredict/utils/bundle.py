@@ -52,7 +52,7 @@ class BundleController:
         res = {
             "name": self.name,
             "performance": None,
-            "use":  random.randint(0, 100),
+            "use":  0,
             "active": False,
             "activeVersion": None,
             "versions": self.get_versions(),
@@ -64,6 +64,7 @@ class BundleController:
             bundle = VersionController(self.name, version)
             res["datasource"] = bundle.get_item("meta", "datasource")
             res["description"] = bundle.get_item("meta", "description")
+            res["use"] += bundle.get_category("use")
             score = bundle.get_item(
                 "algorithm", "score")["scoreMean"]
             raw_scores.append(score)
@@ -105,3 +106,4 @@ class BundleController:
 
     def remove_archive(self):
         os.remove(self.path / str(self.name+".zip"))
+
