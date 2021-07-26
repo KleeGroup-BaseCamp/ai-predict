@@ -69,5 +69,11 @@ public class PredictionManagerImpl implements ModelManager {
 	public Integer delete(String modelName, Integer version) {
 		return predictionPlugin.delete(modelName, version);
 	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Integer activate(String modelName, Integer version) {
+		return predictionPlugin.activate(modelName, version);
+}
 	
 }

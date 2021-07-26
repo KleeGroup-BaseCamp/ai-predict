@@ -58,9 +58,8 @@ public class IrisServices implements Component {
 		irisDAO.update(entity);
 	}
 	
-	public Iris getFirst() {
-		
-		return irisDAO.get((long) 1000);
+	public Iris get(long id) {
+		return irisDAO.get(id);
 	}
 	
 }

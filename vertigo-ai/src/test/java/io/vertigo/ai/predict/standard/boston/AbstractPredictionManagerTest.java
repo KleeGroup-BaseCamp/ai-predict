@@ -63,7 +63,7 @@ public abstract class AbstractPredictionManagerTest {
 		final DefinitionSpace definitionSpace = node.getDefinitionSpace();
 
 		bostonDatabase = new BostonDatabase();
-		rowDefinition = definitionSpace.resolve(itemName,RowDefinition.class);
+		rowDefinition = definitionSpace.resolve(itemName, RowDefinition.class);
 	}
 	
 	private Dataset getBostonDataset(){

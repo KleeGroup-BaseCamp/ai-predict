@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -17,12 +16,12 @@ public class IrisTrainTest {
 
 
 	public static void testTrainPostgresql(ModelManager modelManager) throws JsonParseException, JsonMappingException, IOException {
-		TrainResponse response = modelManager.train("iris-xgb", 0);
+		TrainResponse response = modelManager.train("iris", 2);
 		Assertions.assertEquals(-1, BigDecimal.valueOf(0.92).compareTo(response.getScore().getScoreMean()));
 	}
 	
 	public static void testScore(ModelManager modelManager) {
-		AIPredictScoreResponse response = modelManager.score("iris-xgb", 0);
+		AIPredictScoreResponse response = modelManager.score("iris", 2);
 		Assertions.assertEquals(-1, BigDecimal.valueOf(0.92).compareTo(response.getScore().getScoreMean()));
 	}
 }

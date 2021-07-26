@@ -36,6 +36,8 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.ai.example.iris.predict.IrisPredictionTest;
@@ -144,16 +146,53 @@ public abstract class AbstractIrisTestManager {
 		newIris.setVariety("test");
 		irisServices.create(newIris);
 		
-		Iris firstIris = irisServices.getFirst();
-		firstIris.setVariety("test");
-		irisServices.update(firstIris);
+		waitAndExpectIndexation(appSize + 1, dtDefinitionIrisTrain);
+		
+		long newAppSize;
+		long newTrainSize;
+		IrisTrain irisTrain;
 		
 		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
-			appSize = entityStoreManager.count(dtDefinitionIris);
-			trainSize = entityStoreManager.count(dtDefinitionIrisTrain);
+			newAppSize = entityStoreManager.count(dtDefinitionIris);
+			newTrainSize = entityStoreManager.count(dtDefinitionIrisTrain);
+			
+			final UID<Entity> irisTrainURI = UID.of(dtDefinitionIrisTrain, newIris.getId());
+			irisTrain = (IrisTrain) entityStoreManager.readOne(irisTrainURI);
 		}
+		
+		Assertions.assertEquals(newAppSize, newTrainSize);
+		Assertions.assertEquals(appSize + 1, newAppSize);
+		Assertions.assertEquals(trainSize + 1, newTrainSize);
 
-		Assertions.assertEquals(appSize, trainSize);
+		Iris updatedIris = irisServices.get(newIris.getId());
+		updatedIris.setVariety("new value");
+		irisServices.update(updatedIris);
+		
+		
+		irisTrain.setVariety(updatedIris.getVariety());
+		waitAndExpectIndexation(irisTrain, dtDefinitionIrisTrain);
+		
+		Iris updatedIrisApp;
+		IrisTrain updatedIrisTrain;
+
+		try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
+			newAppSize = entityStoreManager.count(dtDefinitionIris);
+			newTrainSize = entityStoreManager.count(dtDefinitionIrisTrain);
+			
+			final UID<Entity> irisURI = UID.of(dtDefinitionIris, newIris.getId());
+			final UID<Entity> irisTrainURI = UID.of(dtDefinitionIrisTrain, newIris.getId());
+			updatedIrisApp = (Iris) entityStoreManager.readOne(irisURI);
+			updatedIrisTrain = (IrisTrain) entityStoreManager.readOne(irisTrainURI);
+		}
+		
+		// We check that an updated entity keep the train db size length unchanged 
+		Assertions.assertEquals(newAppSize, newTrainSize);
+		Assertions.assertEquals(appSize + 1, newAppSize);
+		Assertions.assertEquals(trainSize + 1, newTrainSize);
+		
+		// We check that an updated entity has been updated to the train db
+		Assertions.assertEquals(updatedIris.getVariety(), updatedIrisApp.getVariety());
+		Assertions.assertEquals(updatedIris.getVariety(), updatedIrisTrain.getVariety());
 	}
 	
 	@Test
@@ -166,6 +205,48 @@ public abstract class AbstractIrisTestManager {
 	public void testIrisPredict() {
 		IrisPredictionTest irisPredict = new IrisPredictionTest(modelManager);
 		irisPredict.testPredictXGBClassifier();
+	}
+	
+	private void waitAndExpectIndexation(final long expectedCount, DtDefinition dtDefinition) {
+		waitAndExpectIndexation(expectedCount, null, dtDefinition);
+	}
+
+	private void waitAndExpectIndexation(final Entity expectedEntity, DtDefinition dtDefinition) {
+		waitAndExpectIndexation(-1, expectedEntity, dtDefinition);
+	}
+	
+	private void waitAndExpectIndexation(final long expectedCount, final Entity expectedEntity, DtDefinition dtDefinition) {
+		final long time = System.currentTimeMillis();
+		long size = -1;
+		Entity entity = null;
+		try {
+			do {
+				Thread.sleep(250); //wait index was done
+
+				if (expectedEntity != null) {
+					try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
+						UID entityURI = expectedEntity.getUID();
+						entity = entityStoreManager.readOne(entityURI);
+					}
+					
+					if (entity.equals(expectedEntity)) {
+						break; //si l'entité correspond à l'entité attendue on sort.
+					}
+				} else {
+					try (VTransactionWritable tx = transactionManager.createCurrentTransaction()) {
+						size = entityStoreManager.count(dtDefinition);
+					}
+					
+					if (size == expectedCount) {
+						break; //si le nombre est atteint on sort.
+					}
+				}
+
+			} while (System.currentTimeMillis() - time < 5000);//timeout 5s
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt(); //si interrupt on relance
+		}
+		Assertions.assertEquals(expectedCount, size);
 	}
 }
 

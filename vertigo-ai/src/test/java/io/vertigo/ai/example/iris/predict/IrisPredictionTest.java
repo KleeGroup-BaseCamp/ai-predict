@@ -34,7 +34,7 @@ public class IrisPredictionTest {
 	}
 	
 	private PredictResponse testPrediction(final String predictionType) {
-		PredictResponse response = modelManager.predict(dataset, "iris-"+predictionType, 0);
+		PredictResponse response = modelManager.predict(dataset, "iris"+predictionType, 2);
 		return response;
 	}
 	
@@ -59,8 +59,12 @@ public class IrisPredictionTest {
 	}
 	
 	public void testPredictXGBClassifier() {
-		PredictResponse response = testPrediction("xgb");
-		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
+		//PredictResponse response = testPrediction("xgb");
+		modelManager.activate("iris", 2);
+		PredictResponse response = modelManager.predict(dataset, "iris", 2);
+		//Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
+		Assertions.assertEquals("Versicolor", response.getPredictionList().get(0).getPredictionLabel());
+		Assertions.assertEquals("Versicolor", response.getPredictionList().get(1).getPredictionLabel());
 	}
 	
 	public void testPredictLogistic() {
