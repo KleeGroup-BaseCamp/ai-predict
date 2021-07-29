@@ -1,5 +1,5 @@
 from pathlib import Path
-import os
+import os, json
 import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -167,3 +167,6 @@ CORS_ORIGIN_WHITELIST = (
 
 #Bundle upload path
 STATIC_ROOT = Path("frontend", "dist")
+train_db_path = Path("conf", "train_db.json")
+with open(train_db_path, "r") as train_db:
+    TRAIN_DB = json.load(train_db)
