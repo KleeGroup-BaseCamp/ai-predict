@@ -19,7 +19,7 @@
 package io.vertigo.ai;
 
 import io.vertigo.ai.impl.server.PredictionManagerImpl;
-import io.vertigo.ai.impl.structure.dataset.DatasetInMemoryManagerImpl;
+import io.vertigo.ai.impl.structure.datasetInMemory.DatasetInMemoryManagerImpl;
 import io.vertigo.ai.impl.structure.record.RecordManagerImpl;
 import io.vertigo.ai.mlmodel.ModelManager;
 import io.vertigo.ai.plugins.AIPredictPluginImpl;

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import io.vertigo.ai.impl.structure.dataset.loader.AbstractDatasetLoader;
+import io.vertigo.ai.impl.structure.datasetInMemory.loader.AbstractDatasetLoader;
 import io.vertigo.ai.structure.dataset.DatasetManager;
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.dataset.models.Dataset;

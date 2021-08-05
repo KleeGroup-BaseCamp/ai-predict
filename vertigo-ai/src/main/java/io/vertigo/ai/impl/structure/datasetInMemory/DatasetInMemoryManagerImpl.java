@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.vertigo.ai.impl.structure.dataset;
+package io.vertigo.ai.impl.structure.datasetInMemory;
 
 import java.util.Optional;
 

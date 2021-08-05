@@ -34,6 +34,7 @@ def get_major_parameters(package:str, modelName:str, model, grid_search:bool):
         key = ""
     res = {}
     for param in major_parameters:
+        print(model_parameters)
         value = model_parameters[key+param]
         if not value:
             res[major_parameters[param]] = "None"

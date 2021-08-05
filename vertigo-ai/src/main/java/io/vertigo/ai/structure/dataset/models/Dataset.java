@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toCollection;
 
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.row.models.Row;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.model.UID;
 
 public class Dataset implements Serializable, Iterable<Row> {
@@ -121,6 +122,10 @@ public class Dataset implements Serializable, Iterable<Row> {
 		this.datasetDefinition = dataset.getDefinition();
 	}
 	
+	public Dataset(DtDefinition output) {
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * DatasetDefinition getter
 	 */

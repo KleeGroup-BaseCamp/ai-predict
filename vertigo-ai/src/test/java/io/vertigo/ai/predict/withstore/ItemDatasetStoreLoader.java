@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import io.vertigo.ai.impl.structure.dataset.loader.AbstractSqlDatasetLoader;
+import io.vertigo.ai.impl.structure.datasetInMemory.loader.AbstractSqlDatasetLoader;
 import io.vertigo.ai.predict.data.domain.boston.BostonItem;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
 import io.vertigo.ai.structure.dataset.DatasetManager;

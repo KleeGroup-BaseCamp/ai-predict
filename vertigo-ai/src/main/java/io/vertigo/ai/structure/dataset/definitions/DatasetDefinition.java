@@ -30,18 +30,18 @@ public class DatasetDefinition extends AbstractDefinition {
 	
 	public static final String PREFIX = "Ds";
 
-	private final DtDefinition datasetDtDefinition;
+	private final DtDefinition itemDtDefinition;
 	private final Boolean streamed;
 	
 	/**
 	 * Constructor.
 	 * @param name Dataset name
-	 * @param datasetDtDefinition DtDefinition associé au dataset
+	 * @param itemDtDefinition DtDefinition associé au dataset
 	 * @param streamed Boolean idiquant si le dataset est streamé.
 	 */
-	public DatasetDefinition(String name, DtDefinition datasetDtDefinition, Boolean streamed) {
+	public DatasetDefinition(String name, DtDefinition itemDtDefinition, Boolean streamed) {
 		super(name);
-		this.datasetDtDefinition = datasetDtDefinition;
+		this.itemDtDefinition = itemDtDefinition;
 		this.streamed = streamed;
 	}
 
@@ -49,8 +49,8 @@ public class DatasetDefinition extends AbstractDefinition {
 	 * Définition de l'objet représentant le contenu du dataset.
 	 * @return Définition des champs enregistrés.
 	 */
-	public DtDefinition getDatasetDtDefinition() {
-		return datasetDtDefinition;
+	public DtDefinition getItemDtDefinition() {
+		return itemDtDefinition;
 	}
 
 	/**

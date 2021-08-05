@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -23,14 +24,14 @@ public class Row implements DtObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private HashMap<DatasetField, Object> map;
+	private Map<DatasetField, Object> map;
 	private UID<?> uid = null;
 	private RowDefinition rowDefinition = null;
     
 	/**
 	 * Construct a row based on an HashMap
 	 */
-	public Row(HashMap<DatasetField, Object> item) { 
+	public Row(Map<DatasetField, Object> item) { 
 		map = item;
 	}
 	
@@ -44,7 +45,7 @@ public class Row implements DtObject {
 	/**
 	 * Construct a row based on an HashMap with an UID and a RowDefinition for Vertigo Applications
 	 */
-	public Row(HashMap<DatasetField, Object> item, UID<?> uid, RowDefinition rowDefinition) {
+	public Row(Map<DatasetField, Object> item, UID<?> uid, RowDefinition rowDefinition) {
 		map = item;
 		this.uid = uid;
 		this.rowDefinition = rowDefinition;
@@ -83,7 +84,7 @@ public class Row implements DtObject {
 			//get its fields
 			Field[] fields = clazz.getDeclaredFields();
 			//initiate the map
-			HashMap<DatasetField, Object> mapItem = new HashMap<DatasetField, Object>();
+			Map<DatasetField, Object> mapItem = new HashMap<DatasetField, Object>();
 			// fr each field, set it accessible and add it to the map
 			for (Field field : fields) {
 				if (field.getName() != "this$0") {
@@ -130,7 +131,7 @@ public class Row implements DtObject {
 	 * Collect the HashMap associated to the row
 	 * @return a map of all item in the row
 	 */
-	public HashMap<DatasetField, Object> collect() {
+	public Map<DatasetField, Object> collect() {
 		return map;
 	}
 	
@@ -176,7 +177,7 @@ public class Row implements DtObject {
 	 * Copies all of the mappings from the specified map to this row.These mappings will replace any mappings that this row had forany of the keys currently in the specified map.
 	 * @param item mappings to be stored in this map
 	 */
-	public void putAll(HashMap<DatasetField, Object> item) {
+	public void putAll(Map<DatasetField, Object> item) {
 		map.putAll(item);
 	}
 	
@@ -185,7 +186,7 @@ public class Row implements DtObject {
 	 * @param item rows to be stored in this map
 	 */
 	public void putAll(Row item) {
-		HashMap<DatasetField, Object> other = item.collect();
+		Map<DatasetField, Object> other = item.collect();
 		map.putAll(other);
 	}
 	
@@ -195,8 +196,8 @@ public class Row implements DtObject {
 	 * @return a new row
 	 */
 	public Row join(Row item) {
-		HashMap<DatasetField, Object> other = item.collect();
-		HashMap<DatasetField, Object> mapCopy = new HashMap<DatasetField, Object>(map);
+		Map<DatasetField, Object> other = item.collect();
+		Map<DatasetField, Object> mapCopy = new HashMap<DatasetField, Object>(map);
 		other.putAll(mapCopy);
 		return new Row(other);
 		
@@ -273,7 +274,7 @@ public class Row implements DtObject {
 	 * Returns a string representation of this row.
 	 */
 	public String toString() {
-		HashMap<String, Object> serialized = new HashMap<String, Object>();
+		Map<String, Object> serialized = new HashMap<String, Object>();
 		map.keySet().forEach(item -> serialized.put(item.getName(), map.get(item)));
 		StringBuilder builder = new StringBuilder();
 		builder.append("{");
@@ -290,7 +291,7 @@ public class Row implements DtObject {
 	 * @return a new row with the specified DatasetField
 	 */
 	public Row get(List<DatasetField> fields) {
-		HashMap<DatasetField, Object> newMap = new HashMap<DatasetField, Object>();
+		Map<DatasetField, Object> newMap = new HashMap<DatasetField, Object>();
 		for (DatasetField field: fields) {
 			newMap.put(field, get(field));
 		}
@@ -307,8 +308,8 @@ public class Row implements DtObject {
 		return get(field).toString().compareTo(other.get(field).toString());
 	}
 	
-	private HashMap<String, DatasetField> fields() {
-		HashMap<String, DatasetField> fieldMap = new HashMap<String, DatasetField>();
+	private Map<String, DatasetField> fields() {
+		Map<String, DatasetField> fieldMap = new HashMap<String, DatasetField>();
 		Set<DatasetField> fields = map.keySet();
 		fields.forEach(field -> fieldMap.put(field.getName(), field));
 		return fieldMap;
@@ -334,7 +335,7 @@ public class Row implements DtObject {
 		I newObject = (I) ctor.newInstance();
 		
 		List<Field> clazzFields = Arrays.asList(clazz.getDeclaredFields());
-		HashMap<String, DatasetField> rowFields = fields();
+		Map<String, DatasetField> rowFields = fields();
 		for (Field field : clazzFields) {
 			String key = field.getName();
 			if (rowFields.containsKey(key)) {

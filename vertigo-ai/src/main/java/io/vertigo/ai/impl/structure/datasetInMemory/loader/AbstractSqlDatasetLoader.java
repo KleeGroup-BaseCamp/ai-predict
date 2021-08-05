@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.vertigo.ai.impl.structure.dataset.loader;
+package io.vertigo.ai.impl.structure.datasetInMemory.loader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
