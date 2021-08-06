@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import io.vertigo.ai.example.domain.DtDefinitions;
 import io.vertigo.ai.impl.structure.dataset.DatasetImpl;
 import io.vertigo.ai.structure.DatasetManager;
@@ -53,6 +55,8 @@ public final class SqlDatasetProcessingPluginImpl
 	
 	private CriteriaCtx criteriaCtx = null;
 	
+
+	@Inject
 	public SqlDatasetProcessingPluginImpl(
 			@ParamValue("dataSpace") final Optional<String> optDataSpace,
 			@ParamValue("connectionName") final Optional<String> optConnectionName,
@@ -192,10 +196,9 @@ public final class SqlDatasetProcessingPluginImpl
 	
 	private <E extends Entity> Dataset<E> executeTask(String taskName, DtDefinition tableDefinition, String outputName, List<DtField> fields, String query) {
 		
-		final DtDefinitionBuilder outputDefinitionBuilder = DtDefinition.builder(StringUtil.constToLowerCamelCase(outputName))
+		final DtDefinitionBuilder outputDefinitionBuilder = DtDefinition.builder("Dt"+StringUtil.constToUpperCamelCase(outputName))
 						.withPackageName(tableDefinition.getPackageName())
-						.withDataSpace(tableDefinition.getDataSpace())
-						.withStereoType(tableDefinition.getStereotype());
+						.withDataSpace(tableDefinition.getDataSpace());
 		for (DtField field : fields) {
 			outputDefinitionBuilder.addDataField(field.getName(),
 					field.getLabel().toString(),

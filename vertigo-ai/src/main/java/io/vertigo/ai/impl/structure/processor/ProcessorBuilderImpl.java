@@ -57,7 +57,7 @@ public final class ProcessorBuilderImpl implements ProcessorBuilder {
 	public <E extends Entity> ProcessorBuilder select(String requestedFields) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("requestedFields", requestedFields);
-		processors.add(new ProcessorImpl(processors.size(), "join", params));
+		processors.add(new ProcessorImpl(processors.size(), "select", params));
 		return this;
 	}
 

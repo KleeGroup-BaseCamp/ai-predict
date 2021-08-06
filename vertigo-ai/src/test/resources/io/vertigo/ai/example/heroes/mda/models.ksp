@@ -1,0 +1,32 @@
+package io.vertigo.ai.example.heroes.domain
+
+create Domain DoString {
+	dataType: String
+	storeType: "TEXT"
+}
+
+create Domain DoInt {
+	dataType: Integer
+	storeType: "NUMERIC"
+}
+
+create DtDefinition DtHeroe {
+	stereotype: "Entity"
+	id id {domain: DoInt label:"ID"}
+	field name {domain: DoString label:"Name" cardinality:"1"}
+	field job {domain: DoString label:"Job" cardinality:"1"}
+    field faction {domain: DoInt label:"Faction ID" cardinality:"1"}
+}
+
+create DtDefinition DtFaction {
+	stereotype: "Entity"
+	id id {domain: DoInt label:"ID"}
+	field name {domain: DoString label:"Name" cardinality:"1"}
+    field era {domain: DoInt label:"Era ID" cardinality:"1"}
+}
+
+create DtDefinition DtEra {
+	stereotype: "Entity"
+	id id {domain: DoInt label:"ID"}
+	field name {domain: DoString label:"Name" cardinality:"1"}
+}

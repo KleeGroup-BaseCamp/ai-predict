@@ -19,10 +19,12 @@
 package io.vertigo.ai;
 
 import io.vertigo.ai.impl.server.PredictionManagerImpl;
+import io.vertigo.ai.impl.structure.dataset.DatasetManagerImpl;
 import io.vertigo.ai.impl.structure.datasetInMemory.DatasetInMemoryManagerImpl;
 import io.vertigo.ai.impl.structure.record.RecordManagerImpl;
 import io.vertigo.ai.mlmodel.ModelManager;
 import io.vertigo.ai.plugins.AIPredictPluginImpl;
+import io.vertigo.ai.plugins.SqlDatasetProcessingPluginImpl;
 import io.vertigo.ai.structure.dataset.DatasetManager;
 import io.vertigo.ai.structure.record.RecordManager;
 import io.vertigo.core.node.config.Feature;
@@ -46,7 +48,7 @@ public class AIFeatures extends Features<AIFeatures>{
 	protected void buildFeatures() {
 		getModuleConfigBuilder().addComponent(ModelManager.class, PredictionManagerImpl.class);
 		getModuleConfigBuilder().addComponent(RecordManager.class, RecordManagerImpl.class);
-		getModuleConfigBuilder().addComponent(DatasetManager.class, DatasetInMemoryManagerImpl.class);
+		getModuleConfigBuilder().addComponent(io.vertigo.ai.structure.DatasetManager.class, DatasetManagerImpl.class);
 	}
 	
 
@@ -54,7 +56,12 @@ public class AIFeatures extends Features<AIFeatures>{
 	public AIFeatures withAIPredictBackend(final Param... params) {
 		getModuleConfigBuilder().addPlugin(AIPredictPluginImpl.class, params);
 		return this;
-		
+	}
+	
+	@Feature("processing.SqlProcessing")
+	public AIFeatures withSqlProcessing(final Param...params) {
+		getModuleConfigBuilder().addPlugin(SqlDatasetProcessingPluginImpl.class, params);
+		return this;
 	}
 
 }

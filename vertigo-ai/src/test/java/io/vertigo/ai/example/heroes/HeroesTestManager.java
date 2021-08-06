@@ -1,11 +1,11 @@
-package io.vertigo.ai.example.iris;
+package io.vertigo.ai.example.heroes;
 
 import io.vertigo.ai.MyNodeConfig;
 import io.vertigo.core.node.config.NodeConfig;
 
-public class IrisTestManager extends AbstractIrisTestManager {
+public final class HeroesTestManager extends AbstractHeroesTestManager {
 
-	private static final String DS_DATASET = "DsIris";
+	private static final String DS_DATASET = "DsHeroes";
 	@Override
 	protected void doSetUp() {
 		init(DS_DATASET);
@@ -13,7 +13,6 @@ public class IrisTestManager extends AbstractIrisTestManager {
 
 	@Override
 	protected NodeConfig buildNodeConfig() {
-		return MyNodeConfig.config("iris");
+		return MyNodeConfig.config("heroes");
 	}
-
 }

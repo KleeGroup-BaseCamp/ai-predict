@@ -16,7 +16,7 @@ public class BostonRegressionPredictionManager extends AbstractPredictionManager
 
 	@Override
 	protected NodeConfig buildNodeConfig() {
-		return MyNodeConfig.config(false, false);
+		return MyNodeConfig.config("");
 	}
 
 }

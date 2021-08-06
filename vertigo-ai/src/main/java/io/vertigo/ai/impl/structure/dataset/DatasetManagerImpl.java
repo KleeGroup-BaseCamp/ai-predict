@@ -47,8 +47,10 @@ public final class DatasetManagerImpl implements DatasetManager {
 			switch (type) {
 				case "sort":
 					sortList.add(params);
+					break;
 				case "filter":
 					filterParam = params;
+					break;
 				default:
 					if (!sortList.isEmpty()) {
 						params.put("sort", sortList);
@@ -61,8 +63,10 @@ public final class DatasetManagerImpl implements DatasetManager {
 					switch (type) {
 						case "select":
 							processDataset = datasetProcessingPlugin.select(processDataset, params);
+							break;
 						case "join":
 							processDataset = datasetProcessingPlugin.join(processDataset, params);
+							break;
 					}
 			}
 		}

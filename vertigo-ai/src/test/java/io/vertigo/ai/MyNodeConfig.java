@@ -1,5 +1,11 @@
 package io.vertigo.ai;
 
+import io.vertigo.ai.example.heroes.HeroesDefinitionProvider;
+import io.vertigo.ai.example.heroes.dao.EraDAO;
+import io.vertigo.ai.example.heroes.dao.FactionDAO;
+import io.vertigo.ai.example.heroes.dao.HeroeDAO;
+import io.vertigo.ai.example.heroes.data.HeroesSmartTypes;
+import io.vertigo.ai.example.heroes.data.datageneration.HeroesGenerator;
 import io.vertigo.ai.example.iris.ItemDefinitionProvider;
 import io.vertigo.ai.example.iris.dao.IrisDAO;
 import io.vertigo.ai.example.iris.dao.IrisTrainDAO;
@@ -10,7 +16,6 @@ import io.vertigo.ai.example.iris.services.IrisServices;
 import io.vertigo.ai.example.train.TrainPAO;
 import io.vertigo.ai.structure.record.definitions.RecordLoader;
 import io.vertigo.commons.CommonsFeatures;
-import io.vertigo.commons.impl.transaction.VTransactionManagerImpl;
 import io.vertigo.core.node.config.BootConfig;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.core.node.config.ModuleConfig;
@@ -27,11 +32,13 @@ import io.vertigo.datastore.DataStoreFeatures;
 
 public final class MyNodeConfig {
 	
-	public static NodeConfig config(final boolean withDb, final boolean iris) {
+	public static NodeConfig config(final String object) {
 		
 		final AIFeatures aiFeatures = new AIFeatures()
 				.withAIPredictBackend(
-									Param.of("server.name", "http://127.0.0.1:8000/"));
+									Param.of("server.name", "http://127.0.0.1:8000/"))
+				.withSqlProcessing(
+									Param.of("dataSpace", "train"));
 		
 		final NodeConfigBuilder nodeConfigBuilder = NodeConfig.builder()
 				.withBoot(BootConfig.builder()
@@ -76,21 +83,37 @@ public final class MyNodeConfig {
 					.withSqlEntityStore()
 					.build());
 
-		nodeConfigBuilder.addModule(aiFeatures.build())
+		if (object=="iris") {
+			nodeConfigBuilder.addModule(aiFeatures.build())
+					.addModule(ModuleConfig.builder("myApp")
+					.addComponent(ItemDefinitionProvider.class)
+					.addComponent(IrisDAO.class)
+					.addComponent(IrisTrainDAO.class)
+					.addComponent(TrainPAO.class)
+					.addComponent(IrisGenerator.class)
+					.addComponent(RecordLoader.class, IrisDatasetLoader.class)
+					.addComponent(IrisServices.class)
+					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+							.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
+							.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())
+							.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
+							.build())
+					.build());
+		} else if (object=="heroes") {
+			nodeConfigBuilder.addModule(aiFeatures.build())
 				.addModule(ModuleConfig.builder("myApp")
-				.addComponent(ItemDefinitionProvider.class)
-				.addComponent(GenericDefinitionProvider.class)
-				.addComponent(IrisDAO.class)
-				.addComponent(IrisTrainDAO.class)
-				.addComponent(TrainPAO.class)
-				.addComponent(IrisGenerator.class)
-				.addComponent(RecordLoader.class, IrisDatasetLoader.class)
-				.addComponent(IrisServices.class)
+				.addComponent(HeroesDefinitionProvider.class)
+				.addComponent(HeroesGenerator.class)
+				.addComponent(HeroeDAO.class)
+				.addComponent(FactionDAO.class)
+				.addComponent(EraDAO.class)
 				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
 						.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
+						.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())
 						.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
 						.build())
 				.build());
+		}
 		
 		return nodeConfigBuilder.build();
 	}

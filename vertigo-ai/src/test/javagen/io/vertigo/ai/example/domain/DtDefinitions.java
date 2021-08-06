@@ -17,12 +17,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
+		/** Objet de données Era. */
+		Era(io.vertigo.ai.example.heroes.domain.Era.class),
 		/** Objet de données EventType. */
 		EventType(io.vertigo.ai.example.telstra.domain.EventType.class),
+		/** Objet de données Faction. */
+		Faction(io.vertigo.ai.example.heroes.domain.Faction.class),
+		/** Objet de données Heroe. */
+		Heroe(io.vertigo.ai.example.heroes.domain.Heroe.class),
 		/** Objet de données Iris. */
 		Iris(io.vertigo.ai.example.iris.domain.Iris.class),
-		/** Objet de données IrisPredict. */
-		IrisPredict(io.vertigo.ai.example.iris.domain.IrisPredict.class),
 		/** Objet de données IrisTrain. */
 		IrisTrain(io.vertigo.ai.example.iris.domain.IrisTrain.class),
 		/** Objet de données Location. */
@@ -50,6 +54,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	}
 
 	/**
+	 * Enumération des champs de Era.
+	 */
+	public enum EraFields implements DtFieldName<io.vertigo.ai.example.heroes.domain.Era> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Name'. */
+		name	}
+
+	/**
 	 * Enumération des champs de EventType.
 	 */
 	public enum EventTypeFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.EventType> {
@@ -57,6 +70,30 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		id,
 		/** Propriété 'Event Type'. */
 		eventType	}
+
+	/**
+	 * Enumération des champs de Faction.
+	 */
+	public enum FactionFields implements DtFieldName<io.vertigo.ai.example.heroes.domain.Faction> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'Era ID'. */
+		era	}
+
+	/**
+	 * Enumération des champs de Heroe.
+	 */
+	public enum HeroeFields implements DtFieldName<io.vertigo.ai.example.heroes.domain.Heroe> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'Job'. */
+		job,
+		/** Propriété 'Faction ID'. */
+		faction	}
 
 	/**
 	 * Enumération des champs de Iris.
@@ -74,21 +111,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		petalWidth,
 		/** Propriété 'Label'. */
 		variety	}
-
-	/**
-	 * Enumération des champs de IrisPredict.
-	 */
-	public enum IrisPredictFields implements DtFieldName<io.vertigo.ai.example.iris.domain.IrisPredict> {
-		/** Propriété 'ID'. */
-		id,
-		/** Propriété 'Sepal Lenght'. */
-		sepalLength,
-		/** Propriété 'Sepal Width'. */
-		sepalWidth,
-		/** Propriété 'Petal Lenght'. */
-		petalLength,
-		/** Propriété 'Petal Width'. */
-		petalWidth	}
 
 	/**
 	 * Enumération des champs de IrisTrain.

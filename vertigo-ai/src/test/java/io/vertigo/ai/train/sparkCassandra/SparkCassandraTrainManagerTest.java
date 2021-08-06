@@ -7,7 +7,7 @@ public class SparkCassandraTrainManagerTest extends AbstractSparkCassandraTrainM
 
 	@Override
 	protected NodeConfig buildNodeConfig() {
-		return MyNodeConfig.config(false, false);
+		return MyNodeConfig.config("");
 	}
 
 	@Override

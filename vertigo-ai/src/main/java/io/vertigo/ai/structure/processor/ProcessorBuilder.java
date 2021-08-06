@@ -9,7 +9,7 @@ import io.vertigo.datamodel.structure.model.Entity;
 
 public interface ProcessorBuilder {
 
-	<E extends Entity> List<Processor> build();
+	List<Processor> build();
 	
 	<E extends Entity> ProcessorBuilder sort(final String sortField, final String sortOrder);
 	
