@@ -13,19 +13,27 @@ import io.vertigo.ai.impl.structure.dataset.DatasetImpl;
 import io.vertigo.ai.structure.DatasetManager;
 import io.vertigo.ai.structure.dataset.Dataset;
 import io.vertigo.ai.structure.processor.DatasetProcessingPlugin;
+import io.vertigo.basics.formatter.FormatterString;
+import io.vertigo.basics.task.TaskEngineProc;
+import io.vertigo.basics.task.TaskEngineProcBatch;
 import io.vertigo.basics.task.TaskEngineSelect;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.database.impl.sql.SqlManagerImpl;
 import io.vertigo.database.sql.SqlManager;
 import io.vertigo.database.sql.vendor.SqlDialect;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.CriteriaCtx;
 import io.vertigo.datamodel.criteria.CriteriaEncoder;
+import io.vertigo.datamodel.impl.smarttype.SmartTypeManagerImpl;
+import io.vertigo.datamodel.smarttype.FormatterConfig;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
+import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinitionBuilder;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.definitions.DtDefinitionBuilder;
 import io.vertigo.datamodel.structure.definitions.DtField;
@@ -89,7 +97,10 @@ public final class SqlDatasetProcessingPluginImpl
 		
 		StringBuilder queryBuilder = new StringBuilder("create table if not exists ")
 					.append(outputName)
-					.append("; ")
+					.append(" (name text, faction numeric); ")
+					.append("truncate table ")
+					.append(outputName)
+					.append(";")
 					.append("insert into ")
 					.append(outputName)
 					.append(" select ")
@@ -99,12 +110,13 @@ public final class SqlDatasetProcessingPluginImpl
 					.append(handleSortFilter(params));
 		String query = queryBuilder.append(";").toString();
 		
-		String taskName = "TkSelect " + requestedFields + "from" + tableName;
+		String taskName = "TkInsert" + StringUtil.constToUpperCamelCase(requestedFields.replaceAll(",", "_")) + "From" + tableName;
 		
 		List<DtField> fields = new ArrayList<DtField>();
 		for(String fieldName : requestedFields.split(",")) {
 			fields.add(tableDefinition.getField(fieldName));
 		}
+		
 		return executeTask(taskName, tableDefinition, outputName, fields, query);
 	}
 
@@ -196,7 +208,8 @@ public final class SqlDatasetProcessingPluginImpl
 	
 	private <E extends Entity> Dataset<E> executeTask(String taskName, DtDefinition tableDefinition, String outputName, List<DtField> fields, String query) {
 		
-		final DtDefinitionBuilder outputDefinitionBuilder = DtDefinition.builder("Dt"+StringUtil.constToUpperCamelCase(outputName))
+		String outputDefinitionBasName = StringUtil.constToUpperCamelCase(outputName);
+		final DtDefinitionBuilder outputDefinitionBuilder = DtDefinition.builder("Dt"+outputDefinitionBasName)
 						.withPackageName(tableDefinition.getPackageName())
 						.withDataSpace(tableDefinition.getDataSpace());
 		for (DtField field : fields) {
@@ -206,9 +219,11 @@ public final class SqlDatasetProcessingPluginImpl
 					field.getCardinality(),
 					field.isPersistent());
 		}
+		final SmartTypeDefinition outputSmartType = SmartTypeDefinition.builder("STy"+outputDefinitionBasName, BasicType.String).build();
 		final DtDefinition outputDefinition = outputDefinitionBuilder.build();
+		
 		final TaskDefinitionBuilder taskDefinitionBuilder = TaskDefinition.builder(taskName)
-				.withEngine(TaskEngineSelect.class)
+				.withEngine(TaskEngineProcBatch.class)
 				.withDataSpace(dataSpace)
 				.withRequest(query);
 		
@@ -219,7 +234,7 @@ public final class SqlDatasetProcessingPluginImpl
 		}
 		
 		final TaskDefinition taskDefinition = taskDefinitionBuilder
-				.withOutAttribute("ds", Node.getNode().getDefinitionSpace().resolve(SMART_TYPE_PREFIX + outputDefinition.getName(), SmartTypeDefinition.class), Cardinality.MANY)
+				.withOutAttribute("ds", outputSmartType, Cardinality.MANY)
 				.build();
 		
 		final TaskBuilder taskBuilder = Task.builder(taskDefinition);
@@ -229,10 +244,9 @@ public final class SqlDatasetProcessingPluginImpl
 				taskBuilder.addValue(attributeName, criteriaCtx.getAttributeValue(attributeName));
 			}
 		}
-		
-		taskManager.execute(taskBuilder
-				.addContextProperty("connectionName", connectionName)
-				.build());
+		Task task = taskBuilder
+				.build();
+		taskManager.execute(task);
 		criteriaCtx = null;
 		return new DatasetImpl<E>(outputDefinition);
 	}

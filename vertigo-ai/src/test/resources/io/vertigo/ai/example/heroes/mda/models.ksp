@@ -12,6 +12,7 @@ create Domain DoInt {
 
 create DtDefinition DtHeroe {
 	stereotype: "Entity"
+	storeName: "train"
 	id id {domain: DoInt label:"ID"}
 	field name {domain: DoString label:"Name" cardinality:"1"}
 	field job {domain: DoString label:"Job" cardinality:"1"}
@@ -20,6 +21,7 @@ create DtDefinition DtHeroe {
 
 create DtDefinition DtFaction {
 	stereotype: "Entity"
+	storeName: "train"
 	id id {domain: DoInt label:"ID"}
 	field name {domain: DoString label:"Name" cardinality:"1"}
     field era {domain: DoInt label:"Era ID" cardinality:"1"}
@@ -27,6 +29,7 @@ create DtDefinition DtFaction {
 
 create DtDefinition DtEra {
 	stereotype: "Entity"
+	storeName: "train"
 	id id {domain: DoInt label:"ID"}
 	field name {domain: DoString label:"Name" cardinality:"1"}
 }

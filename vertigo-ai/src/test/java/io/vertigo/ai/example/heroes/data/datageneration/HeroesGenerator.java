@@ -49,10 +49,9 @@ public class HeroesGenerator implements Component {
 		//---
 		
 		Heroe heroe = new Heroe();
-		heroe.setId(Integer.getInteger(record[0]));
 		heroe.setName(record[1]);
 		heroe.setJob(record[2]);
-		heroe.setFaction(Integer.parseInt(record[3]));
+		heroe.setFaction(1000+Integer.parseInt(record[3]));
 
 		heroeDAO.create(heroe);
 	}
@@ -63,7 +62,6 @@ public class HeroesGenerator implements Component {
 		//---
 		
 		Era era = new Era();
-		era.setId(Integer.getInteger(record[0]));
 		era.setName(record[1]);
 
 		eraDAO.create(era);
@@ -75,9 +73,8 @@ public class HeroesGenerator implements Component {
 		//---
 		
 		Faction faction = new Faction();
-		faction.setId(Integer.getInteger(record[0]));
 		faction.setName(record[1]);
-		faction.setEra(Integer.parseInt(record[2]));
+		faction.setEra(1000+Integer.parseInt(record[2]));
 
 		factionDAO.create(faction);
 	}

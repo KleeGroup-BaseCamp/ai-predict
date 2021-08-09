@@ -38,7 +38,8 @@ public final class MyNodeConfig {
 				.withAIPredictBackend(
 									Param.of("server.name", "http://127.0.0.1:8000/"))
 				.withSqlProcessing(
-									Param.of("dataSpace", "train"));
+									Param.of("dataSpace", "train"),
+									Param.of("connectionName", "train"));
 		
 		final NodeConfigBuilder nodeConfigBuilder = NodeConfig.builder()
 				.withBoot(BootConfig.builder()
@@ -62,7 +63,6 @@ public final class MyNodeConfig {
 							Param.of("dataBaseClass", H2DataBase.class.getName()),
 							Param.of("jdbcDriver", "org.h2.Driver"),
 							Param.of("jdbcUrl", "jdbc:h2:mem:database"))
-
 					.withMigration(Param.of("mode", "update"))
 					.withLiquibaseDataBaseMigrationPlugin(
 							Param.of("masterFile", "/liquibase/master.xml"))

@@ -1,5 +1,6 @@
 package io.vertigo.ai.example.heroes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.vertigo.ai.example.heroes.dao.FactionDAO;
+import io.vertigo.ai.example.heroes.dao.HeroeDAO;
 import io.vertigo.ai.example.heroes.data.datageneration.HeroesGenerator;
 import io.vertigo.ai.example.heroes.domain.Era;
 import io.vertigo.ai.example.heroes.domain.Faction;
@@ -20,6 +23,7 @@ import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.processor.Processor;
 import io.vertigo.ai.structure.processor.ProcessorBuilder;
 import io.vertigo.commons.transaction.VTransactionManager;
+import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -46,8 +50,7 @@ public abstract class AbstractHeroesTestManager {
 	
 	@Inject
 	private ModelManager modelManager;
-	
-	
+		
 	private AutoCloseableNode node;
 	
 	private DtDefinition heroeDtDefinition; 
@@ -89,6 +92,8 @@ public abstract class AbstractHeroesTestManager {
 		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
 		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
 		List<Processor> processors = processorBuilder.select("name,faction").build();
+		transactionManager.createCurrentTransaction();
 		datasetManager.executeProcessing(heroes, processors);
+		
 	}
 }

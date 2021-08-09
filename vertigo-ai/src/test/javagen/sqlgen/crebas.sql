@@ -5,14 +5,8 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS ERA cascade;
-drop sequence IF EXISTS SEQ_ERA;
 drop table IF EXISTS EVENT_TYPE cascade;
 drop sequence IF EXISTS SEQ_EVENT_TYPE;
-drop table IF EXISTS FACTION cascade;
-drop sequence IF EXISTS SEQ_FACTION;
-drop table IF EXISTS HEROE cascade;
-drop sequence IF EXISTS SEQ_HEROE;
 drop table IF EXISTS IRIS cascade;
 drop sequence IF EXISTS SEQ_IRIS;
 drop table IF EXISTS LOCATION cascade;
@@ -30,16 +24,7 @@ drop sequence IF EXISTS SEQ_SEVERITY_TYPE;
 -- ============================================================
 --   Sequences                                      
 -- ============================================================
-create sequence SEQ_ERA
-	start with 1000 cache 20; 
-
 create sequence SEQ_EVENT_TYPE
-	start with 1000 cache 20; 
-
-create sequence SEQ_FACTION
-	start with 1000 cache 20; 
-
-create sequence SEQ_HEROE
 	start with 1000 cache 20; 
 
 create sequence SEQ_IRIS
@@ -59,22 +44,6 @@ create sequence SEQ_SEVERITY_TYPE
 
 
 -- ============================================================
---   Table : ERA                                        
--- ============================================================
-create table ERA
-(
-    ID          	 NUMERIC     	not null,
-    NAME        	 TEXT        	not null,
-    constraint PK_ERA primary key (ID)
-);
-
-comment on column ERA.ID is
-'ID';
-
-comment on column ERA.NAME is
-'Name';
-
--- ============================================================
 --   Table : EVENT_TYPE                                        
 -- ============================================================
 create table EVENT_TYPE
@@ -89,50 +58,6 @@ comment on column EVENT_TYPE.ID is
 
 comment on column EVENT_TYPE.EVENT_TYPE is
 'Event Type';
-
--- ============================================================
---   Table : FACTION                                        
--- ============================================================
-create table FACTION
-(
-    ID          	 NUMERIC     	not null,
-    NAME        	 TEXT        	not null,
-    ERA         	 NUMERIC     	not null,
-    constraint PK_FACTION primary key (ID)
-);
-
-comment on column FACTION.ID is
-'ID';
-
-comment on column FACTION.NAME is
-'Name';
-
-comment on column FACTION.ERA is
-'Era ID';
-
--- ============================================================
---   Table : HEROE                                        
--- ============================================================
-create table HEROE
-(
-    ID          	 NUMERIC     	not null,
-    NAME        	 TEXT        	not null,
-    JOB         	 TEXT        	not null,
-    FACTION     	 NUMERIC     	not null,
-    constraint PK_HEROE primary key (ID)
-);
-
-comment on column HEROE.ID is
-'ID';
-
-comment on column HEROE.NAME is
-'Name';
-
-comment on column HEROE.JOB is
-'Job';
-
-comment on column HEROE.FACTION is
-'Faction ID';
 
 -- ============================================================
 --   Table : IRIS                                        

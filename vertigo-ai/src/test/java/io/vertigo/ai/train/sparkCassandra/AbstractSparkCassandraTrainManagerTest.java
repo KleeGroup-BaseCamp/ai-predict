@@ -137,7 +137,6 @@ public abstract class AbstractSparkCassandraTrainManagerTest {
                 id++;
             }
         }
-        System.out.println(records);
         JavaRDD<Iris> irisRDD = sc.parallelize(records);
         javaFunctions(irisRDD).writerBuilder("traindb", "iristest", mapToRow(Iris.class)).saveToCassandra();
         
