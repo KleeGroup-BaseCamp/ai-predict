@@ -17,10 +17,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
+		/** Objet de données DeployPredict. */
+		DeployPredict(io.vertigo.ai.server.domain.DeployPredict.class),
+		/** Objet de données DeployResponse. */
+		DeployResponse(io.vertigo.ai.server.domain.DeployResponse.class),
 		/** Objet de données Era. */
 		Era(io.vertigo.ai.example.heroes.domain.Era.class),
 		/** Objet de données EventType. */
 		EventType(io.vertigo.ai.example.telstra.domain.EventType.class),
+		/** Objet de données Explanation. */
+		Explanation(io.vertigo.ai.server.domain.Explanation.class),
 		/** Objet de données Faction. */
 		Faction(io.vertigo.ai.example.heroes.domain.Faction.class),
 		/** Objet de données Heroe. */
@@ -33,10 +39,20 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Location(io.vertigo.ai.example.telstra.domain.Location.class),
 		/** Objet de données LogFeature. */
 		LogFeature(io.vertigo.ai.example.telstra.domain.LogFeature.class),
+		/** Objet de données Predict. */
+		Predict(io.vertigo.ai.server.domain.Predict.class),
+		/** Objet de données PredictResponse. */
+		PredictResponse(io.vertigo.ai.server.domain.PredictResponse.class),
 		/** Objet de données ResourceType. */
 		ResourceType(io.vertigo.ai.example.telstra.domain.ResourceType.class),
+		/** Objet de données Score. */
+		Score(io.vertigo.ai.server.domain.Score.class),
+		/** Objet de données ScoreResponse. */
+		ScoreResponse(io.vertigo.ai.server.domain.ScoreResponse.class),
 		/** Objet de données SeverityType. */
-		SeverityType(io.vertigo.ai.example.telstra.domain.SeverityType.class)		;
+		SeverityType(io.vertigo.ai.example.telstra.domain.SeverityType.class),
+		/** Objet de données TrainResponse. */
+		TrainResponse(io.vertigo.ai.server.domain.TrainResponse.class)		;
 
 		private final Class<?> clazz;
 
@@ -52,6 +68,32 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 			return clazz;
 		}
 	}
+
+	/**
+	 * Enumération des champs de DeployPredict.
+	 */
+	public enum DeployPredictFields implements DtFieldName<io.vertigo.ai.server.domain.DeployPredict> {
+		/** Propriété 'Status'. */
+		status,
+		/** Propriété 'Response'. */
+		response	}
+
+	/**
+	 * Enumération des champs de DeployResponse.
+	 */
+	public enum DeployResponseFields implements DtFieldName<io.vertigo.ai.server.domain.DeployResponse> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'Version'. */
+		version,
+		/** Propriété 'Activated'. */
+		activated,
+		/** Propriété 'Auto'. */
+		auto,
+		/** Propriété 'Error'. */
+		error	}
 
 	/**
 	 * Enumération des champs de Era.
@@ -70,6 +112,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		id,
 		/** Propriété 'Event Type'. */
 		eventType	}
+
+	/**
+	 * Enumération des champs de Explanation.
+	 */
+	public enum ExplanationFields implements DtFieldName<io.vertigo.ai.server.domain.Explanation> {
+		/** Propriété 'Explanation 1D'. */
+		explainFeature	}
 
 	/**
 	 * Enumération des champs de Faction.
@@ -152,6 +201,30 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		volume	}
 
 	/**
+	 * Enumération des champs de Predict.
+	 */
+	public enum PredictFields implements DtFieldName<io.vertigo.ai.server.domain.Predict> {
+		/** Propriété 'Prediction Label'. */
+		predictionLabel,
+		/** Propriété 'Prediction Numeric'. */
+		predictionNumeric,
+		/** Propriété 'Prediction Vector'. */
+		predictionNVector,
+		/** Propriété 'Exploration 1D'. */
+		explantion1D,
+		/** Propriété 'Exploration 2D'. */
+		explantion2D	}
+
+	/**
+	 * Enumération des champs de PredictResponse.
+	 */
+	public enum PredictResponseFields implements DtFieldName<io.vertigo.ai.server.domain.PredictResponse> {
+		/** Propriété 'Prediction List'. */
+		predictionList,
+		/** Propriété 'Error'. */
+		error	}
+
+	/**
 	 * Enumération des champs de ResourceType.
 	 */
 	public enum ResourceTypeFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.ResourceType> {
@@ -161,6 +234,30 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		resourceType	}
 
 	/**
+	 * Enumération des champs de Score.
+	 */
+	public enum ScoreFields implements DtFieldName<io.vertigo.ai.server.domain.Score> {
+		/** Propriété 'Score Mean'. */
+		scoreMean,
+		/** Propriété 'Score Standard deviation'. */
+		scoreStd	}
+
+	/**
+	 * Enumération des champs de ScoreResponse.
+	 */
+	public enum ScoreResponseFields implements DtFieldName<io.vertigo.ai.server.domain.ScoreResponse> {
+		/** Propriété 'time'. */
+		time,
+		/** Propriété 'Name'. */
+		modelName,
+		/** Propriété 'Version'. */
+		version,
+		/** Propriété 'Score'. */
+		score,
+		/** Propriété 'Status'. */
+		status	}
+
+	/**
 	 * Enumération des champs de SeverityType.
 	 */
 	public enum SeverityTypeFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.SeverityType> {
@@ -168,6 +265,25 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		id,
 		/** Propriété 'Severity Type'. */
 		severityType	}
+
+	/**
+	 * Enumération des champs de TrainResponse.
+	 */
+	public enum TrainResponseFields implements DtFieldName<io.vertigo.ai.server.domain.TrainResponse> {
+		/** Propriété 'time'. */
+		time,
+		/** Propriété 'Name'. */
+		modelName,
+		/** Propriété 'Version'. */
+		version,
+		/** Propriété 'Score'. */
+		score,
+		/** Propriété 'Status'. */
+		status,
+		/** Propriété 'Response'. */
+		response,
+		/** Propriété 'Deploy'. */
+		deploy	}
 
 	/** {@inheritDoc} */
 	@Override

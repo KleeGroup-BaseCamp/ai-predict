@@ -24,7 +24,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.vertigo.ai.mlmodel.ModelManager;
-import io.vertigo.ai.server.models.AIPredictScoreResponse;
+import io.vertigo.ai.server.models.ScoreResponse;
 import io.vertigo.ai.server.models.PredictResponse;
 import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -60,7 +60,7 @@ public class PredictionManagerImpl implements ModelManager {
 
 	/** {@inheritDoc} */
 	@Override
-	public AIPredictScoreResponse score(String modelName, Integer version) {
+	public ScoreResponse score(String modelName, Integer version) {
 		return predictionPlugin.score(modelName, version);
 	}
 

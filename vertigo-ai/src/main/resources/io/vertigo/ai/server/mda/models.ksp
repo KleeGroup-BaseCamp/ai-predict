@@ -1,0 +1,75 @@
+package io.vertigo.ai.server.domain
+
+create Domain DoStringAIResponse {
+	dataType: String
+	storeType: "TEXT"
+}
+
+create Domain DoIntegerAIResponse {
+	dataType: Integer
+	storeType: "NUMERIC"
+}
+
+create Domain DoDecimalAIResponse {
+	dataType: BigDecimal
+	storeType: "NUMERIC(16,16)"
+}
+
+create Domain DoBooleanAIResponse {
+	dataType: Boolean
+	storeType: "BOOLEAN"
+}
+
+create DtDefinition DtExplanation {
+	field explainFeature {domain: DoDecimalAIResponse label:"Explanation 1D" cardinality:"*"}
+}
+
+create DtDefinition DtPredict {
+    field predictionLabel {domain: DoStringAIResponse label:"Prediction Label" cardinality:"1"}
+    field predictionNumeric {domain: DoDecimalAIResponse label:"Prediction Numeric" cardinality:"1"}
+    field predictionNVector {domain: DoDecimalAIResponse label:"Prediction Vector" cardinality:"*"}
+    field explantion1D {domain: DoDtExplanation label:"Exploration 1D" cardinality:"1"}
+    field explantion2D {domain: DoDtExplanation label:"Exploration 2D" cardinality:"*"}
+}
+
+create DtDefinition DtPredictResponse {
+    field predictionList {domain: DoDtPredict label:"Prediction List" cardinality:"*"}
+    field error {domain: DoStringAIResponse label:"Error" cardinality:"1"}
+}
+
+create DtDefinition DtScore {
+    field scoreMean {domain: DoDecimalAIResponse label:"Score Mean" cardinality:"1"}
+    field scoreStd {domain: DoDecimalAIResponse label:"Score Standard deviation" cardinality:"1"}
+}
+
+create DtDefinition DtDeployResponse {
+    field id {domain: DoIntegerAIResponse label:"ID" cardinality:"1"}
+    field name {domain: DoStringAIResponse label:"Name" cardinality:"1"}
+    field version {domain: DoIntegerAIResponse label:"Version" cardinality:"1"}
+    field activated {domain: DoBooleanAIResponse label:"Activated" cardinality:"1"}
+    field auto {domain: DoBooleanAIResponse label:"Auto" cardinality:"1"}
+    field error {domain: DoStringAIResponse label:"Error" cardinality:"1"}
+}
+
+create DtDefinition DtDeployPredict {
+    field status {domain: DoStringAIResponse label:"Status" cardinality:"1"}
+    field response {domain: DoDtDeployResponse label:"Response" cardinality:"1"}
+}
+
+create DtDefinition DtTrainResponse {
+    field time {domain: DoIntegerAIResponse label:"time" cardinality:"1"}
+    field modelName {domain: DoStringAIResponse label:"Name" cardinality:"1"}
+    field version {domain: DoIntegerAIResponse label:"Version" cardinality:"1"}
+    field score {domain: DoDtScore label:"Score" cardinality:"1"}
+    field status {domain: DoStringAIResponse label:"Status" cardinality:"1"}
+    field response {domain: DoStringAIResponse label:"Response" cardinality:"1"}
+    field deploy {domain: DoDtDeployPredict label:"Deploy" cardinality:"1"}
+}
+
+create DtDefinition DtScoreResponse {
+    field time {domain: DoIntegerAIResponse label:"time" cardinality:"1"}
+    field modelName {domain: DoStringAIResponse label:"Name" cardinality:"1"}
+    field version {domain: DoIntegerAIResponse label:"Version" cardinality:"1"}
+    field score {domain: DoDtScore label:"Score" cardinality:"1"}
+    field status {domain: DoStringAIResponse label:"Status" cardinality:"1"}
+}

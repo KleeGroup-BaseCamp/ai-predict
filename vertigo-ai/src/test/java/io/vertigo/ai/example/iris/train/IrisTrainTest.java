@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import io.vertigo.ai.mlmodel.ModelManager;
-import io.vertigo.ai.server.models.AIPredictScoreResponse;
+import io.vertigo.ai.server.models.ScoreResponse;
 import io.vertigo.ai.server.models.TrainResponse;
 
 public class IrisTrainTest {
@@ -21,7 +21,7 @@ public class IrisTrainTest {
 	}
 	
 	public static void testScore(ModelManager modelManager) {
-		AIPredictScoreResponse response = modelManager.score("iris", 2);
+		ScoreResponse response = modelManager.score("iris", 2);
 		Assertions.assertEquals(-1, BigDecimal.valueOf(0.92).compareTo(response.getScore().getScoreMean()));
 	}
 }

@@ -20,7 +20,7 @@ package io.vertigo.ai.impl.server;
 
 import java.util.List;
 
-import io.vertigo.ai.server.models.AIPredictScoreResponse;
+import io.vertigo.ai.server.models.ScoreResponse;
 import io.vertigo.ai.server.models.PredictResponse;
 import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.core.node.component.Plugin;
@@ -59,7 +59,7 @@ public interface PredictionPlugin extends Plugin {
 	 * @param version version du modèle à scorer
 	 * @return une AIPredictScoreResponse
 	 */
-	AIPredictScoreResponse score(String modelName, Integer version);
+	ScoreResponse score(String modelName, Integer version);
 
 	/**
 	 * Lance la suppression d'un modèle

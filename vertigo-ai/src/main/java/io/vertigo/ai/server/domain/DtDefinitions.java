@@ -28,7 +28,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données PredictResponse. */
 		PredictResponse(io.vertigo.ai.server.models.PredictResponse.class),
 		/** Objet de données ScoreResponse. */
-		ScoreResponse(io.vertigo.ai.server.models.AIPredictScoreResponse.class),
+		ScoreResponse(io.vertigo.ai.server.models.ScoreResponse.class),
 		/** Objet de données TrainResponse. */
 		TrainResponse(io.vertigo.ai.server.models.TrainResponse.class)		;
 
@@ -107,7 +107,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de ScoreResponse.
 	 */
-	public enum ScoreResponseFields implements DtFieldName<io.vertigo.ai.server.models.AIPredictScoreResponse> {
+	public enum ScoreResponseFields implements DtFieldName<io.vertigo.ai.server.models.ScoreResponse> {
 		/** Propriété 'Model name'. */
 		modelName,
 		/** Propriété 'Model version'. */

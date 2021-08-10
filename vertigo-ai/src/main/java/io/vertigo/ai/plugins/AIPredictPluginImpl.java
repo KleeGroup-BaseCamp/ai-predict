@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import io.vertigo.ai.impl.server.PredictionPlugin;
-import io.vertigo.ai.server.models.AIPredictScoreResponse;
+import io.vertigo.ai.server.models.ScoreResponse;
 import io.vertigo.ai.server.models.PredictResponse;
 import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.core.param.ParamValue;
@@ -76,12 +76,12 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public AIPredictScoreResponse score(String modelName, Integer version) {
+	public ScoreResponse score(String modelName, Integer version) {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(server+"api/score/"+modelName+"/"+version+"/");
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(null);
-		AIPredictScoreResponse output = response.readEntity(AIPredictScoreResponse.class);
+		ScoreResponse output = response.readEntity(ScoreResponse.class);
 		response.close();
 		return output;
 	}

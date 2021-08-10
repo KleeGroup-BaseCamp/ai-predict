@@ -20,7 +20,7 @@ package io.vertigo.ai.mlmodel;
 
 import java.util.List;
 
-import io.vertigo.ai.server.models.AIPredictScoreResponse;
+import io.vertigo.ai.server.models.ScoreResponse;
 import io.vertigo.ai.server.models.PredictResponse;
 import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.core.node.component.Manager;
@@ -55,7 +55,7 @@ public interface ModelManager extends Manager {
 	 * @param version Version du modèle
 	 * @return une AIPredictScoreResponse
  	 */
-	AIPredictScoreResponse score(String modelName, Integer version);
+	ScoreResponse score(String modelName, Integer version);
 
 	/**
 	 * Supprime un modèle

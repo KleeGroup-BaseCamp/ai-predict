@@ -1,4 +1,4 @@
-package io.vertigo.ai.server.models;
+package io.vertigo.ai.server.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -16,24 +16,24 @@ public final class TrainResponse implements DtObject {
 	private Integer time;
 	private String modelName;
 	private Integer version;
-	private io.vertigo.ai.server.models.Score score;
+	private io.vertigo.ai.server.domain.Score score;
 	private String status;
 	private String response;
-	private io.vertigo.ai.server.models.DeployPredict deploy;
+	private io.vertigo.ai.server.domain.DeployPredict deploy;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Request duration'.
+	 * Récupère la valeur de la propriété 'time'.
 	 * @return Integer time <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Request duration")
+	@Field(smartType = "STyIntegerAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "time")
 	public Integer getTime() {
 		return time;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Request duration'.
+	 * Définit la valeur de la propriété 'time'.
 	 * @param time Integer <b>Obligatoire</b>
 	 */
 	public void setTime(final Integer time) {
@@ -42,17 +42,17 @@ public final class TrainResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model name'.
+	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String modelName <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model name")
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
 	public String getModelName() {
 		return modelName;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model name'.
+	 * Définit la valeur de la propriété 'Name'.
 	 * @param modelName String <b>Obligatoire</b>
 	 */
 	public void setModelName(final String modelName) {
@@ -61,17 +61,17 @@ public final class TrainResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model version'.
+	 * Récupère la valeur de la propriété 'Version'.
 	 * @return Integer version <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model version")
+	@Field(smartType = "STyIntegerAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Version")
 	public Integer getVersion() {
 		return version;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model version'.
+	 * Définit la valeur de la propriété 'Version'.
 	 * @param version Integer <b>Obligatoire</b>
 	 */
 	public void setVersion(final Integer version) {
@@ -80,20 +80,20 @@ public final class TrainResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model score'.
-	 * @return BigDecimal score <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Score'.
+	 * @return Score score <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyDtScoreResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model score")
-	public io.vertigo.ai.server.models.Score getScore() {
+	@Field(smartType = "STyDtScore", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Score")
+	public io.vertigo.ai.server.domain.Score getScore() {
 		return score;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model score'.
-	 * @param score BigDecimal <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Score'.
+	 * @param score Score <b>Obligatoire</b>
 	 */
-	public void setScore(final io.vertigo.ai.server.models.Score score) {
+	public void setScore(final io.vertigo.ai.server.domain.Score score) {
 		this.score = score;
 	}
 	
@@ -102,7 +102,7 @@ public final class TrainResponse implements DtObject {
 	 * Récupère la valeur de la propriété 'Status'.
 	 * @return String status <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
 	public String getStatus() {
 		return status;
 	}
@@ -121,7 +121,7 @@ public final class TrainResponse implements DtObject {
 	 * Récupère la valeur de la propriété 'Response'.
 	 * @return String response <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Response")
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Response")
 	public String getResponse() {
 		return response;
 	}
@@ -137,20 +137,20 @@ public final class TrainResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Deploy to prediction'.
+	 * Récupère la valeur de la propriété 'Deploy'.
 	 * @return DeployPredict deploy <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyDtDeployPredict", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Deploy to prediction")
-	public io.vertigo.ai.server.models.DeployPredict getDeploy() {
+	@Field(smartType = "STyDtDeployPredict", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Deploy")
+	public io.vertigo.ai.server.domain.DeployPredict getDeploy() {
 		return deploy;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Deploy to prediction'.
+	 * Définit la valeur de la propriété 'Deploy'.
 	 * @param deploy DeployPredict <b>Obligatoire</b>
 	 */
-	public void setDeploy(final io.vertigo.ai.server.models.DeployPredict deploy) {
+	public void setDeploy(final io.vertigo.ai.server.domain.DeployPredict deploy) {
 		this.deploy = deploy;
 	}
 	

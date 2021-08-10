@@ -1,4 +1,4 @@
-package io.vertigo.ai.server.models;
+package io.vertigo.ai.server.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -13,82 +13,25 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class ScoreResponse implements DtObject {
 	private static final long serialVersionUID = 1L;
 
+	private Integer time;
 	private String modelName;
 	private Integer version;
-	private io.vertigo.ai.server.models.Score score;
-	private Integer time;
+	private io.vertigo.ai.server.domain.Score score;
 	private String status;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model name'.
-	 * @return String modelName <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model name")
-	public String getModelName() {
-		return modelName;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model name'.
-	 * @param modelName String <b>Obligatoire</b>
-	 */
-	public void setModelName(final String modelName) {
-		this.modelName = modelName;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model version'.
-	 * @return Integer version <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model version")
-	public Integer getVersion() {
-		return version;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model version'.
-	 * @param version Integer <b>Obligatoire</b>
-	 */
-	public void setVersion(final Integer version) {
-		this.version = version;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model score'.
-	 * @return BigDecimal score <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyDtScoreResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model score")
-	public io.vertigo.ai.server.models.Score getScore() {
-		return score;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model score'.
-	 * @param score BigDecimal <b>Obligatoire</b>
-	 */
-	public void setScore(final io.vertigo.ai.server.models.Score score) {
-		this.score = score;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Request duration'.
+	 * Récupère la valeur de la propriété 'time'.
 	 * @return Integer time <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Request duration")
+	@Field(smartType = "STyIntegerAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "time")
 	public Integer getTime() {
 		return time;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Request duration'.
+	 * Définit la valeur de la propriété 'time'.
 	 * @param time Integer <b>Obligatoire</b>
 	 */
 	public void setTime(final Integer time) {
@@ -97,10 +40,67 @@ public final class ScoreResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Name'.
+	 * @return String modelName <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
+	public String getModelName() {
+		return modelName;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Name'.
+	 * @param modelName String <b>Obligatoire</b>
+	 */
+	public void setModelName(final String modelName) {
+		this.modelName = modelName;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Version'.
+	 * @return Integer version <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyIntegerAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Version")
+	public Integer getVersion() {
+		return version;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Version'.
+	 * @param version Integer <b>Obligatoire</b>
+	 */
+	public void setVersion(final Integer version) {
+		this.version = version;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Score'.
+	 * @return Score score <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyDtScore", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Score")
+	public io.vertigo.ai.server.domain.Score getScore() {
+		return score;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Score'.
+	 * @param score Score <b>Obligatoire</b>
+	 */
+	public void setScore(final io.vertigo.ai.server.domain.Score score) {
+		this.score = score;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Status'.
 	 * @return String status <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
 	public String getStatus() {
 		return status;
 	}
