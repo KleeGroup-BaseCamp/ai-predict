@@ -12,19 +12,17 @@
           v-model="sortForm.sort"
           :options="options"
         />
-        <q-btn flat color="primary">
+        <q-btn flat color="primary button">
           <q-icon
             v-if="sortForm.order == 'DESC'"
             name="expand_less"
             class="text"
-            style="font-size: 1.5em;"
             @click="changeOrder()"
           />
           <q-icon
             v-else
             name="expand_more"
             class="text"
-            style="font-size: 1.5em;"
             @click="changeOrder()"
           />
         </q-btn>

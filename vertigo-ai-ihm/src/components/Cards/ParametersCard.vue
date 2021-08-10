@@ -1,14 +1,16 @@
 <template>
   <q-card>
     <q-card-section class="row">
-      <div class="text-h6 text-primary col">
-        {{ data.algorithm.package }}.{{ data.algorithm.name }}
+      <div class="col row  items-center q-gutter-sm">
+        <div class="text-h6 text-primary col-auto">
+          {{ data.algorithm.package }}.{{ data.algorithm.name }}
+        </div>
+        <div class="text-primary text-subtitle col">({{Math.round(data.algorithm.score.scoreMean*1000)/1000}} ± {{Math.round(data.algorithm.score.scoreStd*1000)/1000}})</div>
       </div>
-      <q-btn flat color="primary">
+      <q-btn flat color="primary button">
         <q-icon
           name="update"
           class="text"
-          style="font-size: 1.5em; max-width: 5px;"
           @click="trainVersion()"
         />
         <q-tooltip>
@@ -18,23 +20,21 @@
       <q-btn
         v-if="data.algorithm.status != 'active'"
         flat
-        color="primary"
+        color="primary button"
         @click="activateBundle()"
       >
         <q-icon
           name="power_settings_new"
           class="text"
-          style="font-size: 1.5em; max-width: 5px;"
         />
         <q-tooltip>
           Activate
         </q-tooltip>
       </q-btn>
-      <q-btn flat color="primary">
+      <q-btn flat color="primary button">
         <q-icon
           name="o_file_download"
           class="text"
-          style="font-size: 1.5em; max-width: 5px;"
           @click="downloadVersion()"
         />
         <q-tooltip>
@@ -43,7 +43,7 @@
       </q-btn>
       <q-btn
         flat
-        color="primary"
+        color="primary button"
         :to="
           '../fork'
             .concat('/', this.data.meta.name)
@@ -53,17 +53,15 @@
         <q-icon
           name="alt_route"
           class="text"
-          style="font-size: 1.5em; max-width: 5px;"
         />
         <q-tooltip>
           Fork
         </q-tooltip>
       </q-btn>
-      <q-btn flat color="primary" @click="deleteVersion()">
+      <q-btn flat color="primary button" @click="deleteVersion()">
         <q-icon
           name="clear"
           class="text"
-          style="font-size: 1.5em; max-width: 5px;"
         />
         <q-tooltip>
           Delete
@@ -233,7 +231,6 @@ export default {
         .post(url)
         .then(response => {
           this.trainResponse = response.data;
-          console.log(response.data);
         })
         .catch(error => {
           this.trainError = true;
@@ -264,7 +261,6 @@ export default {
     },
     parametersSelector(){
       if (this.data.major_parameters){
-        console.log(this.data.major_parameters)
         return this.data.major_parameters;
       }
     }

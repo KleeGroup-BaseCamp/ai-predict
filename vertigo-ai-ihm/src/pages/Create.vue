@@ -79,7 +79,7 @@ export default {
   methods: {
     async sendBundle() {
       var parameters = this.$refs.parametersForm.parameters;
-      parameters.hyperparameters = this.$refs.hyperparametersForm.hyperparameters;
+      parameters.hyperparameters = this.$refs.hyperparametersForm.parameters.hyperparameters;
       const bundle = {
         meta: this.$refs.metaForm.meta,
         algorithm: this.$refs.algorithmForm.algorithm,

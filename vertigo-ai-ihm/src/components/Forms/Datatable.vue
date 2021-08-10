@@ -49,11 +49,10 @@
             />
           </div>
           <div class="column col-1 q-pa-sm justify-center">
-            <q-btn flat color="primary" @click="deleteFeature(index)">
+            <q-btn flat color="primary button" @click="deleteFeature(index)">
               <q-icon
                 name="remove"
                 class="text"
-                style="font-size: 1.5em; max-width: 5px; max-height: 5px;"
               />
               <q-tooltip>
                 Remove Feature

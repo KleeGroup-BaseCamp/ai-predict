@@ -26,11 +26,10 @@
           </q-list>
         </q-btn-dropdown>
 
-        <q-btn flat color="white" to="/">
+        <q-btn flat color="white button" to="/">
           <q-icon
             name="home"
             class="text"
-            style="font-size: 1.5em; max-width: 5px;"
           />
           <q-tooltip>
             Home

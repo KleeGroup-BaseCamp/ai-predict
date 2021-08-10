@@ -8,34 +8,31 @@
     <q-card-section class="row">
       <div class="text-h6 text-primary col-8">{{ title }}</div>
       <div class="col-4 justify-end">
-        <q-btn flat color="primary" :to="exploreURL">
+        <q-btn flat color="primary button" :to="exploreURL">
           <q-icon
             v-if="hover"
             name="login"
             class="text"
-            style="font-size: 1.5em; max-width: 5px;"
           />
           <q-tooltip>
             Explore
           </q-tooltip>
         </q-btn>
-        <q-btn flat color="primary" @click="downloadBundle">
+        <q-btn flat color="primary button" @click="downloadBundle">
           <q-icon
             v-if="hover"
             name="o_file_download"
             class="text"
-            style="font-size: 1.5em; max-width: 5px;"
           />
           <q-tooltip>
             Download
           </q-tooltip>
         </q-btn>
-        <q-btn flat color="primary" @click="deleteBundle">
+        <q-btn flat color="primary button" @click="deleteBundle">
           <q-icon
             v-if="hover"
             name="clear"
             class="text"
-            style="font-size: 1.5em; max-width: 5px;"
           />
           <q-tooltip>
             Delete
@@ -139,7 +136,6 @@ export default {
     },
     downloadBundle() {
       const url = this.downloadURL;
-      console.log(url);
       axios({
         method: "get",
         url: url,
@@ -150,7 +146,6 @@ export default {
           link.href = "/api/download/".concat("", this.title).concat("/", "");
           document.body.appendChild(link);
           link.click();
-          console.log(link.href)
         })
         .catch(error => {
           this.downloadNotifyError(error);
