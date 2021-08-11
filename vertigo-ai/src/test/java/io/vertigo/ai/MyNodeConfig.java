@@ -125,19 +125,22 @@ public final class MyNodeConfig {
 									.build())
 							.build());
 		} else if (object=="heroes") {
-			nodeConfigBuilder.addModule(aiFeatures.build())
+			nodeConfigBuilder
+				.addModule(httpClientFeatures.build())
+				.addModule(vegaFeatures.build())
+				.addModule(aiFeatures.build())
 				.addModule(ModuleConfig.builder("myApp")
-				.addComponent(HeroesDefinitionProvider.class)
-				.addComponent(HeroesGenerator.class)
-				.addComponent(HeroeDAO.class)
-				.addComponent(FactionDAO.class)
-				.addComponent(EraDAO.class)
-				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
-						.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
-						.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())
-						.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
-						.build())
-				.build());
+					.addComponent(HeroesDefinitionProvider.class)
+					.addComponent(HeroesGenerator.class)
+					.addComponent(HeroeDAO.class)
+					.addComponent(FactionDAO.class)
+					.addComponent(EraDAO.class)
+					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+							.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
+							.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())
+							.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
+							.build())
+					.build());
 		}
 		
 		return nodeConfigBuilder.build();

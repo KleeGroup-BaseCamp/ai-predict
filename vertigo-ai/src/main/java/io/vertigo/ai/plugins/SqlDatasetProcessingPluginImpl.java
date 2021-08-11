@@ -223,7 +223,7 @@ public final class SqlDatasetProcessingPluginImpl
 		final DtDefinition outputDefinition = outputDefinitionBuilder.build();
 		
 		final TaskDefinitionBuilder taskDefinitionBuilder = TaskDefinition.builder(taskName)
-				.withEngine(TaskEngineProcBatch.class)
+				.withEngine(TaskEngineProc.class)
 				.withDataSpace(dataSpace)
 				.withRequest(query);
 		
