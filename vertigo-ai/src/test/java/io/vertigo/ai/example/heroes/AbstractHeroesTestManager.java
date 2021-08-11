@@ -17,6 +17,7 @@ import io.vertigo.ai.example.heroes.domain.Faction;
 import io.vertigo.ai.example.heroes.domain.Heroe;
 import io.vertigo.ai.impl.structure.dataset.DatasetImpl;
 import io.vertigo.ai.mlmodel.ModelManager;
+import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
 import io.vertigo.ai.structure.DatasetManager;
 import io.vertigo.ai.structure.dataset.Dataset;
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
@@ -29,6 +30,7 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 
@@ -92,8 +94,14 @@ public abstract class AbstractHeroesTestManager {
 		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
 		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
 		List<Processor> processors = processorBuilder.select("name,faction").build();
-		transactionManager.createCurrentTransaction();
-		datasetManager.executeProcessing(heroes, processors);
+		
+		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+			
+			datasetManager.executeProcessing(heroes, processors);
+			transaction.commit();
+		};
+		
+		
 		
 	}
 }

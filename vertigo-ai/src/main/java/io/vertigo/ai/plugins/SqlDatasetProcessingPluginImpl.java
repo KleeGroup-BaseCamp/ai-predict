@@ -49,9 +49,11 @@ public final class SqlDatasetProcessingPluginImpl
 		implements
 			DatasetProcessingPlugin {
 
-	private static String SELECT_PREFIX = "INTERMEDIATE_PROCESSING_SELECT_";
-	private static String JOIN_PREFIX = "INTERMEDIATE_PROCESSING_JOIN_";
-	private static final String SMART_TYPE_PREFIX = SmartTypeDefinition.PREFIX;
+	private static final String CONNECTION_NAME = "connectionName";
+	
+	private final static String SELECT_PREFIX = "INTERMEDIATE_PROCESSING_SELECT_";
+	private final static String JOIN_PREFIX = "INTERMEDIATE_PROCESSING_JOIN_";
+	private final static String SMART_TYPE_PREFIX = SmartTypeDefinition.PREFIX;
 	
 	private final String dataSpace;
 	private final String connectionName;
@@ -67,7 +69,7 @@ public final class SqlDatasetProcessingPluginImpl
 	@Inject
 	public SqlDatasetProcessingPluginImpl(
 			@ParamValue("dataSpace") final Optional<String> optDataSpace,
-			@ParamValue("connectionName") final Optional<String> optConnectionName,
+			@ParamValue(CONNECTION_NAME) final Optional<String> optConnectionName,
 			@ParamValue("sequencePrefix") final Optional<String> optSequencePrefix,
 			final TaskManager taskManager,
 			final SqlManager sqlManager) {
@@ -234,7 +236,7 @@ public final class SqlDatasetProcessingPluginImpl
 		}
 		
 		final TaskDefinition taskDefinition = taskDefinitionBuilder
-				.withOutAttribute("ds", outputSmartType, Cardinality.MANY)
+				.withOutAttribute("ds", outputSmartType, Cardinality.OPTIONAL_OR_NULLABLE)
 				.build();
 		
 		final TaskBuilder taskBuilder = Task.builder(taskDefinition);
@@ -244,8 +246,9 @@ public final class SqlDatasetProcessingPluginImpl
 				taskBuilder.addValue(attributeName, criteriaCtx.getAttributeValue(attributeName));
 			}
 		}
-		Task task = taskBuilder
-				.build();
+		
+		taskBuilder.addContextProperty(CONNECTION_NAME, connectionName);
+		Task task = taskBuilder	.build();
 		taskManager.execute(task);
 		criteriaCtx = null;
 		return new DatasetImpl<E>(outputDefinition);
