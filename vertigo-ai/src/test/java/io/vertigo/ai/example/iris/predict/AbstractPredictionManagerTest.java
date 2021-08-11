@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.DatasetManagerOld;
 import io.vertigo.ai.structure.dataset.models.Dataset;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
@@ -32,7 +32,7 @@ public abstract class AbstractPredictionManagerTest {
 	private ModelManager predictionManager;
 	
 	@Inject
-	private DatasetManager datasetManager;
+	private DatasetManagerOld datasetManager;
 
 	private AutoCloseableNode node;
 	

@@ -1,4 +1,4 @@
-package io.vertigo.ai.server.domain;
+package io.vertigo.ai.server.models;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -13,7 +13,7 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class PredictResponse implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.domain.Predict> predictionList =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.ai.server.domain.Predict.class);
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.models.Predict> predictionList =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.ai.server.models.Predict.class);
 	private String error;
 	
 	/**
@@ -22,7 +22,7 @@ public final class PredictResponse implements DtObject {
 	 * @return DtList de Predict predictionList
 	 */
 	@Field(smartType = "STyDtPredict", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Prediction List")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.domain.Predict> getPredictionList() {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.models.Predict> getPredictionList() {
 		return predictionList;
 	}
 
@@ -31,7 +31,7 @@ public final class PredictResponse implements DtObject {
 	 * Définit la valeur de la propriété 'Prediction List'.
 	 * @param predictionList DtList de Predict
 	 */
-	public void setPredictionList(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.domain.Predict> predictionList) {
+	public void setPredictionList(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.models.Predict> predictionList) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(predictionList);
 		//---
 		this.predictionList = predictionList;

@@ -13,6 +13,8 @@ from AIPredict.apps.predict.utils.predict import Predictor
 from AIPredict.apps.predict.utils.deploy import BundleDeployer
 from AIPredict.utils.validators import DeployBundleValidator, DataValidator, BundleRequestValidator
 
+from AIPredict.utils.requests import convert_request_data
+
 logger = logging.getLogger(__name__)
 class DeployBundle(viewsets.ViewSet):
 
@@ -105,11 +107,18 @@ class Prediction(viewsets.ViewSet):
         predictor = Predictor(preprocessing=preprocessing, framework=bundle.get_item(
             "meta", "framework"), model=model)
         # extracts data from the request
-        data = pd.DataFrame(request.data)
+        # convert fields from camelCase to snake_case
+        request_data = convert_request_data(request.data)
+        logger.debug('request_data:' + str(request_data))
+
+        #data = pd.DataFrame(request.data)
+        data = pd.DataFrame(request_data)
         try:
             DataValidator(data, bundle.get_bundle()).validate()
+            logger.debug('Data is valid')
         except ValidationError as e:
             return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
 
         try:
             prediction = predictor.predict(data=data)

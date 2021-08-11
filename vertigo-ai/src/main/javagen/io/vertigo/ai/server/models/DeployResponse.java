@@ -22,17 +22,17 @@ public final class DeployResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model ID'.
+	 * Récupère la valeur de la propriété 'ID'.
 	 * @return Integer id <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model ID")
+	@Field(smartType = "STyIntegerAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "ID")
 	public Integer getId() {
 		return id;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model ID'.
+	 * Définit la valeur de la propriété 'ID'.
 	 * @param id Integer <b>Obligatoire</b>
 	 */
 	public void setId(final Integer id) {
@@ -41,17 +41,17 @@ public final class DeployResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model name'.
+	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model name")
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
 	public String getName() {
 		return name;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model name'.
+	 * Définit la valeur de la propriété 'Name'.
 	 * @param name String <b>Obligatoire</b>
 	 */
 	public void setName(final String name) {
@@ -60,17 +60,17 @@ public final class DeployResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model version'.
+	 * Récupère la valeur de la propriété 'Version'.
 	 * @return Integer version <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionInteger", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model version")
+	@Field(smartType = "STyIntegerAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Version")
 	public Integer getVersion() {
 		return version;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model version'.
+	 * Définit la valeur de la propriété 'Version'.
 	 * @param version Integer <b>Obligatoire</b>
 	 */
 	public void setVersion(final Integer version) {
@@ -79,17 +79,17 @@ public final class DeployResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model is activated'.
+	 * Récupère la valeur de la propriété 'Activated'.
 	 * @return Boolean activated <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionBoolean", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model is activated")
+	@Field(smartType = "STyBooleanAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Activated")
 	public Boolean getActivated() {
 		return activated;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model is activated'.
+	 * Définit la valeur de la propriété 'Activated'.
 	 * @param activated Boolean <b>Obligatoire</b>
 	 */
 	public void setActivated(final Boolean activated) {
@@ -98,17 +98,17 @@ public final class DeployResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model is auto deployed'.
+	 * Récupère la valeur de la propriété 'Auto'.
 	 * @return Boolean auto <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionBoolean", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model is auto deployed")
+	@Field(smartType = "STyBooleanAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Auto")
 	public Boolean getAuto() {
 		return auto;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model is auto deployed'.
+	 * Définit la valeur de la propriété 'Auto'.
 	 * @param auto Boolean <b>Obligatoire</b>
 	 */
 	public void setAuto(final Boolean auto) {
@@ -117,17 +117,17 @@ public final class DeployResponse implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Error message'.
+	 * Récupère la valeur de la propriété 'Error'.
 	 * @return String error <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPredictionLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Error message")
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Error")
 	public String getError() {
 		return error;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Error message'.
+	 * Définit la valeur de la propriété 'Error'.
 	 * @param error String <b>Obligatoire</b>
 	 */
 	public void setError(final String error) {

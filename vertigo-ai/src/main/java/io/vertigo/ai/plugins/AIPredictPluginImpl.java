@@ -21,21 +21,13 @@ package io.vertigo.ai.plugins;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import io.vertigo.ai.impl.server.PredictionPlugin;
-import io.vertigo.ai.server.models.ScoreResponse;
 import io.vertigo.ai.server.models.PredictResponse;
+import io.vertigo.ai.server.models.ScoreResponse;
 import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.KeyConcept;
 
 /**
  * Implémentation standard du plugin de connection à AIPredict.
@@ -45,70 +37,41 @@ public class AIPredictPluginImpl implements PredictionPlugin {
 	private String server;
 	
 	@Inject
+	private AIPredictClientWebServices aIPredictClientWebServices;
+	
+	@Inject
 	public AIPredictPluginImpl(@ParamValue("server.name") String serverName) {
 		this.server = serverName;
 	}
 	
 	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<D> data, String modelName, Integer version) {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server + "api/predict/"+modelName+"/"+version+"/");
-		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-		Entity<String> test = Entity.entity(data.toString(), MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.post(test);
-		PredictResponse output = response.readEntity(PredictResponse.class);	
-		response.close();
-		return output;
+	public <D extends DtObject> PredictResponse predict(List<D> data, String modelName, Integer version) {
+		return aIPredictClientWebServices.predict((List<DtObject>) data, modelName, version);
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	public TrainResponse train(String modelName, Integer version) {		
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"api/train/"+modelName+"/"+version+"/");
-		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.post(null);
-		TrainResponse output = response.readEntity(TrainResponse.class);	
-		response.close();
-		return output;
+		return aIPredictClientWebServices.train(modelName, version);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public ScoreResponse score(String modelName, Integer version) {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"api/score/"+modelName+"/"+version+"/");
-		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.post(null);
-		ScoreResponse output = response.readEntity(ScoreResponse.class);
-		response.close();
-		return output;
+		return aIPredictClientWebServices.score(modelName, version);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Integer delete(String modelName, Integer version) {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"api/delete-train/"+modelName+"/"+version+"/");
-		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.delete();
-		Integer output = response.getStatus();
-		response.close();
-		return output;
+		return aIPredictClientWebServices.delete(modelName, version);
 	}
 	
 	/** {@inheritDoc} */
 	@Override
-	public Integer activate(String modelName, Integer version) {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(server+"api/activate/"+modelName+"/"+version+"/");
-		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-		Entity<String> test = Entity.entity("", MediaType.APPLICATION_JSON);
-		Response response = invocationBuilder.put(test);
-		Integer output = response.getStatus();
-		response.close();
-		return output;
+	public void activate(String modelName, Integer version) {
+		aIPredictClientWebServices.activate(modelName, version);
 	}
 	
 }

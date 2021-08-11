@@ -34,14 +34,13 @@ public interface PredictionPlugin extends Plugin {
 
 	/**
 	 * Retourne une prédiction à partir d'une liste d'objet
-	 * @param <K> 
 	 * @param <D> Type d'objet
 	 * @param data liste d'objet
 	 * @param modelName nom du modèle à utiliser
 	 * @param version version du modèle à utiliser
 	 * @return une PredictResponse contenant une prédiction et une explication
 	 */
-	<K extends KeyConcept, D extends DtObject> PredictResponse predict(List<D> data, String modelName, Integer version);
+	<D extends DtObject> PredictResponse predict(List<D> data, String modelName, Integer version);
 	
 	/**
 	 * Lance l'entrainement d'un modèle
@@ -77,6 +76,6 @@ public interface PredictionPlugin extends Plugin {
 	 * @param version
 	 * @return
 	 */
-	Integer activate(String modelName, Integer version);
+	void activate(String modelName, Integer version);
 
 }

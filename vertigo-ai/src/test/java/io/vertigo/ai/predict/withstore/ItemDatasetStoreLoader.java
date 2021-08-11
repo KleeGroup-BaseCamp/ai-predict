@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import io.vertigo.ai.impl.structure.datasetInMemory.loader.AbstractSqlDatasetLoader;
 import io.vertigo.ai.predict.data.domain.boston.BostonItem;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
-import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.DatasetManagerOld;
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.dataset.models.Dataset;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
@@ -28,11 +28,11 @@ import io.vertigo.datamodel.task.model.Task;
 
 public final class ItemDatasetStoreLoader extends AbstractSqlDatasetLoader<Long, BostonRegressionItem, BostonRegressionItem> {
 
-	private final DatasetManager datasetManager;
+	private final DatasetManagerOld datasetManager;
 	private final DefinitionSpace definitionSpace;
 	
 	@Inject
-	public ItemDatasetStoreLoader(final TaskManager taskManager, final DatasetManager datasetManager, VTransactionManager transactionManager) {
+	public ItemDatasetStoreLoader(final TaskManager taskManager, final DatasetManagerOld datasetManager, VTransactionManager transactionManager) {
 		super(taskManager, transactionManager);
 		this.datasetManager = datasetManager;
 		definitionSpace = Node.getNode().getDefinitionSpace();

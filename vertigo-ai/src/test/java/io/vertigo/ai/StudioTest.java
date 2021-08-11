@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import io.vertigo.core.lang.WrappedException;
 import io.vertigo.studio.tools.VertigoStudioMda;
 
-public class Studio {
+public class StudioTest {
 
     public static void main(final String[] args) {
         try {

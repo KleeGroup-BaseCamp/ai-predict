@@ -27,6 +27,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Predict(io.vertigo.ai.server.models.Predict.class),
 		/** Objet de données PredictResponse. */
 		PredictResponse(io.vertigo.ai.server.models.PredictResponse.class),
+		/** Objet de données Score. */
+		Score(io.vertigo.ai.server.models.Score.class),
 		/** Objet de données ScoreResponse. */
 		ScoreResponse(io.vertigo.ai.server.models.ScoreResponse.class),
 		/** Objet de données TrainResponse. */
@@ -60,62 +62,71 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de DeployResponse.
 	 */
 	public enum DeployResponseFields implements DtFieldName<io.vertigo.ai.server.models.DeployResponse> {
-		/** Propriété 'Model ID'. */
+		/** Propriété 'ID'. */
 		id,
-		/** Propriété 'Model name'. */
+		/** Propriété 'Name'. */
 		name,
-		/** Propriété 'Model version'. */
+		/** Propriété 'Version'. */
 		version,
-		/** Propriété 'Model is activated'. */
+		/** Propriété 'Activated'. */
 		activated,
-		/** Propriété 'Model is auto deployed'. */
+		/** Propriété 'Auto'. */
 		auto,
-		/** Propriété 'Error message'. */
+		/** Propriété 'Error'. */
 		error	}
 
 	/**
 	 * Enumération des champs de Explanation.
 	 */
 	public enum ExplanationFields implements DtFieldName<io.vertigo.ai.server.models.Explanation> {
-		/** Propriété 'Explanation Item'. */
+		/** Propriété 'Explanation 1D'. */
 		explainFeature	}
 
 	/**
 	 * Enumération des champs de Predict.
 	 */
 	public enum PredictFields implements DtFieldName<io.vertigo.ai.server.models.Predict> {
-		/** Propriété 'Prediction label'. */
+		/** Propriété 'Prediction Label'. */
 		predictionLabel,
-		/** Propriété 'Prediction numeric'. */
+		/** Propriété 'Prediction Numeric'. */
 		predictionNumeric,
-		/** Propriété 'Prediction vector'. */
-		predictionVector,
-		/** Propriété 'Prediction probabilities'. */
-		predictionProba,
-		/** Propriété '1D Explanation'. */
-		explanation1D,
-		/** Propriété '2D Explanation'. */
-		explanation2D	}
+		/** Propriété 'Prediction Vector'. */
+		predictionNVector,
+		/** Propriété 'Exploration 1D'. */
+		explantion1D,
+		/** Propriété 'Exploration 2D'. */
+		explantion2D	}
 
 	/**
 	 * Enumération des champs de PredictResponse.
 	 */
 	public enum PredictResponseFields implements DtFieldName<io.vertigo.ai.server.models.PredictResponse> {
 		/** Propriété 'Prediction List'. */
-		predictionList	}
+		predictionList,
+		/** Propriété 'Error'. */
+		error	}
+
+	/**
+	 * Enumération des champs de Score.
+	 */
+	public enum ScoreFields implements DtFieldName<io.vertigo.ai.server.models.Score> {
+		/** Propriété 'Score Mean'. */
+		scoreMean,
+		/** Propriété 'Score Standard deviation'. */
+		scoreStd	}
 
 	/**
 	 * Enumération des champs de ScoreResponse.
 	 */
 	public enum ScoreResponseFields implements DtFieldName<io.vertigo.ai.server.models.ScoreResponse> {
-		/** Propriété 'Model name'. */
-		modelName,
-		/** Propriété 'Model version'. */
-		version,
-		/** Propriété 'Model score'. */
-		score,
-		/** Propriété 'Request duration'. */
+		/** Propriété 'time'. */
 		time,
+		/** Propriété 'Name'. */
+		modelName,
+		/** Propriété 'Version'. */
+		version,
+		/** Propriété 'Score'. */
+		score,
 		/** Propriété 'Status'. */
 		status	}
 
@@ -123,19 +134,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de TrainResponse.
 	 */
 	public enum TrainResponseFields implements DtFieldName<io.vertigo.ai.server.models.TrainResponse> {
-		/** Propriété 'Request duration'. */
+		/** Propriété 'time'. */
 		time,
-		/** Propriété 'Model name'. */
+		/** Propriété 'Name'. */
 		modelName,
-		/** Propriété 'Model version'. */
+		/** Propriété 'Version'. */
 		version,
-		/** Propriété 'Model score'. */
+		/** Propriété 'Score'. */
 		score,
 		/** Propriété 'Status'. */
 		status,
 		/** Propriété 'Response'. */
 		response,
-		/** Propriété 'Deploy to prediction'. */
+		/** Propriété 'Deploy'. */
 		deploy	}
 
 	/** {@inheritDoc} */

@@ -14,14 +14,14 @@ public final class DeployPredict implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private String status;
-	private DeployResponse response;
+	private io.vertigo.ai.server.models.DeployResponse response;
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Status'.
 	 * @return String status <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
+	@Field(smartType = "STyStringAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
 	public String getStatus() {
 		return status;
 	}
@@ -38,19 +38,19 @@ public final class DeployPredict implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Response'.
-	 * @return BigDecimal response <b>Obligatoire</b>
+	 * @return DeployResponse response <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDtDeployResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Response")
-	public DeployResponse getResponse() {
+	public io.vertigo.ai.server.models.DeployResponse getResponse() {
 		return response;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Response'.
-	 * @param response BigDecimal <b>Obligatoire</b>
+	 * @param response DeployResponse <b>Obligatoire</b>
 	 */
-	public void setResponse(final DeployResponse response) {
+	public void setResponse(final io.vertigo.ai.server.models.DeployResponse response) {
 		this.response = response;
 	}
 	

@@ -1,27 +1,34 @@
 package io.vertigo.ai.example.iris.predict;
 
 import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.structure.stereotype.Field;
 
 public final class IrisPredict implements DtObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	//@Field(smartType = "STyId", type = "ID", cardinality = Cardinality.ONE, label = "Id")
+	//private Long id;
+	
+	@Field(smartType = "STyExactDecimal", label = "Sepal Length")
 	private java.math.BigDecimal sepalLength;
+	
+	@Field(smartType = "STyExactDecimal", label = "Sepal Width")
 	private java.math.BigDecimal sepalWidth;
-	private java.math.BigDecimal petalLength;
-	private java.math.BigDecimal petalWidth;
 
+	@Field(smartType = "STyExactDecimal", label = "Petal Length")
+	private java.math.BigDecimal petalLength;
+
+	@Field(smartType = "STyExactDecimal", label = "Petal Width")
+	private java.math.BigDecimal petalWidth;
 	
-	
-	public Long getId() {
+	/*public Long getId() {
 		return id;
 	}
 
 	public void setId(final Long id) {
 		this.id = id;
-	}
+	}*/
 	
 	public java.math.BigDecimal getSepalLength() {
 		return sepalLength;

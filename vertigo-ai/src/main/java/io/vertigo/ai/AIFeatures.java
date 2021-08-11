@@ -20,16 +20,19 @@ package io.vertigo.ai;
 
 import io.vertigo.ai.impl.server.PredictionManagerImpl;
 import io.vertigo.ai.impl.structure.dataset.DatasetManagerImpl;
-import io.vertigo.ai.impl.structure.datasetInMemory.DatasetInMemoryManagerImpl;
 import io.vertigo.ai.impl.structure.record.RecordManagerImpl;
 import io.vertigo.ai.mlmodel.ModelManager;
+import io.vertigo.ai.plugins.AIPredictClientWebServices;
 import io.vertigo.ai.plugins.AIPredictPluginImpl;
 import io.vertigo.ai.plugins.SqlDatasetProcessingPluginImpl;
-import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.server.domain.AISmartTypes;
+import io.vertigo.ai.structure.DatasetManager;
 import io.vertigo.ai.structure.record.RecordManager;
+import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.core.node.config.Feature;
 import io.vertigo.core.node.config.Features;
 import io.vertigo.core.param.Param;
+import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 
 /**
  * Defines AI features.
@@ -48,7 +51,12 @@ public class AIFeatures extends Features<AIFeatures>{
 	protected void buildFeatures() {
 		getModuleConfigBuilder().addComponent(ModelManager.class, PredictionManagerImpl.class);
 		getModuleConfigBuilder().addComponent(RecordManager.class, RecordManagerImpl.class);
-		getModuleConfigBuilder().addComponent(io.vertigo.ai.structure.DatasetManager.class, DatasetManagerImpl.class);
+		getModuleConfigBuilder().addComponent(DatasetManager.class, DatasetManagerImpl.class);
+		getModuleConfigBuilder().addAmplifier(AIPredictClientWebServices.class);
+		getModuleConfigBuilder().addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+				.addDefinitionResource("smarttypes", AISmartTypes.class.getName())
+				.addDefinitionResource("dtobjects", "io.vertigo.ai.server.domain.DtDefinitions")
+				.build());
 	}
 	
 

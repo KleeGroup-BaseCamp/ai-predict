@@ -48,7 +48,7 @@ public class PredictionManagerImpl implements ModelManager {
 
 	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version) {
+	public <D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version) {
 		return predictionPlugin.predict(data, modelName, version);
 	}
 	
@@ -72,8 +72,8 @@ public class PredictionManagerImpl implements ModelManager {
 
 	/** {@inheritDoc} */
 	@Override
-	public Integer activate(String modelName, Integer version) {
-		return predictionPlugin.activate(modelName, version);
-}
+	public void activate(String modelName, Integer version) {
+		predictionPlugin.activate(modelName, version);
+	}
 	
 }

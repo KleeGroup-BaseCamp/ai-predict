@@ -18,18 +18,18 @@ public final class Score implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model cross validation score mean'.
-	 * @return BigDecimal score <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Score Mean'.
+	 * @return BigDecimal scoreMean <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyFloat", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model cross validation score mean")
+	@Field(smartType = "STyDecimalAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Score Mean")
 	public java.math.BigDecimal getScoreMean() {
 		return scoreMean;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model score'.
-	 * @param score BigDecimal <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Score Mean'.
+	 * @param scoreMean BigDecimal <b>Obligatoire</b>
 	 */
 	public void setScoreMean(final java.math.BigDecimal scoreMean) {
 		this.scoreMean = scoreMean;
@@ -37,18 +37,18 @@ public final class Score implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model cross validation score standard deviation'.
-	 * @return BigDecimal score <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Score Standard deviation'.
+	 * @return BigDecimal scoreStd <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyFloat", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model cross validation score standard deviation")
+	@Field(smartType = "STyDecimalAIResponse", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Score Standard deviation")
 	public java.math.BigDecimal getScoreStd() {
 		return scoreStd;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model score'.
-	 * @param score BigDecimal <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Score Standard deviation'.
+	 * @param scoreStd BigDecimal <b>Obligatoire</b>
 	 */
 	public void setScoreStd(final java.math.BigDecimal scoreStd) {
 		this.scoreStd = scoreStd;

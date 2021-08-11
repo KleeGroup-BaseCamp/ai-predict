@@ -25,7 +25,6 @@ import io.vertigo.ai.server.models.PredictResponse;
 import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.KeyConcept;
 
 /**
  * Gestionnaire des modèles de machine learning.
@@ -39,7 +38,7 @@ public interface ModelManager extends Manager {
 	 * @param version Version du modèle
 	 * @return une PredictResponse
  	 */
-	<K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version);
+	<D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version);
 	
 	/**
 	 * Déclenche le réentrainement d'un modèle.
@@ -71,6 +70,6 @@ public interface ModelManager extends Manager {
 	 * @param version Version du modèle
 	 * @return le code http de la réponse du serveur
 	 */
-	Integer activate(String modelName, Integer version);
+	void activate(String modelName, Integer version);
 
 }

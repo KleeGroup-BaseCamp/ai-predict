@@ -1,4 +1,4 @@
-package io.vertigo.ai.server.domain;
+package io.vertigo.ai.server.models;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -16,8 +16,8 @@ public final class Predict implements DtObject {
 	private String predictionLabel;
 	private java.math.BigDecimal predictionNumeric;
 	private java.util.List<java.math.BigDecimal> predictionNVector = new java.util.ArrayList<>();
-	private io.vertigo.ai.server.domain.Explanation explantion1D;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.domain.Explanation> explantion2D =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.ai.server.domain.Explanation.class);
+	private io.vertigo.ai.server.models.Explanation explantion1D;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.models.Explanation> explantion2D =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.ai.server.models.Explanation.class);
 	
 	/**
 	 * Champ : DATA.
@@ -84,7 +84,7 @@ public final class Predict implements DtObject {
 	 * @return Explanation explantion1D <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDtExplanation", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Exploration 1D")
-	public io.vertigo.ai.server.domain.Explanation getExplantion1D() {
+	public io.vertigo.ai.server.models.Explanation getExplantion1D() {
 		return explantion1D;
 	}
 
@@ -93,7 +93,7 @@ public final class Predict implements DtObject {
 	 * Définit la valeur de la propriété 'Exploration 1D'.
 	 * @param explantion1D Explanation <b>Obligatoire</b>
 	 */
-	public void setExplantion1D(final io.vertigo.ai.server.domain.Explanation explantion1D) {
+	public void setExplantion1D(final io.vertigo.ai.server.models.Explanation explantion1D) {
 		this.explantion1D = explantion1D;
 	}
 	
@@ -103,7 +103,7 @@ public final class Predict implements DtObject {
 	 * @return DtList de Explanation explantion2D
 	 */
 	@Field(smartType = "STyDtExplanation", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Exploration 2D")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.domain.Explanation> getExplantion2D() {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.models.Explanation> getExplantion2D() {
 		return explantion2D;
 	}
 
@@ -112,7 +112,7 @@ public final class Predict implements DtObject {
 	 * Définit la valeur de la propriété 'Exploration 2D'.
 	 * @param explantion2D DtList de Explanation
 	 */
-	public void setExplantion2D(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.domain.Explanation> explantion2D) {
+	public void setExplantion2D(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.ai.server.models.Explanation> explantion2D) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(explantion2D);
 		//---
 		this.explantion2D = explantion2D;

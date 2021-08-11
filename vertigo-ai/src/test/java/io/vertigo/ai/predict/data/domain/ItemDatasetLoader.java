@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.ai.impl.structure.datasetInMemory.loader.AbstractDatasetLoader;
-import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.DatasetManagerOld;
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.dataset.models.Dataset;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
@@ -21,13 +21,13 @@ import io.vertigo.datamodel.structure.model.UID;
 public class ItemDatasetLoader<T extends TestItems> extends AbstractDatasetLoader<Long, T, T>{
 
 	private static final int SEARCH_CHUNK_SIZE = 5;
-	private final DatasetManager datasetManager;
+	private final DatasetManagerOld datasetManager;
 	private TestDatabase<T> itemDatabase;
 	private RowDefinition itemDefinition;
 
 	
 	@Inject
-	public ItemDatasetLoader(final DatasetManager predictionManager) {
+	public ItemDatasetLoader(final DatasetManagerOld predictionManager) {
 		Assertion.check().isNotNull(predictionManager);
 		//---
 		this.datasetManager = predictionManager;

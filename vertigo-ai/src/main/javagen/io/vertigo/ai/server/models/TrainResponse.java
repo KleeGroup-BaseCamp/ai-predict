@@ -1,4 +1,4 @@
-package io.vertigo.ai.server.domain;
+package io.vertigo.ai.server.models;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -16,10 +16,10 @@ public final class TrainResponse implements DtObject {
 	private Integer time;
 	private String modelName;
 	private Integer version;
-	private io.vertigo.ai.server.domain.Score score;
+	private io.vertigo.ai.server.models.Score score;
 	private String status;
 	private String response;
-	private io.vertigo.ai.server.domain.DeployPredict deploy;
+	private io.vertigo.ai.server.models.DeployPredict deploy;
 	
 	/**
 	 * Champ : DATA.
@@ -84,7 +84,7 @@ public final class TrainResponse implements DtObject {
 	 * @return Score score <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDtScore", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Score")
-	public io.vertigo.ai.server.domain.Score getScore() {
+	public io.vertigo.ai.server.models.Score getScore() {
 		return score;
 	}
 
@@ -93,7 +93,7 @@ public final class TrainResponse implements DtObject {
 	 * Définit la valeur de la propriété 'Score'.
 	 * @param score Score <b>Obligatoire</b>
 	 */
-	public void setScore(final io.vertigo.ai.server.domain.Score score) {
+	public void setScore(final io.vertigo.ai.server.models.Score score) {
 		this.score = score;
 	}
 	
@@ -141,7 +141,7 @@ public final class TrainResponse implements DtObject {
 	 * @return DeployPredict deploy <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDtDeployPredict", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Deploy")
-	public io.vertigo.ai.server.domain.DeployPredict getDeploy() {
+	public io.vertigo.ai.server.models.DeployPredict getDeploy() {
 		return deploy;
 	}
 
@@ -150,7 +150,7 @@ public final class TrainResponse implements DtObject {
 	 * Définit la valeur de la propriété 'Deploy'.
 	 * @param deploy DeployPredict <b>Obligatoire</b>
 	 */
-	public void setDeploy(final io.vertigo.ai.server.domain.DeployPredict deploy) {
+	public void setDeploy(final io.vertigo.ai.server.models.DeployPredict deploy) {
 		this.deploy = deploy;
 	}
 	

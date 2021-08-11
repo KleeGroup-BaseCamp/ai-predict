@@ -1,4 +1,4 @@
-package io.vertigo.ai.server.domain
+package io.vertigo.ai.server.models
 
 create Domain DoStringAIResponse {
 	dataType: String

@@ -1,14 +1,20 @@
 from AIPredict.apps.train.utils.databases import postgresql
 
+# import the logging library
+import logging
 
-def get_data(dataset_config: int):
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
+def get_data(dataset_config: dict):
     db_config = dataset_config["db_config"]
     data_config = dataset_config["data_config"]
 
-    features = [feature["name"]
-                for feature in data_config if not feature["is_label"]]
-    labels = [feature["name"]
-              for feature in data_config if feature["is_label"]]
+    features = [feature["name"] for feature in data_config if not feature["is_label"]]
+    labels = [feature["name"] for feature in data_config if feature["is_label"]]
+
+    logger.info('features: ' + str(features))
+    logger.info('labels: ' + str(labels))
 
     key = db_config["key"]
     if key == "postgresql":
