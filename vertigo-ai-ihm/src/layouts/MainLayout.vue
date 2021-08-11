@@ -26,7 +26,7 @@
           </q-list>
         </q-btn-dropdown>
 
-        <q-btn flat color="white button" to="/">
+        <q-btn flat color="white button" to="/home">
           <q-icon
             name="home"
             class="text"
