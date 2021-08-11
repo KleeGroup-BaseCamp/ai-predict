@@ -39,6 +39,8 @@ public final class DatasetManagerImpl implements DatasetManager {
 		Map<String, Object> filterParam = new HashMap<String, Object>();
 		
 		Dataset<?> processDataset = dataset;
+		
+		int count = 0;
 		for (Processor processor : processors) {
 			String type = processor.getProcessorType();
 			Map<String, Object> params = processor.getProcessorParameters();
@@ -53,21 +55,25 @@ public final class DatasetManagerImpl implements DatasetManager {
 				default:
 					if (!sortList.isEmpty()) {
 						params.put("sort", sortList);
-						sortList.clear();
 					}
 					if (!filterParam.isEmpty()) {
 						params.put("filter", filterParam);
-						filterParam.clear();
 					}
+					params.put("order", count++);
 					switch (type) {
 						case "select":
 							processDataset = datasetProcessingPlugin.select(processDataset, params);
+							filterParam.clear();
+							sortList.clear();
 							break;
 						case "join":
 							processDataset = datasetProcessingPlugin.join(processDataset, params);
+							filterParam.clear();
+							sortList.clear();
 							break;
 					}
 			}
+			
 		}
 		return processDataset;
 	}

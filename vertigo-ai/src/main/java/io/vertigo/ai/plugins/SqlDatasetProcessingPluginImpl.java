@@ -37,6 +37,8 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinitionBuilder;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.definitions.DtDefinitionBuilder;
 import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.structure.definitions.DtProperty;
+import io.vertigo.datamodel.structure.definitions.Property;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.task.TaskManager;
 import io.vertigo.datamodel.task.definitions.TaskDefinition;
@@ -94,13 +96,10 @@ public final class SqlDatasetProcessingPluginImpl
 			Map<String, Object> params) {
 		DtDefinition tableDefinition = dataset.getItemDefinition();
 		String tableName = getTableName(tableDefinition);
-		String outputName = SELECT_PREFIX + tableName;
+		int order = (int) params.get("order");
+		String outputName = SELECT_PREFIX + tableName + "_" + order;
 		String requestedFields = (String) params.get("requestedFields");
-		
-		StringBuilder queryBuilder = new StringBuilder("create table if not exists ")
-					.append(outputName)
-					.append(" (name text, faction numeric); ")
-					.append("truncate table ")
+		StringBuilder queryBuilder = new StringBuilder("truncate table ")
 					.append(outputName)
 					.append(";")
 					.append("insert into ")
@@ -112,14 +111,14 @@ public final class SqlDatasetProcessingPluginImpl
 					.append(handleSortFilter(params));
 		String query = queryBuilder.append(";").toString();
 		
-		String taskName = "TkInsert" + StringUtil.constToUpperCamelCase(requestedFields.replaceAll(",", "_")) + "From" + tableName;
+		String taskName = "TkInsert" + StringUtil.constToUpperCamelCase(requestedFields.replaceAll(",", "_")) + "From" + tableName+order;
 		
 		List<DtField> fields = new ArrayList<DtField>();
 		for(String fieldName : requestedFields.split(",")) {
 			fields.add(tableDefinition.getField(fieldName));
 		}
-		
-		return executeTask(taskName, tableDefinition, outputName, fields, query);
+		String createTableQuery = buildCreateTableQuery(outputName, fields);
+		return executeTask(taskName, tableDefinition, outputName, fields, createTableQuery+query);
 	}
 
 	@Override
@@ -186,6 +185,11 @@ public final class SqlDatasetProcessingPluginImpl
 	private String handleSortFilter(Map<String, Object> params) {
 		StringBuilder sortFilterQueryBuilder = new StringBuilder("");
 		if (params.containsKey("filter")) {
+			System.out.println("");
+			System.out.println("");
+			System.out.println(params.get("filter"));
+			System.out.println("");
+			System.out.println("");
 			String filterQuery = filter((Map<String, Object>) params.get("filter"));
 			sortFilterQueryBuilder.append(filterQuery);
 		}
@@ -204,6 +208,7 @@ public final class SqlDatasetProcessingPluginImpl
 	
 	private <E extends Entity> String convertCriteriaToSql(Criteria<E> criteria) {
 		final Tuple<String, CriteriaCtx> tuple = criteria.toStringAnCtx(criteriaEncoder);
+		System.out.println(tuple);
 		criteriaCtx = tuple.getVal2();
 		return tuple.getVal1();
 	}
@@ -248,9 +253,24 @@ public final class SqlDatasetProcessingPluginImpl
 		}
 		
 		taskBuilder.addContextProperty(CONNECTION_NAME, connectionName);
-		Task task = taskBuilder	.build();
+		Task task = taskBuilder.build();
 		taskManager.execute(task);
 		criteriaCtx = null;
 		return new DatasetImpl<E>(outputDefinition);
+	}
+	
+	private String buildCreateTableQuery(String outputName, List<DtField> fields) {
+		StringBuilder createQuery = new StringBuilder("create table if not exists ")
+					.append(outputName)
+					.append(" (");
+		for (DtField field : fields) {
+			createQuery.append(field.getName())
+					.append(" ")
+					.append(field.getSmartTypeDefinition().getProperties().getValue(DtProperty.STORE_TYPE));
+			if (fields.indexOf(field) != fields.size()-1)
+				createQuery.append(",");
+		}
+		createQuery.append("); ");
+		return createQuery.toString();
 	}
 }

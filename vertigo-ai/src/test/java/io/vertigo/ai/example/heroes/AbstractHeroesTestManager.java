@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.vertigo.ai.example.domain.DtDefinitions.HeroeFields;
 import io.vertigo.ai.example.heroes.dao.FactionDAO;
 import io.vertigo.ai.example.heroes.dao.HeroeDAO;
 import io.vertigo.ai.example.heroes.data.datageneration.HeroesGenerator;
@@ -29,7 +30,10 @@ import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.node.definition.DefinitionSpace;
+import io.vertigo.datamodel.criteria.Criteria;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DtFieldName;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
@@ -100,8 +104,19 @@ public abstract class AbstractHeroesTestManager {
 			datasetManager.executeProcessing(heroes, processors);
 			transaction.commit();
 		};
+	}
+	
+	@Test
+	public void testWhere() {
+		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
+		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
+		final Criteria<Heroe> criteria = Criterions.isEqualTo(HeroeFields.faction, 1001);
+		List<Processor> processors = processorBuilder.filter(criteria).select("name,faction").build();
 		
-		
-		
+		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+			
+			datasetManager.executeProcessing(heroes, processors);
+			transaction.commit();
+		};
 	}
 }
