@@ -100,7 +100,6 @@ public abstract class AbstractHeroesTestManager {
 		List<Processor> processors = processorBuilder.select("name,faction").build();
 		
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			
 			datasetManager.executeProcessing(heroes, processors);
 			transaction.commit();
 		};

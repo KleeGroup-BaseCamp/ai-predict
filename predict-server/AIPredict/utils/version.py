@@ -8,8 +8,12 @@ import shutil
 import zipfile
 import numpy as np
 
+import logging
+
 from AIPredict.utils.imports import *
 from AIPredict.settings.production import BUNDLE_PATH
+
+logger = logging.getLogger(__name__)
 
 class VersionController:
 
@@ -177,8 +181,10 @@ class VersionController:
         os.remove(self.path / str(self.name + "-v" + str(self.version) + ".zip"))
     
     def used(self):
+        logger.debug(self.path / "bundle.json")
         with open(self.path / "bundle.json", "r+") as jsonBundle:
             bundle = json.load(jsonBundle)
             bundle["use"] += 1
-
+            jsonBundle.seek(0)  # Go back to the beginning of to write the new version
             json.dump(bundle, jsonBundle)
+            jsonBundle.truncate()
