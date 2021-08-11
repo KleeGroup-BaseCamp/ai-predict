@@ -203,9 +203,15 @@ public abstract class AbstractIrisTestManager {
 	}
 	
 	@Test
-	public void testIrisPredict() {
+	public void testIrisPredictXGB() {
 		IrisPredictionTest irisPredict = new IrisPredictionTest(modelManager);
 		irisPredict.testPredictXGBClassifier();
+	}
+
+	@Test
+	public void testIrisPredictAll() {
+		IrisPredictionTest irisPredict = new IrisPredictionTest(modelManager);
+		irisPredict.testPredictAllClassifier();
 	}
 	
 	private void waitAndExpectIndexation(final long expectedCount, DtDefinition dtDefinition) {

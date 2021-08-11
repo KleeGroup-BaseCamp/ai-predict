@@ -59,7 +59,7 @@ public class IrisPredictionTest {
 	}
 
 	
-	public void testAllPredictClassifier() {
+	public void testPredictAllClassifier() {
 		for(int i = 0; i < 15 ; i++) {
 			modelManager.activate("iris", i);
 			PredictResponse response = modelManager.predict(dataset, "iris", i);
