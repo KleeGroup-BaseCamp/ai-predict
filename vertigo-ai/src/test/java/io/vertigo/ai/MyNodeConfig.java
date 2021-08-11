@@ -1,5 +1,8 @@
 package io.vertigo.ai;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import io.vertigo.ai.example.heroes.HeroesDefinitionProvider;
 import io.vertigo.ai.example.heroes.dao.EraDAO;
 import io.vertigo.ai.example.heroes.dao.FactionDAO;
@@ -12,10 +15,12 @@ import io.vertigo.ai.example.iris.dao.IrisTrainDAO;
 import io.vertigo.ai.example.iris.data.IrisSmartTypes;
 import io.vertigo.ai.example.iris.data.datageneration.IrisGenerator;
 import io.vertigo.ai.example.iris.loader.IrisDatasetLoader;
+import io.vertigo.ai.example.iris.predict.IrisPredict;
 import io.vertigo.ai.example.iris.services.IrisServices;
 import io.vertigo.ai.example.train.TrainPAO;
 import io.vertigo.ai.structure.record.definitions.RecordLoader;
 import io.vertigo.commons.CommonsFeatures;
+import io.vertigo.connectors.httpclient.HttpClientFeatures;
 import io.vertigo.core.node.config.BootConfig;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.core.node.config.ModuleConfig;
@@ -29,8 +34,20 @@ import io.vertigo.database.impl.sql.vendor.postgresql.PostgreSqlDataBase;
 import io.vertigo.datamodel.DataModelFeatures;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.datastore.DataStoreFeatures;
+import io.vertigo.vega.VegaFeatures;
 
 public final class MyNodeConfig {
+	
+	private static final String WS_PORT = "8000";
+
+	public static final class WsDtDefinitions implements Iterable<Class<?>> {
+		@Override
+		public Iterator<Class<?>> iterator() {
+			return Arrays.asList(new Class<?>[] {
+					IrisPredict.class
+			}).iterator();
+		}
+	}
 	
 	public static NodeConfig config(final String object) {
 		
@@ -72,7 +89,6 @@ public final class MyNodeConfig {
 					.build());
 		
 		nodeConfigBuilder.addModule(new DataModelFeatures().build());
-		
 		nodeConfigBuilder.addModule(new DataStoreFeatures()
 					.withCache()
 					.withMemoryCache()
@@ -83,22 +99,31 @@ public final class MyNodeConfig {
 					.withSqlEntityStore()
 					.build());
 
+		final VegaFeatures vegaFeatures = new VegaFeatures()
+				.withWebServicesProxyClient();
+		final HttpClientFeatures httpClientFeatures = new HttpClientFeatures()
+				.withHttpClient(Param.of("urlPrefix", "http://localhost:" + MyNodeConfig.WS_PORT + ""));
+		
 		if (object=="iris") {
-			nodeConfigBuilder.addModule(aiFeatures.build())
+			nodeConfigBuilder
+					.addModule(httpClientFeatures.build())
+					.addModule(vegaFeatures.build())
+					.addModule(aiFeatures.build())
 					.addModule(ModuleConfig.builder("myApp")
-					.addComponent(ItemDefinitionProvider.class)
-					.addComponent(IrisDAO.class)
-					.addComponent(IrisTrainDAO.class)
-					.addComponent(TrainPAO.class)
-					.addComponent(IrisGenerator.class)
-					.addComponent(RecordLoader.class, IrisDatasetLoader.class)
-					.addComponent(IrisServices.class)
-					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
-							.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
-							.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())
-							.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
-							.build())
-					.build());
+							.addComponent(ItemDefinitionProvider.class)
+							.addComponent(IrisDAO.class)
+							.addComponent(IrisTrainDAO.class)
+							.addComponent(TrainPAO.class)
+							.addComponent(IrisGenerator.class)
+							.addComponent(RecordLoader.class, IrisDatasetLoader.class)
+							.addComponent(IrisServices.class)
+							.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+									.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
+									.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())
+									.addDefinitionResource("dtobjects", "io.vertigo.ai.example.domain.DtDefinitions")
+									.addDefinitionResource("dtobjects", WsDtDefinitions.class.getName())
+									.build())
+							.build());
 		} else if (object=="heroes") {
 			nodeConfigBuilder.addModule(aiFeatures.build())
 				.addModule(ModuleConfig.builder("myApp")

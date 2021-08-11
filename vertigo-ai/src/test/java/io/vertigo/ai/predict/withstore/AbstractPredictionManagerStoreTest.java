@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.DatasetManagerOld;
 import io.vertigo.ai.structure.dataset.models.Dataset;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.mlmodel.ModelManager;
@@ -45,14 +45,11 @@ public abstract class AbstractPredictionManagerStoreTest {
 	@Inject
 	private ModelManager predictionManager;
 	@Inject
-	private DatasetManager datasetManager;
+	private DatasetManagerOld datasetManager;
 	@Inject
 	private TaskManager taskManager;
 	//Dataset
 	private static final String DS_DATASET = "DsBostonRegressionDataset";
-	
-	
-
 
 	private AutoCloseableNode node;
 	
@@ -129,7 +126,7 @@ public abstract class AbstractPredictionManagerStoreTest {
 		RowChunk<BostonRegressionItem> chunk = new RowChunk<BostonRegressionItem>(uids, BostonRegressionItem.class);
 		Dataset dataset = loader.loadData(chunk, DS_DATASET);
 		PredictResponse response = predictionManager.predict(dataset.collect(), "boston-regression", 0);
-		Assertions.assertEquals(BigDecimal.valueOf(25.175095544577786), response.getPredictionList().get(0).getPredictionVector().get(0));
+		Assertions.assertEquals(BigDecimal.valueOf(25.175095544577786), response.getPredictionList().get(0).getPredictionNVector().get(0));
 
 	}
 }

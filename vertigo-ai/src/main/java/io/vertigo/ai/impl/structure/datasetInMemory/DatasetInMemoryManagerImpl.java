@@ -20,7 +20,7 @@ package io.vertigo.ai.impl.structure.datasetInMemory;
 
 import java.util.Optional;
 
-import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.dataset.DatasetManagerOld;
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.core.lang.Assertion;
@@ -32,7 +32,7 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 /**
  * Implémentation standard du gestionnaire des datasets en mémoire.
  */
-public final class DatasetInMemoryManagerImpl implements DatasetManager{
+public final class DatasetInMemoryManagerImpl implements DatasetManagerOld{
 
 
 	/** {@inheritDoc} */

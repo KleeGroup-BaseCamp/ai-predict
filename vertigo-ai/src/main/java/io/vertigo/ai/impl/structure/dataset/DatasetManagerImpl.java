@@ -13,7 +13,6 @@ import io.vertigo.ai.structure.dataset.Dataset;
 import io.vertigo.ai.structure.processor.DatasetProcessingPlugin;
 import io.vertigo.ai.structure.processor.Processor;
 import io.vertigo.ai.structure.processor.ProcessorBuilder;
-import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.structure.model.Entity;
 
 public final class DatasetManagerImpl implements DatasetManager {

@@ -11,7 +11,6 @@ import numpy as np
 from AIPredict.utils.imports import *
 from AIPredict.settings.production import BUNDLE_PATH
 
-
 class VersionController:
 
     def __init__(self, name: str, version: int, load_bundle: bool = True) -> None:

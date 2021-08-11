@@ -20,7 +20,7 @@
         "db_config":
          {
              "db_type": "postgresql",
-             "table": "iris",
+             "table": "iris_train",
              "database": "traindb",
              "user": "postgres",
              "password": "admin",

@@ -2,10 +2,6 @@ package io.vertigo.ai.example.iris;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -23,12 +19,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import io.vertigo.ai.example.iris.data.datageneration.IrisGenerator;
 import io.vertigo.ai.example.iris.domain.Iris;
 import io.vertigo.ai.example.iris.domain.IrisTrain;
+import io.vertigo.ai.example.iris.predict.IrisPredictionTest;
 import io.vertigo.ai.example.iris.services.IrisServices;
-import io.vertigo.ai.example.iris.train.IrisTrainTest;
 import io.vertigo.ai.mlmodel.ModelManager;
+import io.vertigo.ai.server.models.ScoreResponse;
+import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.ai.structure.record.RecordManager;
 import io.vertigo.ai.structure.record.definitions.RecordDefinition;
-import io.vertigo.ai.structure.record.models.Record;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -40,7 +37,6 @@ import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
-import io.vertigo.ai.example.iris.predict.IrisPredictionTest;
 
 public abstract class AbstractIrisTestManager {
 
@@ -197,8 +193,13 @@ public abstract class AbstractIrisTestManager {
 	
 	@Test
 	public void testIrisTrain() throws JsonParseException, JsonMappingException, IOException {
-		IrisTrainTest.testTrainPostgresql(modelManager);
-		IrisTrainTest.testScore(modelManager);
+		//Test Train Postgresql
+		TrainResponse trainResponse = modelManager.train("iris", 2);
+		Assertions.assertEquals(-1, BigDecimal.valueOf(0.92).compareTo(trainResponse.getScore().getScoreMean()));
+		
+		//Test Score
+		ScoreResponse scoreResponse = modelManager.score("iris", 2);
+		Assertions.assertEquals(-1, BigDecimal.valueOf(0.92).compareTo(scoreResponse.getScore().getScoreMean()));
 	}
 	
 	@Test

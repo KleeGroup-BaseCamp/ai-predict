@@ -123,6 +123,7 @@ class TrainModel(viewsets.ViewSet):
         # prepare parameters and preprocessing dictionaries
         params = config["parameters"]
         # get dataset
+        logger.info('config["dataset"]:' + str(config["dataset"]))
         try:
             X_train, y_train = get_data(config["dataset"])
             logger.info("Data extracted")

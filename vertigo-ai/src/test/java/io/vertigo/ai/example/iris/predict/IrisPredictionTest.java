@@ -57,14 +57,20 @@ public class IrisPredictionTest {
 		PredictResponse response = testPrediction("svc");
 		Assertions.assertEquals(BigDecimal.ZERO, response.getPredictionList().get(0).getPredictionNumeric());
 	}
+
+	
+	public void testAllPredictClassifier() {
+		for(int i = 0; i < 15 ; i++) {
+			modelManager.activate("iris", i);
+			PredictResponse response = modelManager.predict(dataset, "iris", i);
+			Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
+		}
+	}
 	
 	public void testPredictXGBClassifier() {
-		//PredictResponse response = testPrediction("xgb");
-		modelManager.activate("iris", 2);
-		PredictResponse response = modelManager.predict(dataset, "iris", 2);
-		//Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
-		Assertions.assertEquals("Versicolor", response.getPredictionList().get(0).getPredictionLabel());
-		Assertions.assertEquals("Versicolor", response.getPredictionList().get(1).getPredictionLabel());
+		modelManager.activate("iris", 9);
+		PredictResponse response = modelManager.predict(dataset, "iris", 9);
+		Assertions.assertEquals("Setosa", response.getPredictionList().get(0).getPredictionLabel());
 	}
 	
 	public void testPredictLogistic() {

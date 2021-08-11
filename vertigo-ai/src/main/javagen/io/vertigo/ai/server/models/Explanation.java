@@ -1,4 +1,4 @@
-package io.vertigo.ai.server.domain;
+package io.vertigo.ai.server.models;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
