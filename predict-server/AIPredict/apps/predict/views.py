@@ -119,10 +119,13 @@ class Prediction(viewsets.ViewSet):
         except ValidationError as e:
             return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+        column = [col["name"] for col in sorted(bundle.get_item("dataset", "data_config"), key=lambda x: x["id"]) if not col["is_label"]]
 
+        data = data[column]
+
+        bundle.used()
         try:
             prediction = predictor.predict(data=data)
-            bundle.used()
             return Response(prediction, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)

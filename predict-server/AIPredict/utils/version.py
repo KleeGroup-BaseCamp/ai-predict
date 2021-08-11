@@ -177,10 +177,8 @@ class VersionController:
         os.remove(self.path / str(self.name + "-v" + str(self.version) + ".zip"))
     
     def used(self):
-        with open(self.path, "r") as jsonBundle:
+        with open(self.path / "bundle.json", "r+") as jsonBundle:
             bundle = json.load(jsonBundle)
-        
-        bundle["use"] += 1
+            bundle["use"] += 1
 
-        with open(self.path, "w") as jsonBundle:
             json.dump(bundle, jsonBundle)
