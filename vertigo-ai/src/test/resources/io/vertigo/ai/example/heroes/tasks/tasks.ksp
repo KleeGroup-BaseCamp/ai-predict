@@ -1,0 +1,25 @@
+package io.vertigo.ai.example.heroes
+
+create Task TkTruncateHeroes {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE HEROE
+             "
+}
+
+create Task TkTruncateFaction {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE FACTION
+             "
+}
+
+create Task TkTruncateEra {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE ERA
+             "
+}

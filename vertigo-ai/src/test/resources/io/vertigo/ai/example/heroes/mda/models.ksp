@@ -14,7 +14,7 @@ create DtDefinition DtHeroe {
 	stereotype: "Entity"
 	storeName: "train"
 	id id {domain: DoInt label:"ID"}
-	field name {domain: DoString label:"Name" cardinality:"1"}
+	field heroeName {domain: DoString label:"Name" cardinality:"1"}
 	field job {domain: DoString label:"Job" cardinality:"1"}
     field faction {domain: DoInt label:"Faction ID" cardinality:"1"}
 }
@@ -23,7 +23,8 @@ create DtDefinition DtFaction {
 	stereotype: "Entity"
 	storeName: "train"
 	id id {domain: DoInt label:"ID"}
-	field name {domain: DoString label:"Name" cardinality:"1"}
+	field factionId {domain: DoInt label:"Faction ID"}
+	field factionName {domain: DoString label:"Name" cardinality:"1"}
     field era {domain: DoInt label:"Era ID" cardinality:"1"}
 }
 
@@ -31,5 +32,14 @@ create DtDefinition DtEra {
 	stereotype: "Entity"
 	storeName: "train"
 	id id {domain: DoInt label:"ID"}
-	field name {domain: DoString label:"Name" cardinality:"1"}
+	field eraId {domain: DoInt label:"Era ID"}
+	field eraName {domain: DoString label:"Name" cardinality:"1"}
+}
+
+create DtDefinition DtFactionCount {
+	stereotype: "Entity"
+	storeName: "train"
+	id id {domain: DoInt label:"ID"}
+	field factionName {domain: DoString label:"Name" cardinality:"1"}
+    field countFactionName {domain: DoInt label:"Heroes per faction" cardinality:"1"}
 }

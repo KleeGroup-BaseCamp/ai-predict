@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import io.vertigo.ai.example.heroes.HeroesDefinitionProvider;
+import io.vertigo.ai.example.heroes.HeroesPAO;
 import io.vertigo.ai.example.heroes.dao.EraDAO;
 import io.vertigo.ai.example.heroes.dao.FactionDAO;
 import io.vertigo.ai.example.heroes.dao.HeroeDAO;
@@ -135,6 +136,7 @@ public final class MyNodeConfig {
 					.addComponent(HeroeDAO.class)
 					.addComponent(FactionDAO.class)
 					.addComponent(EraDAO.class)
+					.addComponent(HeroesPAO.class)
 					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
 							.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
 							.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())

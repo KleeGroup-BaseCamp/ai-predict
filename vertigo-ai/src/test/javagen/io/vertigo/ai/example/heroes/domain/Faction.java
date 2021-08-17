@@ -16,7 +16,8 @@ public final class Faction implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	private String name;
+	private Integer factionId;
+	private String factionName;
 	private Integer era;
 
 	/** {@inheritDoc} */
@@ -46,21 +47,40 @@ public final class Faction implements Entity {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Faction ID'.
+	 * @return Integer factionId
+	 */
+	@Field(smartType = "STyInt", label = "Faction ID")
+	public Integer getFactionId() {
+		return factionId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Faction ID'.
+	 * @param factionId Integer
+	 */
+	public void setFactionId(final Integer factionId) {
+		this.factionId = factionId;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Name'.
-	 * @return String name <b>Obligatoire</b>
+	 * @return String factionName <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyString", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
-	public String getName() {
-		return name;
+	public String getFactionName() {
+		return factionName;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Name'.
-	 * @param name String <b>Obligatoire</b>
+	 * @param factionName String <b>Obligatoire</b>
 	 */
-	public void setName(final String name) {
-		this.name = name;
+	public void setFactionName(final String factionName) {
+		this.factionName = factionName;
 	}
 	
 	/**

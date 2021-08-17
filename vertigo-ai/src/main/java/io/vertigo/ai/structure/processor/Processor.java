@@ -7,7 +7,7 @@ import io.vertigo.datamodel.structure.model.Entity;
 
 public interface Processor {
 
-	String getProcessorType();
+	ProcessorTypes getProcessorType();
 	
 	Map<String, Object> getProcessorParameters();
 	

@@ -26,7 +26,7 @@ import io.vertigo.ai.plugins.AIPredictClientWebServices;
 import io.vertigo.ai.plugins.AIPredictPluginImpl;
 import io.vertigo.ai.plugins.SqlDatasetProcessingPluginImpl;
 import io.vertigo.ai.server.domain.AISmartTypes;
-import io.vertigo.ai.structure.DatasetManager;
+import io.vertigo.ai.structure.dataset.DatasetManager;
 import io.vertigo.ai.structure.record.RecordManager;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.core.node.config.Feature;

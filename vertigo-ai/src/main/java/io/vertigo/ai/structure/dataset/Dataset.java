@@ -3,9 +3,10 @@ package io.vertigo.ai.structure.dataset;
 import java.util.List;
 
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
 
-public interface Dataset<E extends Entity> {
+public interface Dataset<E extends DtObject> {
 	
 	/**
 	 * Get item definition

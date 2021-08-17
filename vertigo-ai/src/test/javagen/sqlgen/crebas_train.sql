@@ -9,6 +9,8 @@ drop table IF EXISTS ERA cascade;
 drop sequence IF EXISTS SEQ_ERA;
 drop table IF EXISTS FACTION cascade;
 drop sequence IF EXISTS SEQ_FACTION;
+drop table IF EXISTS FACTION_COUNT cascade;
+drop sequence IF EXISTS SEQ_FACTION_COUNT;
 drop table IF EXISTS HEROE cascade;
 drop sequence IF EXISTS SEQ_HEROE;
 drop table IF EXISTS IRIS_TRAIN cascade;
@@ -26,6 +28,9 @@ create sequence SEQ_ERA
 create sequence SEQ_FACTION
 	start with 1000 cache 20; 
 
+create sequence SEQ_FACTION_COUNT
+	start with 1000 cache 20; 
+
 create sequence SEQ_HEROE
 	start with 1000 cache 20; 
 
@@ -39,14 +44,18 @@ create sequence SEQ_IRIS_TRAIN
 create table ERA
 (
     ID          	 NUMERIC     	not null,
-    NAME        	 TEXT        	not null,
+    ERA_ID      	 NUMERIC     	,
+    ERA_NAME    	 TEXT        	not null,
     constraint PK_ERA primary key (ID)
 );
 
 comment on column ERA.ID is
 'ID';
 
-comment on column ERA.NAME is
+comment on column ERA.ERA_ID is
+'Era ID';
+
+comment on column ERA.ERA_NAME is
 'Name';
 
 -- ============================================================
@@ -55,7 +64,8 @@ comment on column ERA.NAME is
 create table FACTION
 (
     ID          	 NUMERIC     	not null,
-    NAME        	 TEXT        	not null,
+    FACTION_ID  	 NUMERIC     	,
+    FACTION_NAME	 TEXT        	not null,
     ERA         	 NUMERIC     	not null,
     constraint PK_FACTION primary key (ID)
 );
@@ -63,11 +73,34 @@ create table FACTION
 comment on column FACTION.ID is
 'ID';
 
-comment on column FACTION.NAME is
+comment on column FACTION.FACTION_ID is
+'Faction ID';
+
+comment on column FACTION.FACTION_NAME is
 'Name';
 
 comment on column FACTION.ERA is
 'Era ID';
+
+-- ============================================================
+--   Table : FACTION_COUNT                                        
+-- ============================================================
+create table FACTION_COUNT
+(
+    ID          	 NUMERIC     	not null,
+    FACTION_NAME	 TEXT        	not null,
+    COUNT_FACTION_NAME	 NUMERIC     	not null,
+    constraint PK_FACTION_COUNT primary key (ID)
+);
+
+comment on column FACTION_COUNT.ID is
+'ID';
+
+comment on column FACTION_COUNT.FACTION_NAME is
+'Name';
+
+comment on column FACTION_COUNT.COUNT_FACTION_NAME is
+'Heroes per faction';
 
 -- ============================================================
 --   Table : HEROE                                        
@@ -75,7 +108,7 @@ comment on column FACTION.ERA is
 create table HEROE
 (
     ID          	 NUMERIC     	not null,
-    NAME        	 TEXT        	not null,
+    HEROE_NAME  	 TEXT        	not null,
     JOB         	 TEXT        	not null,
     FACTION     	 NUMERIC     	not null,
     constraint PK_HEROE primary key (ID)
@@ -84,7 +117,7 @@ create table HEROE
 comment on column HEROE.ID is
 'ID';
 
-comment on column HEROE.NAME is
+comment on column HEROE.HEROE_NAME is
 'Name';
 
 comment on column HEROE.JOB is

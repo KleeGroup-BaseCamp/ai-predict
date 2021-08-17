@@ -8,11 +8,13 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.ai.impl.structure.processor.ProcessorBuilderImpl;
-import io.vertigo.ai.structure.DatasetManager;
 import io.vertigo.ai.structure.dataset.Dataset;
+import io.vertigo.ai.structure.dataset.DatasetManager;
 import io.vertigo.ai.structure.processor.DatasetProcessingPlugin;
 import io.vertigo.ai.structure.processor.Processor;
 import io.vertigo.ai.structure.processor.ProcessorBuilder;
+import io.vertigo.ai.structure.processor.ProcessorTypes;
+import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
 
 public final class DatasetManagerImpl implements DatasetManager {
@@ -26,30 +28,37 @@ public final class DatasetManagerImpl implements DatasetManager {
 		
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ProcessorBuilder createBuilder() {
 		return new ProcessorBuilderImpl();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public <E extends Entity> Dataset<?> executeProcessing(Dataset<E> dataset,
+	public <E extends Entity, F extends DtObject> Dataset<?> executeProcessing(Dataset<E> inputDataset,
+			Dataset<F> outputDataset,
 			List<Processor> processors) {
 		
 		List<Map<String, Object>> sortList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> filterParam = new HashMap<String, Object>();
 		
-		Dataset<?> processDataset = dataset;
+		Dataset<E> processDataset = inputDataset;
 		
 		int count = 0;
 		for (Processor processor : processors) {
-			String type = processor.getProcessorType();
+			ProcessorTypes type = processor.getProcessorType();
 			Map<String, Object> params = processor.getProcessorParameters();
 			
 			switch (type) {
-				case "sort":
+				case SORT:
 					sortList.add(params);
 					break;
-				case "filter":
+				case FILTER:
 					filterParam = params;
 					break;
 				default:
@@ -61,20 +70,27 @@ public final class DatasetManagerImpl implements DatasetManager {
 					}
 					params.put("order", count++);
 					switch (type) {
-						case "select":
+						case SELECT:
 							processDataset = datasetProcessingPlugin.select(processDataset, params);
 							filterParam.clear();
 							sortList.clear();
 							break;
-						case "join":
+						case JOIN:
 							processDataset = datasetProcessingPlugin.join(processDataset, params);
 							filterParam.clear();
 							sortList.clear();
+							break;
+						case GROUPBY:
+							processDataset = datasetProcessingPlugin.group(processDataset, params);
+							filterParam.clear();
+							sortList.clear();
+						default :
 							break;
 					}
 			}
 			
 		}
+		processDataset = datasetProcessingPlugin.build(processDataset, outputDataset);
 		return processDataset;
 	}
 	

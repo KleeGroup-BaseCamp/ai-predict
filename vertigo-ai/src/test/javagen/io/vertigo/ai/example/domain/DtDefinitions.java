@@ -23,6 +23,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		EventType(io.vertigo.ai.example.telstra.domain.EventType.class),
 		/** Objet de données Faction. */
 		Faction(io.vertigo.ai.example.heroes.domain.Faction.class),
+		/** Objet de données FactionCount. */
+		FactionCount(io.vertigo.ai.example.heroes.domain.FactionCount.class),
 		/** Objet de données Heroe. */
 		Heroe(io.vertigo.ai.example.heroes.domain.Heroe.class),
 		/** Objet de données Iris. */
@@ -59,8 +61,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum EraFields implements DtFieldName<io.vertigo.ai.example.heroes.domain.Era> {
 		/** Propriété 'ID'. */
 		id,
+		/** Propriété 'Era ID'. */
+		eraId,
 		/** Propriété 'Name'. */
-		name	}
+		eraName	}
 
 	/**
 	 * Enumération des champs de EventType.
@@ -77,10 +81,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum FactionFields implements DtFieldName<io.vertigo.ai.example.heroes.domain.Faction> {
 		/** Propriété 'ID'. */
 		id,
+		/** Propriété 'Faction ID'. */
+		factionId,
 		/** Propriété 'Name'. */
-		name,
+		factionName,
 		/** Propriété 'Era ID'. */
 		era	}
+
+	/**
+	 * Enumération des champs de FactionCount.
+	 */
+	public enum FactionCountFields implements DtFieldName<io.vertigo.ai.example.heroes.domain.FactionCount> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Name'. */
+		factionName,
+		/** Propriété 'Heroes per faction'. */
+		countFactionName	}
 
 	/**
 	 * Enumération des champs de Heroe.
@@ -89,7 +106,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'ID'. */
 		id,
 		/** Propriété 'Name'. */
-		name,
+		heroeName,
 		/** Propriété 'Job'. */
 		job,
 		/** Propriété 'Faction ID'. */

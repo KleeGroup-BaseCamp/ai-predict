@@ -12,17 +12,16 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
  */
 @Generated
 @io.vertigo.datamodel.structure.stereotype.DataSpace("train")
-public final class Heroe implements Entity {
+public final class FactionCount implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	private String heroeName;
-	private String job;
-	private Integer faction;
+	private String factionName;
+	private Integer countFactionName;
 
 	/** {@inheritDoc} */
 	@Override
-	public UID<Heroe> getUID() {
+	public UID<FactionCount> getUID() {
 		return UID.of(this);
 	}
 	
@@ -48,58 +47,39 @@ public final class Heroe implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Name'.
-	 * @return String heroeName <b>Obligatoire</b>
+	 * @return String factionName <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyString", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
-	public String getHeroeName() {
-		return heroeName;
+	public String getFactionName() {
+		return factionName;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Name'.
-	 * @param heroeName String <b>Obligatoire</b>
+	 * @param factionName String <b>Obligatoire</b>
 	 */
-	public void setHeroeName(final String heroeName) {
-		this.heroeName = heroeName;
+	public void setFactionName(final String factionName) {
+		this.factionName = factionName;
 	}
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Job'.
-	 * @return String job <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Heroes per faction'.
+	 * @return Integer countFactionName <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyString", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Job")
-	public String getJob() {
-		return job;
+	@Field(smartType = "STyInt", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Heroes per faction")
+	public Integer getCountFactionName() {
+		return countFactionName;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Job'.
-	 * @param job String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Heroes per faction'.
+	 * @param countFactionName Integer <b>Obligatoire</b>
 	 */
-	public void setJob(final String job) {
-		this.job = job;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Faction ID'.
-	 * @return Integer faction <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyInt", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Faction ID")
-	public Integer getFaction() {
-		return faction;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Faction ID'.
-	 * @param faction Integer <b>Obligatoire</b>
-	 */
-	public void setFaction(final Integer faction) {
-		this.faction = faction;
+	public void setCountFactionName(final Integer countFactionName) {
+		this.countFactionName = countFactionName;
 	}
 	
 	/** {@inheritDoc} */

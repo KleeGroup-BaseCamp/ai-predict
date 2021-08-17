@@ -16,7 +16,8 @@ public final class Era implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	private String name;
+	private Integer eraId;
+	private String eraName;
 
 	/** {@inheritDoc} */
 	@Override
@@ -45,21 +46,40 @@ public final class Era implements Entity {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Era ID'.
+	 * @return Integer eraId
+	 */
+	@Field(smartType = "STyInt", label = "Era ID")
+	public Integer getEraId() {
+		return eraId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Era ID'.
+	 * @param eraId Integer
+	 */
+	public void setEraId(final Integer eraId) {
+		this.eraId = eraId;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Name'.
-	 * @return String name <b>Obligatoire</b>
+	 * @return String eraName <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyString", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
-	public String getName() {
-		return name;
+	public String getEraName() {
+		return eraName;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Name'.
-	 * @param name String <b>Obligatoire</b>
+	 * @param eraName String <b>Obligatoire</b>
 	 */
-	public void setName(final String name) {
-		this.name = name;
+	public void setEraName(final String eraName) {
+		this.eraName = eraName;
 	}
 	
 	/** {@inheritDoc} */
