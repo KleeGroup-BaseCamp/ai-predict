@@ -6,10 +6,12 @@ import java.util.Iterator;
 import io.vertigo.ai.example.heroes.HeroesDefinitionProvider;
 import io.vertigo.ai.example.heroes.HeroesPAO;
 import io.vertigo.ai.example.heroes.dao.EraDAO;
+import io.vertigo.ai.example.heroes.dao.FactionCountDAO;
 import io.vertigo.ai.example.heroes.dao.FactionDAO;
 import io.vertigo.ai.example.heroes.dao.HeroeDAO;
 import io.vertigo.ai.example.heroes.data.HeroesSmartTypes;
 import io.vertigo.ai.example.heroes.data.datageneration.HeroesGenerator;
+import io.vertigo.ai.example.heroes.domain.FactionCount;
 import io.vertigo.ai.example.iris.ItemDefinitionProvider;
 import io.vertigo.ai.example.iris.dao.IrisDAO;
 import io.vertigo.ai.example.iris.dao.IrisTrainDAO;
@@ -137,6 +139,7 @@ public final class MyNodeConfig {
 					.addComponent(FactionDAO.class)
 					.addComponent(EraDAO.class)
 					.addComponent(HeroesPAO.class)
+					.addComponent(FactionCountDAO.class)
 					.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
 							.addDefinitionResource("smarttypes", IrisSmartTypes.class.getName())
 							.addDefinitionResource("smarttypes", HeroesSmartTypes.class.getName())

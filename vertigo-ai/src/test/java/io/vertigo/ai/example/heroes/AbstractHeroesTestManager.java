@@ -6,10 +6,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.example.domain.DtDefinitions.HeroeFields;
+import io.vertigo.ai.example.heroes.dao.FactionCountDAO;
 import io.vertigo.ai.example.heroes.dao.FactionDAO;
 import io.vertigo.ai.example.heroes.dao.HeroeDAO;
 import io.vertigo.ai.example.heroes.data.datageneration.HeroesGenerator;
@@ -29,6 +31,7 @@ import io.vertigo.ai.structure.processor.ProcessorBuilder;
 import io.vertigo.ai.structure.processor.SortOrder;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -63,13 +66,17 @@ public abstract class AbstractHeroesTestManager {
 	
 	@Inject
 	private HeroesPAO heroesPAO;
+	
+	@Inject
+	private FactionCountDAO factionCountDAO;
 		
 	private AutoCloseableNode node;
 	
 	private DtDefinition heroeDtDefinition; 
 	private DtDefinition factionDtDefinition;
 	private DtDefinition factionCountDtDefinition;
-	private DtDefinition eraDtDefinition;
+	
+	
 	
 	protected final void init(final String datasetName) {
 		final DefinitionSpace definitionSpace = node.getDefinitionSpace();
@@ -78,7 +85,6 @@ public abstract class AbstractHeroesTestManager {
 		heroeDtDefinition = DtObjectUtil.findDtDefinition(Heroe.class);
 		factionDtDefinition = DtObjectUtil.findDtDefinition(Faction.class);
 		factionCountDtDefinition = DtObjectUtil.findDtDefinition(FactionCount.class);
-		eraDtDefinition = DtObjectUtil.findDtDefinition(Era.class);
 	}
 	
 	protected abstract void doSetUp();
@@ -114,80 +120,20 @@ public abstract class AbstractHeroesTestManager {
 		Dataset<Faction> factions = new DatasetImpl<Faction>(factionDtDefinition);
 		Dataset<FactionCount> factionCount = new DatasetImpl<FactionCount>(factionCountDtDefinition);
 		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
-		final Criteria<Heroe> criteria = Criterions.isLessThanOrEqualTo(HeroeFields.faction, 10);
+		final Criteria<Heroe> criteria = Criterions.isEqualTo(HeroeFields.faction, 1);
 		List<Processor> processors = processorBuilder.filter(criteria).select("heroeName,faction").join(factions, "factionId", "faction").groupBy("factionName", Agregator.COUNT).build();
-		
+		FactionCount factionCountItem;
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
 			datasetManager.executeProcessing(heroes, factionCount, processors);
+			factionCountItem = factionCountDAO.get(1);
 			transaction.commit();
 		};
 		
-	}
-	
-	/*
-	@Test
-	public void testSelect() {
-		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
-		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
-		List<Processor> processors = processorBuilder.select("heroeName,faction").build();
 		
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			datasetManager.executeProcessing(heroes, processors);
-			transaction.commit();
-		};
-	}
-	
-	@Test
-	public void testWhere() {
-		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
-		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
-		final Criteria<Heroe> criteria = Criterions.isEqualTo(HeroeFields.faction, 1001);
-		List<Processor> processors = processorBuilder.filter(criteria).select("heroeName,faction").build();
+		Assertions.assertEquals(4, factionCountItem.getCountFactionName());
+		Assertions.assertEquals("Old Republic", factionCountItem.getFactionName());
 		
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			
-			datasetManager.executeProcessing(heroes, processors);
-			transaction.commit();
-		};
 	}
-	
-	@Test
-	public void testSort() {
-		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
-		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
-		List<Processor> processors = processorBuilder.sort("faction", SortOrder.ASC).select("heroeName,faction").build();
-		
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			
-			datasetManager.executeProcessing(heroes, processors);
-			transaction.commit();
-		};
-	}
-	
-	@Test
-	public void testJoin() {
-		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
-		Dataset<Faction> factions = new DatasetImpl<Faction>(factionDtDefinition);
-		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
-		List<Processor> processors = processorBuilder.join(factions, "factionId", "faction").select("heroeName,factionName").build();
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			
-			datasetManager.executeProcessing(heroes, processors);
-			transaction.commit();
-		};
-	}
-	
-	@Test
-	public void testGroup() {
-		Dataset<Heroe> heroes = new DatasetImpl<Heroe>(heroeDtDefinition);
-		Dataset<Faction> factions = new DatasetImpl<Faction>(factionDtDefinition);
-		ProcessorBuilder processorBuilder = datasetManager.createBuilder();
-		List<Processor> processors = processorBuilder.join(factions, "factionId", "faction").groupBy("factionName", Aggregator.COUNT).build();
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			
-			datasetManager.executeProcessing(heroes, processors);
-			transaction.commit();
-		};
-	}*/
+
 }
 		
