@@ -1,0 +1,37 @@
+.bundle-card {
+  width: auto;
+  height: auto;
+}
+
+.bundle-items {
+  min-width: 425px;
+  width: auto;
+  height: auto;
+}
+
+.overview-card {
+  min-width: 200px;
+}
+
+.overview-items {
+  border-left: 2px solid;
+  border-bottom: 2px solid;
+  border-color: #2a9d8f;
+}
+
+.select-sort {
+  min-width: 150px;
+}
+
+.filter-items {
+  min-width: 150px;
+  margin-left: 10px;
+}
+
+.version-card:hover {
+  background-color: #e7e7e7;
+}
+
+.button {
+  max-width: 35px;
+}

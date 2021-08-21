@@ -1,142 +1,131 @@
-from django.shortcuts import render
-from django.http import Http404, JsonResponse
-from rest_framework import viewsets, status, views
+from django.http import JsonResponse
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 
+import logging
 import pandas as pd
-import json
-import numpy as np
-import shutil, os
+import shutil
+import os
 
-from AIPredict.apps.predict.models import Bundle
-from AIPredict.apps.predict.serializers import BundleSerializer
-from AIPredict.apps.predict.utils.files import upload_files, remove_files, get_model, build_bundle_path, get_bundle_item, get_framework, get_auto_deployed_bundles
-from AIPredict.apps.predict.utils.response import PredictResponseEncoder, parse_response
+from AIPredict.utils.version import VersionController
 from AIPredict.apps.predict.utils.predict import Predictor
-from AIPredict.apps.predict.validators import validate_file, validate_archive, validate_data
+from AIPredict.apps.predict.utils.deploy import BundleDeployer
+from AIPredict.utils.validators import DeployBundleValidator, DataValidator, BundleRequestValidator
 
-class DeployBundle(viewsets.ModelViewSet):
+from AIPredict.utils.requests import convert_request_data
 
-    queryset = Bundle.objects.all()
-    serializer_class = BundleSerializer
+logger = logging.getLogger(__name__)
+class DeployBundle(viewsets.ViewSet):
 
     def create(self, request):
-        #gets the file from the request
+        """
+        Handle a bundle importation request.
+        
+        Used by the AI Predict Manager UI.
+
+        Endpoint:
+            POST: deploy/
+        """
         try:
-            file = validate_file(request.FILES)
-            archive = validate_archive(file['archive'])
-            name, version = upload_files(archive)
+            filename, file = DeployBundleValidator(request.FILES).validate()
+            name, version = BundleDeployer(filename, file).deploy()
+            bundle = VersionController(name, version)
+            bundle.set_item("meta", "status", "deployed")
         except ValidationError as e:
-            #shutil.rmtree("./bundles/temp/")
-            #os.mkdir("./bundles/temp/")
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-
-        deploy_bundle = self.deploy(name, version)
-        return JsonResponse(deploy_bundle, status=status.HTTP_201_CREATED)
-    
-    def auto_deploy(self, request):
-        bundles = get_auto_deployed_bundles()
-        deploy_bundles = {"deployed_bundles": []}
-        for bundle in bundles:
-            try:
-                deploy_bundle = self.deploy(bundle[0], bundle[1], auto=True)
-                deploy_bundles["deployed_bundles"].append(deploy_bundle)
-                print(deploy_bundles)
-            except ValidationError as e:
-                return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                print(e)
-        return JsonResponse(deploy_bundles, status=status.HTTP_201_CREATED)
-
-    def deploy(self, name, version, auto=False):
-        serializer = self.get_serializer(data={"name":name, "version": version, "auto_deploy": auto})
-        # checks validity
-        serializer.is_valid(raise_exception=True)
-        # creates and save the bundle in the database
-        self.perform_create(serializer)
-        return serializer.data
+            shutil.rmtree("./bundles/temp/")
+            os.mkdir("./bundles/temp/")
+            logger.error("Bundle deployement failed : " + e)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
+        logger.info("The bundle %s v%s has been deployed successfully" %(name, version))
+        return JsonResponse(bundle.serialize(), status=status.HTTP_201_CREATED)
 
     def activate(self, request, *args, **kwargs):
-        # gets the request bundle version
-        bundle = kwargs["bundle"]
-        version = kwargs["version"]
-        # gets the instance to activate
-        to_update = Bundle.objects.filter(name=bundle, version=version)
-        # checks if the instance exists
-        if len(to_update) == 0:
-            return Response("The bundle %s v%s does not exist" %(bundle, version), status=status.HTTP_404_NOT_FOUND)
-        # checks if this bundle has already an active version and if so, deactivates it 
-        activated_instance = Bundle.objects.filter(name=bundle, activated=True)
-        if len(activated_instance) > 0:
-            activated_instance.update(activated=False)
-        # activates the instance
-        to_update.update(activated=True)
-        return Response(status=status.HTTP_200_OK)
+        """
+        Handle a bundle activation request.
+        
+        Used by the AI Predict Manager UI.
 
-    def destroy(self, request, *args, **kwargs):
-        # gets the request bundle version
-        bundle = kwargs["bundle"]
-        version = kwargs["version"]
-        # gets the instance to remove
-        to_remove = Bundle.objects.filter(name=bundle, version=version)
-        #checks if the instance 
-        if len(to_remove) == 0:
-            return Response("The bundle %s v%s does not exist" %(bundle, version), status=status.HTTP_404_NOT_FOUND)
-        # removes files from ./bundles
-        auto = to_remove[0].auto_deploy
-        path = build_bundle_path(name=bundle, version=version, auto=auto)
-        remove_files(bundle, path)
-        # removes the instance from the database
-        self.perform_destroy(to_remove)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        Endpoint:
+            PUT: activate/<str: bundle>/<int:version>/'
+        """
+        try:
+            BundleRequestValidator(True, **kwargs).validate()
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-class Prediction(views.APIView):
+        # gets the request bundle name and version
+        name = kwargs.pop("bundle")
+        version = kwargs.pop("version")
+        # Load bundle and activate it
+        bundle = VersionController(name, version)
+        bundle.activate()
+        return Response(bundle.serialize(), status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
-        # gets the request bundle version
-        bundle = kwargs["bundle"]
-        version = kwargs["version"]
-        instance = Bundle.objects.filter(name=bundle, version=version)[0]
-        if not instance.activated:
-            try:
-                activated_instance = Bundle.objects.filter(name=bundle, activated=True)[0]
-                return Response("The bundle %s v%s is not activated. Please activate it with /activate/%s/%s/ or use %s v%s." 
-                    %(bundle, version, bundle, version, bundle, activated_instance.version),
-                    status=status.HTTP_403_FORBIDDEN)
-            except IndexError:
-                return Response("The bundle %s has no activated version. Please use /activate/%s/%s/ to activate version %s" 
-                    %(bundle, bundle, version, version),
-                    status=status.HTTP_403_FORBIDDEN)
+
+class Prediction(viewsets.ViewSet):
+
+    def predict(self, request, *args, **kwargs):
+        """
+        Handle a prediction request.
+        
+        Used by the AI Predict Manager UI.
+
+        Endpoint:
+            POST: predict/<str: bundle>/<int:version>/'
+        
+        Response:
+            {
+                'predictionList':
+                [
+                    {
+                        'predictionLabel': 'Class1',
+                        'predictionProba': [0.7134958505630493, 0.0031012804247438908, 0.28340286016464233]
+                    }
+                ]
+            }
+        """
+        try:
+            BundleRequestValidator(True, **kwargs).validate()
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        # gets the request bundle name and version
+        name = kwargs.pop("bundle")
+        version = kwargs.pop("version")
+
+        bundle = VersionController(name, version)
+        if not bundle.is_active():
+            return Response("The bundle %s v%s is not activated. Please activate it with /activate/%s/%s/ to activate it."
+                            % (name, version, bundle, version),
+                            status=status.HTTP_403_FORBIDDEN)
 
         # gets the model and the preprocessing dictionnary
-        auto = instance.auto_deploy
-        path = build_bundle_path(name=bundle, version=version, auto=auto)
-        model = get_model(path)
-        preprocessing = get_bundle_item(path, "preprocessing")
-        algo = get_bundle_item(path, "algorithm")
-        if algo["type"] in ["Classification", "classification"]:
-            # sets up a predictor instance
-            predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model, labels=algo["labels"])
-        else:
-            predictor = Predictor(preprocessing=preprocessing, framework=get_framework(path), model=model)
-        
-        
-        #extracts data from the request
-        
-        body_unicode =request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        
-        data = pd.DataFrame(body)
+        model = bundle.get_model()
+        preprocessing = bundle.get_category("preprocessing")
+        predictor = Predictor(preprocessing=preprocessing, framework=bundle.get_item(
+            "meta", "framework"), model=model)
+        # extracts data from the request
+        # convert fields from camelCase to snake_case
+        request_data = convert_request_data(request.data)
+        logger.debug('request_data:' + str(request_data))
 
+        #data = pd.DataFrame(request.data)
+        data = pd.DataFrame(request_data)
         try:
-            data = validate_data(data, path)
+            DataValidator(data, bundle.get_bundle()).validate()
+            logger.debug('Data is valid')
         except ValidationError as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+        column = [col["name"] for col in sorted(bundle.get_item("dataset", "data_config"), key=lambda x: x["id"]) if not col["is_label"]]
+
+        data = data[column]
+
+        bundle.used()
         try:
             prediction = predictor.predict(data=data)
-            return JsonResponse(prediction)
+            return Response(prediction, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)

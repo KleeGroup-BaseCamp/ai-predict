@@ -1,0 +1,30 @@
+package io.vertigo.ai.example.iris
+
+/*
+create Task TkGetIris {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select * from IRIS
+             "
+    out dtcIris    {domain : DoDtIris         cardinality: "*" }
+} 
+*/
+
+
+/** 
+create Task TkCreateIris {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            INSERT INTO IRIS (ID, SEPALLENGHT, SEPALWIDTH, PETALLENGTH, PETALWIDTH, VARIETY) values (nextval('SEQ_EQUIPEMENT'), #sepalLength#, #sepalWidth#, #petalLength#, #petalWidth#, #variety#)   
+             "
+    in sepalLength    {domain : DoDecimal         cardinality: "1" }
+    in sepalWidth   {domain : DoDecimal         cardinality: "1" }
+    in petalLength    {domain : DoDecimal         cardinality: "1" }
+    in petalWidth   {domain : DoDecimal         cardinality: "1" }
+    in variety   {domain : DoLabel         cardinality: "1" }
+
+* 
+*/
+
+
+

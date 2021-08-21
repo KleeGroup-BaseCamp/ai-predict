@@ -1,34 +1,21 @@
-from AIPredict.apps.predict.utils.preprocessing import FeatureEngineering
+from AIPredict.utils.imports import *
+from AIPredict.utils.preprocessing import FeatureEngineering
 from AIPredict.apps.predict.utils.response import parse_response, PredictResponseEncoder
+
 import numpy as np
 import json
+import logging
 
-try:
-    import keras
-except:
-    keras = None
-try:
-    import sklearn
-except:
-    sklearn = None
-try:
-    import shap
-except:
-    shap = None
-try:
-    import xgboost
-except:
-    xgboost = None
+logger = logging.getLogger(__name__)
 
 class Predictor(object):
     """Wraps a model and a preprocessing dictionnary to 
     """
-    def __init__(self, preprocessing:dict, model, framework:str, labels=None):
+    def __init__(self, preprocessing:dict, model, framework:str):
 
         self.preprocessing = preprocessing
         self.model = model
         self.framework = framework
-        self.labels = labels
     
     def _apply_preprocessing(self, data):
         # applies the preprocessing dictionary to the input data
@@ -38,18 +25,19 @@ class Predictor(object):
     
     def _predict(self, data):
         #calls the predict moethod of the model if possible
+        logger.info('Pre processing ...')
         preprocessed_data = self._apply_preprocessing(data)
 
         if self.framework == "keras" and "predict" in dir(self.model):
+            logger.info('Predicting ...')
             raw_pred = self.model.predict(preprocessed_data)
             prediction = [np.argmax(pred) for pred in raw_pred]
 
         elif "predict" in dir(self.model):
+            logger.info('Predicting ...')
+            #For xgboost, data columns must be reordered here in the same order as the order used in train
             prediction = self.model.predict(preprocessed_data)
-    
-        if self.labels:
-            return [self.labels[str(pred)] for pred in prediction]
-        
+
         return prediction
 
     def _predict_proba(self, data):
@@ -75,7 +63,9 @@ class Predictor(object):
     def predict(self, data):
         res = {}
         #Basic Prediction
+        
         prediction = self._predict(data)
+        
         if all(not isinstance(pred, str) for pred in prediction):
             if len(np.shape(prediction))>1:
                 res["predictionVector"] = prediction
@@ -87,7 +77,9 @@ class Predictor(object):
         #Classes probabilities for classification
         res["predictionProba"] = self._predict_proba(data=data)
 
+
         #Prediction explanation (if the model allows it)
+        logger.info('explaining')
         try:
             explanation = self._explain_prediction(data).values
             if len(np.shape(explanation)) == 2:

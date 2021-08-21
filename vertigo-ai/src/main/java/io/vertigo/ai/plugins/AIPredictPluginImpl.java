@@ -1,62 +1,77 @@
+/**
+ * vertigo - application development platform
+ *
+ * Copyright (C) 2013-2021, Vertigo.io, team@vertigo.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.vertigo.ai.plugins;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.json.JSONConfiguration;
-
-import io.vertigo.ai.impl.PredictionPlugin;
-import io.vertigo.ai.predict.models.PredictResponse;
+import io.vertigo.ai.impl.server.PredictionPlugin;
+import io.vertigo.ai.server.models.PredictResponse;
+import io.vertigo.ai.server.models.ScoreResponse;
+import io.vertigo.ai.server.models.TrainResponse;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.KeyConcept;
 
+/**
+ * Implémentation standard du plugin de connection à AIPredict.
+ */
 public class AIPredictPluginImpl implements PredictionPlugin {
-	
-	private static final Logger LOG = LogManager.getLogger(AIPredictPluginImpl.class);
-	
+		
 	private String server;
+	
+	@Inject
+	private AIPredictClientWebServices aIPredictClientWebServices;
 	
 	@Inject
 	public AIPredictPluginImpl(@ParamValue("server.name") String serverName) {
 		this.server = serverName;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept, D extends DtObject> PredictResponse predict(List<? extends DtObject> data, String modelName, Integer version) {
-		
-		ClientConfig clientConfig = new DefaultClientConfig();
-		 
-        clientConfig.getFeatures().put(
-                JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+	public <D extends DtObject> PredictResponse predict(List<D> data, String modelName, Integer version) {
+		return aIPredictClientWebServices.predict((List<DtObject>) data, modelName, version);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public TrainResponse train(String modelName, Integer version) {		
+		return aIPredictClientWebServices.train(modelName, version);
+	}
 
-        Client client = Client.create(clientConfig);
+	/** {@inheritDoc} */
+	@Override
+	public ScoreResponse score(String modelName, Integer version) {
+		return aIPredictClientWebServices.score(modelName, version);
+	}
 
-        WebResource webResource = client
-                .resource(server+modelName+"/"+version.toString()+"/");
-
-        ClientResponse response = webResource.accept("application/json")
-                .type("application/json").post(ClientResponse.class, data.toString());
-
-        if (response.getStatus() != 200) {
-        	LOG.error("Prediction error :" + response.getStatus());
-            throw new RuntimeException("Failed : HTTP error code : "+ response.getStatus());
-        }
-
-        PredictResponse output = response.getEntity(PredictResponse.class);
-        //response.close();
-
-		return output;
-		
+	/** {@inheritDoc} */
+	@Override
+	public Integer delete(String modelName, Integer version) {
+		return aIPredictClientWebServices.delete(modelName, version);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void activate(String modelName, Integer version) {
+		aIPredictClientWebServices.activate(modelName, version);
 	}
 	
 }

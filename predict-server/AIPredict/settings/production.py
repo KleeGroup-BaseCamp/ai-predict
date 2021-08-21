@@ -1,4 +1,6 @@
 from pathlib import Path
+import os, json
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,8 +30,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'AIPredict.apps.predict.apps.AIPredictConfig',
+    'AIPredict.apps.predict.apps.PredictConfig',
+    'AIPredict.apps.train.apps.TrainConfig',
+    'AIPredict.apps.core.apps.CoreConfig',
     'rest_framework',
+    'django_q',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'AIPredict.urls'
@@ -105,23 +112,61 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': '/path/to/django/warn.log',
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
         },
     },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter' : 'verbose'
+        }
+    },
     'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'WARN',
-            'propagate': True,
+        'AIPredict.apps': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'INFO',
         },
     },
 }
+
+
+Q_CLUSTER = {
+    'name': 'DjangORM',
+    'workers': 4,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default'
+}
+
+
+ALLOWED_HOSTS=['http://localhost:8081', 'http://localhost:8080']
+if os.getenv('ALLOWED_HOSTS') is not None:
+    ALLOWED_HOSTS.append(os.getenv('ALLOWED_HOSTS'))
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8081',
+    'http://localhost:8080',
+)
+
+#Bundle upload path
+STATIC_ROOT = Path("frontend", "dist")
+train_db_path = Path("conf", "train_db.json")
+with open(train_db_path, "r") as train_db:
+    TRAIN_DB = json.load(train_db)

@@ -1,4 +1,5 @@
 import os
+import socket
 from AIPredict.settings.production import *
 
 TMP_PATH = os.path.abspath(os.path.join(BASE_DIR, 'tmp'))
@@ -10,25 +11,28 @@ SECRET = '42'
 
 INTERNAL_IPS = ('127.0.0.1',)
 ALLOWED_HOSTS.append('127.0.0.1')
+ALLOWED_HOSTS.append('localhost')
+ALLOWED_HOSTS.append('172.17.0.1')
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 
-import os
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+TRAIN_DB = {
+    'traindb' : 
+        {
+            "sql" : "postgresql",
+            "username" : "postgres",
+            "password" : "admin",
+            "host" : "localhost",
+            "keyspace" : "traindb"
         },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
-    },
+    'cassandra_spark' : 
+        {
+            "username" : "cassandra",
+            "password" : "cassandra",
+            "keyspace" : "traindb",
+            "cluster" : [socket.gethostbyname(socket.gethostname())]
+        }
 }
