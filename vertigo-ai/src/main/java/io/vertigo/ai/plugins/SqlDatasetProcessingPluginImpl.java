@@ -337,7 +337,6 @@ public final class SqlDatasetProcessingPluginImpl
 	
 	private <E extends Entity> String convertCriteriaToSql(Criteria<E> criteria) {
 		final Tuple<String, CriteriaCtx> tuple = criteria.toStringAnCtx(criteriaEncoder);
-		System.out.println(tuple);
 		criteriaCtx = tuple.getVal2();
 		return tuple.getVal1();
 	}
