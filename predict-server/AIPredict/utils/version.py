@@ -11,7 +11,8 @@ import numpy as np
 import logging
 
 from AIPredict.utils.imports import *
-from AIPredict.settings.production import BUNDLE_PATH
+
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ class VersionController:
         # set basic parameters
         self.name = name
         self.version = version
-        self.path = Path(".", BUNDLE_PATH, "standard",
+        self.path = Path(".", settings.BUNDLE_PATH, "standard",
                          name, str("v"+str(version)))
 
         # extract bundle
@@ -124,7 +125,7 @@ class VersionController:
         self.set_item("algorithm", "status", "deployed")
 
     def activate(self):
-        root_path = Path(BUNDLE_PATH, "standard", self.name)
+        root_path = Path(settings.BUNDLE_PATH, "standard", self.name)
         versions = os.listdir(self.path.parent)
         for version in versions:
             v = int(version[1:])

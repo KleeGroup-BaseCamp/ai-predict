@@ -2,10 +2,12 @@ package io.vertigo.ai.structure.processor;
 
 public enum ProcessorTypes {
 
-	SORT,
 	FILTER,
-	SELECT,
 	GROUPBY,
-	JOIN;
-	
+	JOIN,
+	PIVOT,
+	SELECT,
+	SORT,
+	WINDOW;
+
 }

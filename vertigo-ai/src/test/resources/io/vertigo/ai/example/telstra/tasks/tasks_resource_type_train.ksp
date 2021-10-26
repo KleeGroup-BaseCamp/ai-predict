@@ -1,0 +1,32 @@
+package io.vertigo.ai.example.telstra.train
+
+
+create Task TkLoadResourceType {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select * from RESOURCE_TYPE where ID in (#resourceTypeIds.rownum#);
+             "
+    in resourceTypeIds  	   	{domain : DoId         			cardinality: "*" }
+    out dtcResourceTypeTrain	{domain : DoDtResourceTypeTrain	cardinality: "*" }
+}
+
+
+create Task TkBulkCreateResourceTypeTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    storeName : "train"
+    request : "
+            INSERT INTO RESOURCE_TYPE_TRAIN (ID, CODE, RESOURCE_TYPE) values (#resourceTypeTrainList.id#, #resourceTypeTrainList.code#, #resourceTypeTrainList.resourceType#)   
+             "
+    in resourceTypeTrainList    {domain : DoDtResourceTypeTrain         cardinality: "*" }
+}
+
+
+create Task TkRemoveResourceTypeTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE RESOURCE_TYPE_TRAIN;
+             "
+}
+
+

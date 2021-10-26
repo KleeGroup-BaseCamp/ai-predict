@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Tuple
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.conf import settings
 
-from AIPredict.settings.production import BUNDLE_PATH
 from AIPredict.utils.validators import BundleCreationValidator
 
 
@@ -19,7 +19,7 @@ class BundleDeployer:
         self.filename = filename
 
         self.id = uuid.uuid4()
-        self.temp_path = Path(BUNDLE_PATH, "temp", str(self.id))
+        self.temp_path = Path(settings.BUNDLE_PATH, "temp", str(self.id))
 
         self.name = None
         self.version = None

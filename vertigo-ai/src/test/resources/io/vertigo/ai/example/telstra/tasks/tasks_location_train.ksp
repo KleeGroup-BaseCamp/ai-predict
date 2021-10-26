@@ -1,0 +1,31 @@
+package io.vertigo.ai.example.telstra.train
+
+
+create Task TkLoadLocation {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select * from LOCATION where ID in (#locationIds.rownum#);
+             "
+    in locationIds  	   {domain : DoId         	cardinality: "*" }
+    out dtcLocationTrain   {domain : DoDtLocationTrain  cardinality: "*" }
+}
+
+create Task TkBulkCreateLocationTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    storeName : "train"
+    request : "
+            INSERT INTO LOCATION_TRAIN (ID, CODE, LOCATION, SEVERITY_FAULT) values (#locationTrainList.id#, #locationTrainList.code#, #locationTrainList.location#, #locationTrainList.severityFault#)   
+             "
+    in locationTrainList    {domain : DoDtLocationTrain         cardinality: "*" }
+}
+
+
+create Task TkRemoveLocationTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE LOCATION_TRAIN;
+             "
+}
+
+

@@ -1,0 +1,77 @@
+package io.vertigo.ai.example.telstra.domain
+
+
+create DtDefinition DtLocationTrain {
+	stereotype: "Entity"
+	storeName: "train"
+    id id {domain: DoId label:"ID"}
+    field code {domain: DoInteger label:"Code"}
+    field location {domain: DoLabel label:"Location" cardinality:"1"}
+    field severityFault {domain: DoInteger label:"Severity Fault" cardinality:"1"}
+}
+
+create DtDefinition DtLogFeatureTrain {
+	stereotype: "Entity"
+	storeName: "train"
+    id id {domain: DoId label:"ID" }
+    field code {domain: DoInteger label:"Code"}
+    field logFeature {domain: DoLabel label:"Log Feature" cardinality:"1"}
+    field volume {domain: DoInteger label:"Volume" cardinality:"1"}
+}
+
+create DtDefinition DtResourceTypeTrain {
+	stereotype: "StaticMasterData"
+	storeName: "train"
+    id id {domain: DoId label:"ID" }
+    field code {domain: DoInteger label:"Code"}
+    field resourceType {domain: DoLabel label:"Resource Type" cardinality:"1"}
+}
+
+create DtDefinition DtSeverityTypeTrain {
+	stereotype: "StaticMasterData"
+	storeName: "train"
+    id id {domain: DoId label:"ID"}
+    field code {domain: DoInteger label:"Code"}
+    field severityType {domain: DoLabel label:"Severity Type" cardinality:"1"}
+}
+
+create DtDefinition DtEventTypeTrain {
+	stereotype: "StaticMasterData"
+	storeName: "train"
+    id id {domain: DoId label:"ID"}
+    field code {domain: DoInteger label:"Code"}
+    field eventType {domain: DoLabel label:"Event Type" cardinality:"1"}
+}
+
+
+create DtDefinition DtTelstraTrain {
+	stereotype: "Entity"
+	storeName: "train"
+    id id {domain: DoId label:"ID" }
+	field code {domain: DoInteger label:"code" }
+	field codeCount {domain: DoInteger label:"code_count"}
+	
+	field logFeature {domain: DoLabel label:"log_feature"}
+	field volume {domain: DoInteger label:"volume"}
+	field severityFault {domain: DoInteger label:"severity_fault"}
+	
+	field winLocationVolumeSum {domain: DoInteger label:"win_location_volume_sum"}
+	field winLocationVolumeAvg {domain: DoInteger label:"win_location_volume_avg"}
+	field winLocationVolumeMin {domain: DoInteger label:"win_location_volume_min"}
+	field winLocationVolumeMax {domain: DoInteger label:"win_location_volume_max"}
+	field winLocationVolumeCount {domain: DoInteger label:"win_location_volume_count"}
+	
+    field countFeature204 {domain: DoInteger label:"count_feature_204"}
+    field countFeature205 {domain: DoInteger label:"count_feature_205"}
+    field severityType {domain: DoLabel label:"severity_type"}
+    field sumFeature204Volume {domain: DoInteger label:"sum_feature_204_volume"}
+    field sumFeature205Volume {domain: DoInteger label:"sum_feature_205_volume"}
+    field avgFeature204Volume {domain: DoInteger label:"avg_feature_204_volume"}
+    field avgFeature205Volume {domain: DoInteger label:"avg_feature_205_volume"}
+    field minFeature204Volume {domain: DoInteger label:"min_feature_204_volume"}
+    field minFeature205Volume {domain: DoInteger label:"min_feature_205_volume"}
+    field maxFeature204Volume {domain: DoInteger label:"max_feature_204_volume"}
+    field maxFeature205Volume {domain: DoInteger label:"max_feature_205_volume"}
+    field countFeature204Volume {domain: DoInteger label:"count_feature_204_volume"}
+    field countFeature205Volume {domain: DoInteger label:"count_feature_205_volume"}
+}

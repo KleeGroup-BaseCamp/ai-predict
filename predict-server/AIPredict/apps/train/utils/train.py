@@ -1,10 +1,18 @@
 from django_q.tasks import AsyncTask
 import importlib
 
+# import the logging library
+import logging
+
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 
+import numpy as np
+
 from AIPredict.utils.preprocessing import FeatureEngineering
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def build_model(package:str, model_name:str):
     i = importlib.import_module(package)
@@ -19,14 +27,18 @@ def apply_preprocessing(X, y, preprocessing):
 
 def sync_train(package:str, model_name:str, X, y, hyperparameters:dict, metrics:str, n_jobs:int=None, cv:int=None, grid_search:bool=False, *args, **kwargs):
     try:
+        logger.info("Loading %s %s", package, model_name)
         modelBase = build_model(package, model_name)
     except Exception as e:
         raise Exception("The given module %s.%s cannot be found on the server" %(package, model_name))
     if grid_search:
+        logger.info("GridSearch CrossValidation:%s hyperparameters:%s", cv, hyperparameters)
         model = GridSearchCV(estimator=modelBase(), param_grid=hyperparameters, scoring=metrics, n_jobs=n_jobs, cv=cv)
     else:
+        logger.info("No GridSearch hyperparameters:%s", hyperparameters)
         model = modelBase(**hyperparameters)
     try:
+        #logger.info(np.where(np.isnan(X)))
         model = model.fit(X, y)
     except Exception as e:
         raise Exception("An error occured during training. See logs for more details")

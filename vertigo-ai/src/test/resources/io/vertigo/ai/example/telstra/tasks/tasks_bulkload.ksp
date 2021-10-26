@@ -1,0 +1,41 @@
+package io.vertigo.ai.example.telstra
+
+create Task TkBulkCreateEventType {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    request : "
+            INSERT INTO EVENT_TYPE (ID, CODE, EVENT_TYPE) values (nextval('SEQ_EVENT_TYPE'), #eventTypeList.code#, #eventTypeList.eventType#)   
+             "
+    in eventTypeList    {domain : DoDtEventType         cardinality: "*" }
+}
+
+create Task TkBulkCreateLocation {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    request : "
+            INSERT INTO LOCATION (ID, CODE, LOCATION, SEVERITY_FAULT) values (nextval('SEQ_LOCATION'), #locationList.code#, #locationList.location#, #locationList.severityFault#)   
+             "
+    in locationList    {domain : DoDtLocation         cardinality: "*" }
+}
+
+create Task TkBulkCreateLogFeature {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    request : "
+            INSERT INTO LOG_FEATURE (ID, CODE, LOG_FEATURE, VOLUME) values (nextval('SEQ_LOG_FEATURE'), #logFeatureList.code#, #logFeatureList.logFeature#, #logFeatureList.volume#)   
+             "
+    in logFeatureList    {domain : DoDtLogFeature         cardinality: "*" }
+}
+
+create Task TkBulkCreateResourceType {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    request : "
+            INSERT INTO RESOURCE_TYPE (ID, CODE, RESOURCE_TYPE) values (nextval('SEQ_RESOURCE_TYPE'), #resourceTypeList.code#, #resourceTypeList.resourceType#)   
+             "
+    in resourceTypeList    {domain : DoDtResourceType         cardinality: "*" }
+}
+
+create Task TkBulkCreateSeverityType {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    request : "
+            INSERT INTO SEVERITY_TYPE (ID, CODE, SEVERITY_TYPE) values (nextval('SEQ_SEVERITY_TYPE'), #severityTypeList.code#, #severityTypeList.severityType#)   
+             "
+    in severityTypeList    {domain : DoDtSeverityType         cardinality: "*" }
+}

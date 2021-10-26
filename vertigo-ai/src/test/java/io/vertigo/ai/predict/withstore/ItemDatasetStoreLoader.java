@@ -9,7 +9,7 @@ import io.vertigo.ai.predict.data.domain.boston.BostonItem;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionItem;
 import io.vertigo.ai.structure.dataset.DatasetManagerOld;
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
-import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.dataset.models.DatasetOpeOld;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.ai.structure.row.models.Row;
@@ -39,12 +39,12 @@ public final class ItemDatasetStoreLoader extends AbstractSqlDatasetLoader<Long,
 	}
 
 	@Override
-	public Dataset loadData(RowChunk<BostonRegressionItem> itemChunk, String datasetName) {
+	public DatasetOpeOld loadData(RowChunk<BostonRegressionItem> itemChunk, String datasetName) {
 		final DatasetDefinition datasetDefinition = datasetManager.findDatasetDefinition(datasetName);
 		final RowDefinition datasetItemDefinition = datasetManager.findFirstRowDefinitionByKeyConcept(BostonItem.class);
 		final Class<?> clazz = itemChunk.getRowClass();
 		try (final VTransactionWritable tx = getTransactionManager().createCurrentTransaction()) {
-			final Dataset result = new Dataset(clazz, datasetDefinition);
+			final DatasetOpeOld result = new DatasetOpeOld(clazz, datasetDefinition);
 			for (final BostonRegressionItem item : loadItems(itemChunk)) {
 				final UID<BostonRegressionItem> uid = item.getUID();
 				result.append(new Row(item, uid, datasetItemDefinition));

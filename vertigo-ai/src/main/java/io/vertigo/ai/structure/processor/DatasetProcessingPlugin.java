@@ -35,7 +35,25 @@ public interface DatasetProcessingPlugin extends Plugin {
 	 * @return the resulting dataset
 	 */
 	<E extends Entity> Dataset<E> group(Dataset<E> dataset, Map<String, Object> params);
-
+	
+	/**
+	 * 
+	 * @param <E>
+	 * @param dataset
+	 * @param params
+	 * @return
+	 */
+	<E extends Entity> Dataset<E> pivot(Dataset<E> dataset, Map<String, Object> params);
+	
+	/**
+	 * 
+	 * @param <E>
+	 * @param processDataset
+	 * @param params
+	 * @return
+	 */
+	<E extends Entity> Dataset<E> window(Dataset<E> processDataset, Map<String, Object> params);
+	
 	/**
 	 * Build the dataset from an intermediate dataset
 	 * @param <E> the dataset type
@@ -44,4 +62,5 @@ public interface DatasetProcessingPlugin extends Plugin {
 	 * @return the outputDataset dataset
 	 */
 	<E extends Entity, F extends DtObject> Dataset<E> build(Dataset<E> inputDataset, Dataset<F> outputDataset);
+
 }

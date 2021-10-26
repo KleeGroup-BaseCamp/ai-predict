@@ -1,5 +1,6 @@
 import pandas as pd
-from AIPredict.settings.development import TRAIN_DB
+from django.conf import settings
+
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.query import SimpleStatement
@@ -10,7 +11,7 @@ def pandas_factory(colnames, rows):
 
 def cassandra_connect(db_name:str, table:str, fetch_size:int):
     #get database connection parameters
-    database = TRAIN_DB[db_name]
+    database = settings.TRAIN_DB[db_name]
     #set credentials
     credential = PlainTextAuthProvider(username=database["username"], password=database["password"])
     #initialize connection

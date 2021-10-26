@@ -1,5 +1,5 @@
 from AIPredict.utils.parsers import ModelJSONEncoder, TrainingParser
-from AIPredict.utils.preprocessing import FeatureEngineering, pick_encoder_from_label
+from AIPredict.utils.preprocessing import FeatureEngineering, pick_encoder_from_label, pick_imputer_from_label
 from AIPredict.utils.version import VersionController
 from AIPredict.apps.train.utils.files import save, save_config, create_folder
 from AIPredict.apps.train.utils.tools import get_data, train_response, score_response
@@ -10,6 +10,7 @@ from AIPredict.utils.models import get_major_parameters
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from django.core.validators import ValidationError
+from django.conf import settings
 
 import json
 import time
@@ -17,6 +18,7 @@ import logging
 import shap
 import numpy as np
 
+import traceback
 # import the logging library
 import logging
 
@@ -126,38 +128,39 @@ class TrainModel(viewsets.ViewSet):
         logger.info('config["dataset"]:' + str(config["dataset"]))
         try:
             X_train, y_train = get_data(config["dataset"])
-            logger.info("Data extracted")
+            logger.info("Training data loaded")
         except Exception as e:
             logger.error("Cannot extract data from the database: " + str(e))
             return Response({"error": "Cannot extract data from the database"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            logger.info("Validating Train Data")
             TrainDataValidator( X_train, y_train, config).validate()
         except ValidationError as e:
             return Response({"error": e}, status=status.HTTP_406_NOT_ACCEPTABLE)
         # configure preprocessing
         try:
+            logger.info("Starting preprocessing training data")
             X_fe = FeatureEngineering(data=X_train)
             y_fe = FeatureEngineering(data=y_train)
             for feature in config["dataset"]["data_config"]:
                 if feature["preprocessing"] != "":
                     if feature["is_label"]:
-                        y_fe.add(feature["name"], pick_encoder_from_label(
-                        feature["preprocessing"]))
+                        y_fe.add(feature["name"], pick_encoder_from_label(feature["preprocessing"]), feature.get("ifna") )
                     else:
-                        X_fe.add(feature["name"], pick_encoder_from_label(
-                            feature["preprocessing"]))
+                        X_fe.add(feature["name"], pick_encoder_from_label(feature["preprocessing"]), feature.get("ifna") )
             preprocessing = {}
             preprocessing.update(X_fe.get_bundle())
             preprocessing.update(y_fe.get_bundle())
             config["preprocessing"] = preprocessing
+            logger.info("Transform Preprocess")
             X_fe.transform()
             y_fe.transform()
             X_process = X_fe.get_data()
             y_process = y_fe.get_data()
             logger.info("Preprocessing applyed")
         except Exception as e:
-            logger.error("Cannot apply preprocessing properly: " + str(e))
+            logger.error("Cannot apply preprocessing properly: " + str(e) + " " + traceback.print_exc())
             return Response({"error": "Cannot apply preprocessing properly. See logs for details"}, status=status.HTTP_400_BAD_REQUEST)
 
         # train
@@ -187,51 +190,53 @@ class TrainModel(viewsets.ViewSet):
             "time": t, "x_shape": X_process.shape, "y_shape": y_process.shape}
         config["training_data"] = training_data
 
-        logger.info("Training succeeded. Starting explanation computation.")
+        logger.info("Training succeeded.")
         # explanation
         # init explanation
         if grid_search:
             estimator = model.best_estimator_
         else:
             estimator = model
-        # compute features importance
-        if "predict_proba" in dir(estimator):
-            try:
-                explainer = shap.KernelExplainer(estimator.predict_proba, X_process)
-            except:
-                explainer = shap.KernelExplainer(estimator.predict, X_process)
-        else:
-            explainer = shap.KernelExplainer(model.predict, X_process)
-        shap_values = np.asarray(explainer.shap_values(X_process))
-        # compute features importance
-        if len(shap_values.shape) == 2:
-            shap_exp =np.mean(np.absolute(shap_values), 0)
-            exp_array = shap_exp
-        elif len(shap_values.shape) == 3:
-            shap_exp = []
-            shap_values_transpose = shap_values
-            for i in range(len(shap_values_transpose)):
-                shap_exp.append(
-                    np.mean(np.absolute(shap_values_transpose[i]), 0))
-            exp_array = np.sum(shap_exp, 0)
+        if (settings.FEATURES_FLAGS.get('explanation', True)):
+            logger.info("Starting explanation computation.")
+            # compute features importance
+            if "predict_proba" in dir(estimator):
+                try:
+                    explainer = shap.KernelExplainer(estimator.predict_proba, X_process)
+                except:
+                    explainer = shap.KernelExplainer(estimator.predict, X_process)
+            else:
+                explainer = shap.KernelExplainer(model.predict, X_process)
+            shap_values = np.asarray(explainer.shap_values(X_process))
+            # compute features importance
+            if len(shap_values.shape) == 2:
+                shap_exp =np.mean(np.absolute(shap_values), 0)
+                exp_array = shap_exp
+            elif len(shap_values.shape) == 3:
+                shap_exp = []
+                shap_values_transpose = shap_values
+                for i in range(len(shap_values_transpose)):
+                    shap_exp.append(
+                        np.mean(np.absolute(shap_values_transpose[i]), 0))
+                exp_array = np.sum(shap_exp, 0)
 
-        # sort features
-        tuples_exp = sorted(
-            zip(exp_array, X_train.columns), reverse=True)
-        values = []
-        feature_names = []
-        for value, name in tuples_exp:
-            values.append(float(value))
-            feature_names.append(name)
-        config["explanation"] = {
-            "feature": feature_names, "importance": values}
-        logger.info("Explanation successfully computed. Start model saving.")
-        #set moajor parameters
+            # sort features
+            tuples_exp = sorted(
+                zip(exp_array, X_train.columns), reverse=True)
+            values = []
+            feature_names = []
+            for value, name in tuples_exp:
+                values.append(float(value))
+                feature_names.append(name)
+            config["explanation"] = {"feature": feature_names, "importance": values}
+            logger.info("Explanation successfully computed. Start model saving.")
+
+        #set major parameters
         config["major_parameters"] = get_major_parameters(package, model_name, model, grid_search)
         config["use"] = 0
+        logger.info("Saving model.")
         # save model
-        path, name, version = save(
-            model, config, config["meta"]["version"], score)
+        path, name, version = save(model, config, config["meta"]["version"], score)
         response = train_response(time=t, modelName=name, version=version,
                                   status="deployed", response="Trained in %ds" % t, score=score)
         logger.info("Model successfully saved.")

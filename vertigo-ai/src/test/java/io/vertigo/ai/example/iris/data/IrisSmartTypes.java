@@ -5,11 +5,13 @@ import java.math.BigDecimal;
 import io.vertigo.basics.formatter.FormatterDefault;
 import io.vertigo.datamodel.smarttype.annotations.Formatter;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
+import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
 
 public enum IrisSmartTypes {
 
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)
+	@SmartTypeProperty(property = "storeType", value = "INTEGER")
 	Integer,
 	
 	@SmartTypeDefinition(Double.class)
@@ -22,10 +24,17 @@ public enum IrisSmartTypes {
 	
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
+	@SmartTypeProperty(property = "storeType", value = "VARCHAR(100)")
 	Label,
 	
 	@SmartTypeDefinition(Long.class)
 	@Formatter(clazz = FormatterDefault.class)
+	@SmartTypeProperty(property = "storeType", value = "NUMERIC")
 	Id,
+	
+	@SmartTypeDefinition(String.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@SmartTypeProperty(property = "storeType", value = "VARCHAR(100)")
+	Code,
 
 }

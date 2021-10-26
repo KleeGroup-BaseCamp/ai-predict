@@ -4,7 +4,6 @@ import java.util.List;
 
 import io.vertigo.ai.structure.dataset.Dataset;
 import io.vertigo.datamodel.criteria.Criteria;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.model.Entity;
 
 public interface ProcessorBuilder {
@@ -57,6 +56,25 @@ public interface ProcessorBuilder {
 	 * @param aggType the agregation type
 	 * @return this ProcessorBuilder
 	 */
-	<E extends Entity> ProcessorBuilder groupBy(final String field, Agregator... aggType);
+	<E extends Entity> ProcessorBuilder groupBy(final String field, AgregatorType... aggType);
+
 	
+	/**
+	 * Add a pivot processor to the processing list
+	 * @param <E> Dataset object type
+	 * @param field the field to group the dataset by
+	 * @param aggType the agregation type
+	 * @return this ProcessorBuilder
+	 */
+	<E extends Entity> ProcessorBuilder pivot(final String pivotColumn, final List<String> pivotStaticValues, final List<String> rowIdfields, List<Agregator> aggs);
+
+	/**
+	 * Add a pivot processor to the processing list
+	 * @param <E> Dataset object type
+	 * @param field the field to group the dataset by
+	 * @param aggType the agregation type
+	 * @return this ProcessorBuilder
+	 */
+	<E extends Entity> ProcessorBuilder window(final List<String> fields, final List<Window> windows, List<Agregator> aggs);
+
 }

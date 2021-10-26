@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.vertigo.ai.structure.dataset.DatasetManagerOld;
-import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.dataset.models.DatasetOpeOld;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.mlmodel.ModelManager;
 import io.vertigo.ai.predict.data.domain.boston.BostonRegressionDatabase;
@@ -124,7 +124,7 @@ public abstract class AbstractPredictionManagerStoreTest {
 	public void testPredictWithStore() {
 		final ItemDatasetStoreLoader loader = new ItemDatasetStoreLoader(taskManager, datasetManager, transactionManager);
 		RowChunk<BostonRegressionItem> chunk = new RowChunk<BostonRegressionItem>(uids, BostonRegressionItem.class);
-		Dataset dataset = loader.loadData(chunk, DS_DATASET);
+		DatasetOpeOld dataset = loader.loadData(chunk, DS_DATASET);
 		PredictResponse response = predictionManager.predict(dataset.collect(), "boston-regression", 0);
 		Assertions.assertEquals(BigDecimal.valueOf(25.175095544577786), response.getPredictionList().get(0).getPredictionNVector().get(0));
 

@@ -5,7 +5,6 @@ import java.util.List;
 import io.vertigo.ai.structure.dataset.Dataset;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.Entity;
 
 public final class DatasetImpl<E extends DtObject> implements Dataset<E> {
 	

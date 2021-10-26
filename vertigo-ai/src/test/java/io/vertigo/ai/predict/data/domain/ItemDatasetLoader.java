@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import io.vertigo.ai.impl.structure.datasetInMemory.loader.AbstractDatasetLoader;
 import io.vertigo.ai.structure.dataset.DatasetManagerOld;
 import io.vertigo.ai.structure.dataset.definitions.DatasetDefinition;
-import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.dataset.models.DatasetOpeOld;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.ai.structure.row.models.Row;
@@ -53,12 +53,12 @@ public class ItemDatasetLoader<T extends TestItems> extends AbstractDatasetLoade
 	}
 	
 	@Override
-	public Dataset loadData(final RowChunk<T> recordChunk, final String datasetName) {
+	public DatasetOpeOld loadData(final RowChunk<T> recordChunk, final String datasetName) {
 		Assertion.check().isNotNull(itemDatabase, "itemDataBase not bound");
 		//-----
 		final DatasetDefinition datasetDefinition = datasetManager.findDatasetDefinition(datasetName);
 		final Class<?> clazz = recordChunk.getRowClass();
-		final Dataset dataset = new Dataset(clazz, datasetDefinition);
+		final DatasetOpeOld dataset = new DatasetOpeOld(clazz, datasetDefinition);
 		final Map<Long, T> itemPerId = new HashMap<>();
 		for (final T item : itemDatabase.getAllItems()) {
 			itemPerId.put(item.getId(), item);

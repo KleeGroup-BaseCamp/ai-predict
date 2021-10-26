@@ -1,0 +1,32 @@
+package io.vertigo.ai.example.telstra.train
+
+
+create Task TkLoadSeverityType {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select * from SEVERITY_TYPE where ID in (#severityTypeIds.rownum#);
+             "
+    in severityTypeIds  	   	{domain : DoId         			cardinality: "*" }
+    out dtcSeverityTypeTrain	{domain : DoDtSeverityTypeTrain	cardinality: "*" }
+}
+
+
+create Task TkBulkCreateSeverityTypeTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    storeName : "train"
+    request : "
+            INSERT INTO SEVERITY_TYPE_TRAIN (ID, CODE, SEVERITY_TYPE) values (#severityTypeTrainList.id#, #severityTypeTrainList.code#, #severityTypeTrainList.severityType#)   
+             "
+    in severityTypeTrainList    {domain : DoDtSeverityTypeTrain         cardinality: "*" }
+}
+
+
+create Task TkRemoveSeverityTypeTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE SEVERITY_TYPE_TRAIN;
+             "
+}
+
+

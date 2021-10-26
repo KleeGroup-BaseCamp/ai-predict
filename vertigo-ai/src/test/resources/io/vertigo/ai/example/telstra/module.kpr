@@ -1,2 +1,10 @@
 mda/modele.ksp
+mda/modele_train.ksp
+
+tasks/tasks_bulkload.ksp
+tasks/tasks_location_train.ksp
+tasks/tasks_log_feature_train.ksp
+tasks/tasks_resource_type_train.ksp
+tasks/tasks_severity_type_train.ksp
+tasks/tasks_event_type_train.ksp
 
