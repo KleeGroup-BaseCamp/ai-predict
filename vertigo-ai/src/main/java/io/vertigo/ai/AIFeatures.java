@@ -19,14 +19,16 @@
 package io.vertigo.ai;
 
 import io.vertigo.ai.impl.server.PredictionManagerImpl;
-import io.vertigo.ai.impl.structure.dataset.DatasetManagerImpl;
+import io.vertigo.ai.impl.structure.dataset.ProcessorDAGManagerImpl;
+import io.vertigo.ai.impl.structure.dataset.ProcessorManagerImpl;
 import io.vertigo.ai.impl.structure.record.RecordManagerImpl;
 import io.vertigo.ai.mlmodel.ModelManager;
 import io.vertigo.ai.plugins.AIPredictClientWebServices;
 import io.vertigo.ai.plugins.AIPredictPluginImpl;
 import io.vertigo.ai.plugins.SqlDatasetProcessingPluginImpl;
 import io.vertigo.ai.server.domain.AISmartTypes;
-import io.vertigo.ai.structure.dataset.DatasetManager;
+import io.vertigo.ai.structure.processor.ProcessorDAGManager;
+import io.vertigo.ai.structure.processor.ProcessorManager;
 import io.vertigo.ai.structure.record.RecordManager;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.core.node.config.Feature;
@@ -49,14 +51,16 @@ public class AIFeatures extends Features<AIFeatures>{
 
 	@Override
 	protected void buildFeatures() {
-		getModuleConfigBuilder().addComponent(ModelManager.class, PredictionManagerImpl.class);
-		getModuleConfigBuilder().addComponent(RecordManager.class, RecordManagerImpl.class);
-		getModuleConfigBuilder().addComponent(DatasetManager.class, DatasetManagerImpl.class);
-		getModuleConfigBuilder().addAmplifier(AIPredictClientWebServices.class);
-		getModuleConfigBuilder().addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
-				.addDefinitionResource("smarttypes", AISmartTypes.class.getName())
-				.addDefinitionResource("dtobjects", "io.vertigo.ai.server.domain.DtDefinitions")
-				.build());
+		getModuleConfigBuilder()
+			.addComponent(ModelManager.class, PredictionManagerImpl.class)
+			.addComponent(RecordManager.class, RecordManagerImpl.class)
+			.addComponent(ProcessorManager.class, ProcessorManagerImpl.class)
+			.addComponent(ProcessorDAGManager.class, ProcessorDAGManagerImpl.class) // Testing DAG
+			.addAmplifier(AIPredictClientWebServices.class)
+			.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+					.addDefinitionResource("smarttypes", AISmartTypes.class.getName())
+					.addDefinitionResource("dtobjects", "io.vertigo.ai.server.domain.DtDefinitions")
+					.build());
 	}
 	
 

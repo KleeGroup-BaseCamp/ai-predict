@@ -4,7 +4,6 @@ import java.util.List;
 
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.Entity;
 
 public interface Dataset<E extends DtObject> {
 	
@@ -13,12 +12,6 @@ public interface Dataset<E extends DtObject> {
 	 * @return DtDefinition
 	 */
 	DtDefinition getItemDefinition();
-	
-	/**
-	 * Attach data for in memory processing 
-	 * @param <O>
-	 * @param data
-	 */
 	
 	/**
 	 * Collect attached data for in memory processing 

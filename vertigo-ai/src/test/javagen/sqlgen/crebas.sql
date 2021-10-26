@@ -49,12 +49,16 @@ create sequence SEQ_SEVERITY_TYPE
 create table EVENT_TYPE
 (
     ID          	 NUMERIC     	not null,
+    CODE        	 NUMERIC     	,
     EVENT_TYPE  	 TEXT        	not null,
     constraint PK_EVENT_TYPE primary key (ID)
 );
 
 comment on column EVENT_TYPE.ID is
 'ID';
+
+comment on column EVENT_TYPE.CODE is
+'Code';
 
 comment on column EVENT_TYPE.EVENT_TYPE is
 'Event Type';
@@ -97,6 +101,7 @@ comment on column IRIS.VARIETY is
 create table LOCATION
 (
     ID          	 NUMERIC     	not null,
+    CODE        	 NUMERIC     	,
     LOCATION    	 TEXT        	not null,
     SEVERITY_FAULT	 NUMERIC     	not null,
     constraint PK_LOCATION primary key (ID)
@@ -104,6 +109,9 @@ create table LOCATION
 
 comment on column LOCATION.ID is
 'ID';
+
+comment on column LOCATION.CODE is
+'Code';
 
 comment on column LOCATION.LOCATION is
 'Location';
@@ -117,6 +125,7 @@ comment on column LOCATION.SEVERITY_FAULT is
 create table LOG_FEATURE
 (
     ID          	 NUMERIC     	not null,
+    CODE        	 NUMERIC     	,
     LOG_FEATURE 	 TEXT        	not null,
     VOLUME      	 NUMERIC     	not null,
     constraint PK_LOG_FEATURE primary key (ID)
@@ -124,6 +133,9 @@ create table LOG_FEATURE
 
 comment on column LOG_FEATURE.ID is
 'ID';
+
+comment on column LOG_FEATURE.CODE is
+'Code';
 
 comment on column LOG_FEATURE.LOG_FEATURE is
 'Log Feature';
@@ -137,12 +149,16 @@ comment on column LOG_FEATURE.VOLUME is
 create table RESOURCE_TYPE
 (
     ID          	 NUMERIC     	not null,
+    CODE        	 NUMERIC     	,
     RESOURCE_TYPE	 TEXT        	not null,
     constraint PK_RESOURCE_TYPE primary key (ID)
 );
 
 comment on column RESOURCE_TYPE.ID is
 'ID';
+
+comment on column RESOURCE_TYPE.CODE is
+'Code';
 
 comment on column RESOURCE_TYPE.RESOURCE_TYPE is
 'Resource Type';
@@ -153,12 +169,16 @@ comment on column RESOURCE_TYPE.RESOURCE_TYPE is
 create table SEVERITY_TYPE
 (
     ID          	 NUMERIC     	not null,
+    CODE        	 NUMERIC     	,
     SEVERITY_TYPE	 TEXT        	not null,
     constraint PK_SEVERITY_TYPE primary key (ID)
 );
 
 comment on column SEVERITY_TYPE.ID is
 'ID';
+
+comment on column SEVERITY_TYPE.CODE is
+'Code';
 
 comment on column SEVERITY_TYPE.SEVERITY_TYPE is
 'Severity Type';

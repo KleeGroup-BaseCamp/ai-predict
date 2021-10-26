@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 
 import com.opencsv.CSVParserBuilder;
@@ -17,7 +18,7 @@ import io.vertigo.core.resource.ResourceManager;
 
 public final class CSVReaderUtil {
 	
-	public static void parseCSV(final ResourceManager resourceManager, final String csvFilePath, final BiConsumer<String, String[]> recordConsumer) {
+	public static void parseCSV(final ResourceManager resourceManager, final String csvFilePath, final BiConsumer<String, String[]> recordConsumer, final Runnable finishRunnable) {
 		Assertion.check()
 				.isNotNull(resourceManager)
 				.isNotNull(csvFilePath)
@@ -34,10 +35,15 @@ public final class CSVReaderUtil {
 			while ((record = csvReader.readNext()) != null) {
 				recordConsumer.accept(csvFilePath, record);
 			}
+			finishRunnable.run();
 		} catch (final IOException | CsvValidationException e) {
 			throw WrappedException.wrap(e, "Can't load csv file {0}", csvFilePath);
 		}
 		
+	}
+
+	public static void parseCSV(final ResourceManager resourceManager, final String csvFilePath, final BiConsumer<String, String[]> recordConsumer) {
+		parseCSV(resourceManager, csvFilePath, recordConsumer, () -> {});
 	}
 	
 }

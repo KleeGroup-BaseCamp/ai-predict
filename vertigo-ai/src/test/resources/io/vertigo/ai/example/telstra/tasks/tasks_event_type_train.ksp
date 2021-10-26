@@ -1,0 +1,32 @@
+package io.vertigo.ai.example.telstra.train
+
+
+create Task TkLoadEventType {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select * from EVENT_TYPE where ID in (#eventTypeIds.rownum#);
+             "
+    in eventTypeIds  	   	{domain : DoId         			cardinality: "*" }
+    out dtcEventTypeTrain	{domain : DoDtEventTypeTrain	cardinality: "*" }
+}
+
+
+create Task TkBulkCreateEventTypeTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    storeName : "train"
+    request : "
+            INSERT INTO EVENT_TYPE_TRAIN (ID, CODE, EVENT_TYPE) values (#eventTypeTrainList.id#, #eventTypeTrainList.code#, #eventTypeTrainList.eventType#)   
+             "
+    in eventTypeTrainList    {domain : DoDtEventTypeTrain         cardinality: "*" }
+}
+
+
+create Task TkRemoveEventTypeTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE EVENT_TYPE_TRAIN;
+             "
+}
+
+

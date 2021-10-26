@@ -3,7 +3,6 @@ import logging
 import importlib
 from cerberus import Validator
 import builtins
-import numpy as np
 from pandas import DataFrame
 from pathlib import Path
 import os
@@ -12,8 +11,7 @@ from django.core.validators import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.datastructures import MultiValueDict
 
-from AIPredict.settings.development import TRAIN_DB
-from AIPredict.settings.production import BUNDLE_PATH
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 class BundleCreationValidator:
@@ -94,7 +92,7 @@ class BundleCreationValidator:
         is_valid = self.validator.validate(dataset["db_config"], db_config_schema)
         if not is_valid:
             raise ValidationError(self._parse_error(self.validator.errors))
-        if not dataset["db_config"]["database"] in TRAIN_DB:
+        if not dataset["db_config"]["database"] in settings.TRAIN_DB:
             raise ValidationError("The database key %s is unknown." %dataset["db_config"]["key"])
         #check data_config schema
         is_valid = self.validator.validate({"data": dataset["data_config"]}, data_config_schema)
@@ -179,7 +177,7 @@ class BundleRequestValidator:
             self.version = kwargs.pop("version")
         
     def validate(self):
-        path = Path(BUNDLE_PATH, "standard", self.name)
+        path = Path(settings.BUNDLE_PATH, "standard", self.name)
         if self.version:
             path = path / str("v" + str(self.version))
         if not os.path.exists(path):
@@ -190,14 +188,18 @@ class BundleRequestValidator:
 class DataValidator:
 
     def __init__(self, data:DataFrame, config:Dict[str, object]):
+        logger.info("Debug")
         self.data = data
         self.data_schema = config["dataset"]["data_config"]
         self.domain = config["dataset"]["domains"]
-    
-    def validate(self):
-        self._validate_schema()
 
-    def _validate_schema(self) -> DataFrame:
+    def validate(self):
+        #disabling validation
+        if (settings.FEATURES_FLAGS.get('validation', True)):
+            self._validate_schema()
+
+    def _validate_schema(self):
+        logger.info("Validating data schema")
         length = len(self.data)
         schema = {}
         for column in self.data_schema:
@@ -206,11 +208,15 @@ class DataValidator:
             for i in range(length):
                 column_schema["schema"][i] = value_schema
             schema[column["name"]] = column_schema
-
+        
         validator = Validator()
-        is_valid = validator.validate(self.data.to_dict(), schema)
+        data_dict = self.data.to_dict()
+        is_valid = validator.validate(data_dict, schema)
         if not is_valid:
+            logger.error("Data schema is NOT valid !")
             raise ValidationError(self._parse_error(validator.errors))
+        else:
+            logger.info("Data schema is valid")
 
     def _get_value_schema(self, value_conf:Dict[str, object]) -> Dict[str, object]:
         value_schema = {"required": True}
@@ -239,6 +245,7 @@ class DataValidator:
 class TrainDataValidator(DataValidator):
 
     def __init__(self, X:DataFrame, y:DataFrame, config:Dict[str, object]):
+        logger.info("Preparing training data validator")
         self.data_schema = config["dataset"]["data_config"]
         self.domain = config["dataset"]["domains"]
         self.data = X.copy(deep=True)
@@ -249,3 +256,4 @@ class TrainDataValidator(DataValidator):
         for i in range(y_size):
             self.data.insert(x_size, column=y_columns[i], value=y_values[i])
             x_size += 1
+

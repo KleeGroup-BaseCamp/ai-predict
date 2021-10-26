@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.structure.dataset.DatasetManagerOld;
-import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.dataset.models.DatasetOpeOld;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -66,7 +66,7 @@ public abstract class AbstractPredictionManagerTest {
 		datasetItemDefinition = definitionSpace.resolve(itemName,RowDefinition.class);
 	}
 	
-	private Dataset getIrisDataset(){
+	private DatasetOpeOld getIrisDataset(){
 		final ItemDatasetLoader<IrisItem> loader = new ItemDatasetLoader<IrisItem>(datasetManager);
 		loader.setItemDefinition(datasetItemDefinition);
 		loader.bindDataBase(irisDatabase);
@@ -75,12 +75,12 @@ public abstract class AbstractPredictionManagerTest {
 				.map(item -> item.getUID())
 				.collect(Collectors.toList());
 		RowChunk<IrisItem> chunk = new RowChunk<IrisItem>(items, IrisItem.class);
-		Dataset dataset = loader.loadData(chunk, "DsIrisDataset");
+		DatasetOpeOld dataset = loader.loadData(chunk, "DsIrisDataset");
 		return dataset;
 	}
 
 	private PredictResponse testPrediction(final String predictionType) {
-		Dataset dataset = getIrisDataset();
+		DatasetOpeOld dataset = getIrisDataset();
 		PredictResponse response = predictionManager.predict(dataset.collect(), "iris-"+predictionType, 0);
 		return response;
 	}

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.structure.dataset.DatasetManagerOld;
-import io.vertigo.ai.structure.dataset.models.Dataset;
+import io.vertigo.ai.structure.dataset.models.DatasetOpeOld;
 import io.vertigo.ai.structure.row.definitions.RowChunk;
 import io.vertigo.ai.structure.row.definitions.RowDefinition;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -29,7 +29,7 @@ import io.vertigo.ai.server.models.PredictResponse;
 public abstract class AbstractPredictionManagerTest {
     
 	@Inject
-	private ModelManager predictionManager;
+	private ModelManager modelManager;
 	
 	@Inject
 	private DatasetManagerOld datasetManager;
@@ -66,7 +66,7 @@ public abstract class AbstractPredictionManagerTest {
 		rowDefinition = definitionSpace.resolve(itemName, RowDefinition.class);
 	}
 	
-	private Dataset getBostonDataset(){
+	private DatasetOpeOld getBostonDataset(){
 		final ItemDatasetLoader<BostonItem> loader = new ItemDatasetLoader<BostonItem>(datasetManager);
 		loader.setItemDefinition(rowDefinition);
 		loader.bindDataBase(bostonDatabase);
@@ -75,14 +75,25 @@ public abstract class AbstractPredictionManagerTest {
 				.map(item -> item.getUID())
 				.collect(Collectors.toList());
 		RowChunk<BostonItem> chunk = new RowChunk<BostonItem>(items, BostonItem.class);
-		Dataset dataset = loader.loadData(chunk, "DsBostonDataset");
+		DatasetOpeOld dataset = loader.loadData(chunk, "DsBostonDataset");
 		return dataset;
 	}
 	
 	private PredictResponse testPrediction(final String predictionType) {
-		Dataset dataset = getBostonDataset();
-		PredictResponse response = predictionManager.predict(dataset.collect(), "boston-"+predictionType, 0);
+		DatasetOpeOld dataset = getBostonDataset();
+		PredictResponse response = modelManager.predict(dataset.collect(), "boston-"+predictionType, 0);
 		return response;
+	}
+	
+	@Test
+	public void testBostonPredictAll() {
+		
+		DatasetOpeOld dataset = getBostonDataset();
+		
+		int i = 0;
+		modelManager.activate("boston", i);
+		PredictResponse response = modelManager.predict(dataset.collect(), "boston", i);
+		
 	}
 	
 	@Test

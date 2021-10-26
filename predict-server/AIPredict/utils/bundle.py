@@ -9,10 +9,10 @@ import random
 import numpy as np
 import zipfile
 
-from AIPredict.utils.imports import *
-from AIPredict.settings.production import BUNDLE_PATH
-from AIPredict.utils.version import VersionController
+from django.conf import settings
 
+from AIPredict.utils.imports import *
+from AIPredict.utils.version import VersionController
 
 class BundleController:
 
@@ -26,8 +26,7 @@ class BundleController:
         """
         # set basic parameters
         self.name = name
-        self.path = Path(".", BUNDLE_PATH, "standard",
-                         name)
+        self.path = Path(".", settings.BUNDLE_PATH, "standard", name)
 
     def get_path(self) -> Path:
         return self.path

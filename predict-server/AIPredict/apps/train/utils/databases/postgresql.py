@@ -1,13 +1,13 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-from AIPredict.settings.development import TRAIN_DB
+from django.conf import settings
 
 def build_url(database: dict):
     return database["sql"]+"://"+database["username"]+":"+database["password"]+"@"+database["host"]+"/"+database["keyspace"]
 
 def connect_database(db_name: str):
-    database = TRAIN_DB[db_name]
+    database = settings.TRAIN_DB[db_name]
     database_url = build_url(database)
     engine = create_engine(database_url)
     return engine

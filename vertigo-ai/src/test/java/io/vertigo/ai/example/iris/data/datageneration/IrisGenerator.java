@@ -17,7 +17,7 @@ import io.vertigo.database.sql.SqlManager;
 @Transactional
 public class IrisGenerator implements Component { 
 
-	private static final String IRIS_CSV_FILE_PATH = "io/vertigo/ai/datageneration/iris.csv";
+	private static final String IRIS_CSV_FILE_PATH = "io/vertigo/ai/example/iris/datageneration/iris.csv";
 	private static final int IRIS_CSV_FILE_COLUMN_NUMBER = 5;
 	
 	@Inject

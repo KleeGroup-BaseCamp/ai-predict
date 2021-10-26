@@ -21,6 +21,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Era(io.vertigo.ai.example.heroes.domain.Era.class),
 		/** Objet de données EventType. */
 		EventType(io.vertigo.ai.example.telstra.domain.EventType.class),
+		/** Objet de données EventTypeTrain. */
+		EventTypeTrain(io.vertigo.ai.example.telstra.domain.EventTypeTrain.class),
 		/** Objet de données Faction. */
 		Faction(io.vertigo.ai.example.heroes.domain.Faction.class),
 		/** Objet de données FactionCount. */
@@ -33,12 +35,22 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		IrisTrain(io.vertigo.ai.example.iris.domain.IrisTrain.class),
 		/** Objet de données Location. */
 		Location(io.vertigo.ai.example.telstra.domain.Location.class),
+		/** Objet de données LocationTrain. */
+		LocationTrain(io.vertigo.ai.example.telstra.domain.LocationTrain.class),
 		/** Objet de données LogFeature. */
 		LogFeature(io.vertigo.ai.example.telstra.domain.LogFeature.class),
+		/** Objet de données LogFeatureTrain. */
+		LogFeatureTrain(io.vertigo.ai.example.telstra.domain.LogFeatureTrain.class),
 		/** Objet de données ResourceType. */
 		ResourceType(io.vertigo.ai.example.telstra.domain.ResourceType.class),
+		/** Objet de données ResourceTypeTrain. */
+		ResourceTypeTrain(io.vertigo.ai.example.telstra.domain.ResourceTypeTrain.class),
 		/** Objet de données SeverityType. */
-		SeverityType(io.vertigo.ai.example.telstra.domain.SeverityType.class)		;
+		SeverityType(io.vertigo.ai.example.telstra.domain.SeverityType.class),
+		/** Objet de données SeverityTypeTrain. */
+		SeverityTypeTrain(io.vertigo.ai.example.telstra.domain.SeverityTypeTrain.class),
+		/** Objet de données TelstraTrain. */
+		TelstraTrain(io.vertigo.ai.example.telstra.domain.TelstraTrain.class)		;
 
 		private final Class<?> clazz;
 
@@ -72,6 +84,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum EventTypeFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.EventType> {
 		/** Propriété 'ID'. */
 		id,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Event Type'. */
+		eventType	}
+
+	/**
+	 * Enumération des champs de EventTypeTrain.
+	 */
+	public enum EventTypeTrainFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.EventTypeTrain> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Event Type'. */
 		eventType	}
 
@@ -152,6 +177,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum LocationFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.Location> {
 		/** Propriété 'ID'. */
 		id,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Location'. */
+		location,
+		/** Propriété 'Severity Fault'. */
+		severityFault	}
+
+	/**
+	 * Enumération des champs de LocationTrain.
+	 */
+	public enum LocationTrainFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.LocationTrain> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Location'. */
 		location,
 		/** Propriété 'Severity Fault'. */
@@ -163,6 +203,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum LogFeatureFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.LogFeature> {
 		/** Propriété 'ID'. */
 		id,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Log Feature'. */
+		logFeature,
+		/** Propriété 'Volume'. */
+		volume	}
+
+	/**
+	 * Enumération des champs de LogFeatureTrain.
+	 */
+	public enum LogFeatureTrainFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.LogFeatureTrain> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Log Feature'. */
 		logFeature,
 		/** Propriété 'Volume'. */
@@ -174,6 +229,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum ResourceTypeFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.ResourceType> {
 		/** Propriété 'ID'. */
 		id,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Resource Type'. */
+		resourceType	}
+
+	/**
+	 * Enumération des champs de ResourceTypeTrain.
+	 */
+	public enum ResourceTypeTrainFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.ResourceTypeTrain> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Resource Type'. */
 		resourceType	}
 
@@ -183,8 +251,74 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum SeverityTypeFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.SeverityType> {
 		/** Propriété 'ID'. */
 		id,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Severity Type'. */
 		severityType	}
+
+	/**
+	 * Enumération des champs de SeverityTypeTrain.
+	 */
+	public enum SeverityTypeTrainFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.SeverityTypeTrain> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Severity Type'. */
+		severityType	}
+
+	/**
+	 * Enumération des champs de TelstraTrain.
+	 */
+	public enum TelstraTrainFields implements DtFieldName<io.vertigo.ai.example.telstra.domain.TelstraTrain> {
+		/** Propriété 'ID'. */
+		id,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'code_count'. */
+		codeCount,
+		/** Propriété 'Log Feature'. */
+		logFeature,
+		/** Propriété 'Volume'. */
+		volume,
+		/** Propriété 'Severity Fault'. */
+		severityFault,
+		/** Propriété 'win_location_volume_sum'. */
+		winLocationVolumeSum,
+		/** Propriété 'win_location_volume_avg'. */
+		winLocationVolumeAvg,
+		/** Propriété 'win_location_volume_min'. */
+		winLocationVolumeMin,
+		/** Propriété 'win_location_volume_max'. */
+		winLocationVolumeMax,
+		/** Propriété 'win_location_volume_count'. */
+		winLocationVolumeCount,
+		/** Propriété 'count_feature_204'. */
+		countFeature204,
+		/** Propriété 'count_feature_205'. */
+		countFeature205,
+		/** Propriété 'severity_type'. */
+		severityType,
+		/** Propriété 'sum_feature_204_volume'. */
+		sumFeature204Volume,
+		/** Propriété 'sum_feature_205_volume'. */
+		sumFeature205Volume,
+		/** Propriété 'avg_feature_204_volume'. */
+		avgFeature204Volume,
+		/** Propriété 'avg_feature_205_volume'. */
+		avgFeature205Volume,
+		/** Propriété 'min_feature_204_volume'. */
+		minFeature204Volume,
+		/** Propriété 'min_feature_205_volume'. */
+		minFeature205Volume,
+		/** Propriété 'max_feature_204_volume'. */
+		maxFeature204Volume,
+		/** Propriété 'max_feature_205_volume'. */
+		maxFeature205Volume,
+		/** Propriété 'count_feature_204_volume'. */
+		countFeature204Volume,
+		/** Propriété 'count_feature_205_volume'. */
+		countFeature205Volume	}
 
 	/** {@inheritDoc} */
 	@Override

@@ -167,6 +167,13 @@ CORS_ORIGIN_WHITELIST = (
 
 #Bundle upload path
 STATIC_ROOT = Path("frontend", "dist")
+
+# Train db config
 train_db_path = Path("conf", "train_db.json")
 with open(train_db_path, "r") as train_db:
     TRAIN_DB = json.load(train_db)
+
+# Feature Flags
+features_path = Path("conf", "features.json")
+with open(features_path, "r") as features:
+    FEATURES_FLAGS = json.load(features)

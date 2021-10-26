@@ -1,0 +1,19 @@
+version: '3' # 2.4 is the last version that supports depends_on conditions for service health
+services:
+  nginx:
+    image: nginx-ai-predict:latest  # better to use a specific version, if you want to control upgrades
+    hostname: nginx-ai-predict
+    container_name: nginx-ai-predict
+    ports:
+      - '8080:80'
+    depends_on: 
+      - ai-train
+
+  ai-train:
+    image: django-ai-train:latest
+    hostname: django-ai-train
+    container_name: django-ai-train
+    depends_on: 
+      - nginx
+
+

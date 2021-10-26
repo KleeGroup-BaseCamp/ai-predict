@@ -18,7 +18,7 @@ public class Combining {
 	 * @param how the join type. Must be one of left, right, inner, full.
 	 * @returna new dataset
 	 */
-	public static Dataset join(Dataset left, Dataset right, String onLeft, String onRight, String how) {
+	public static DatasetOpeOld join(DatasetOpeOld left, DatasetOpeOld right, String onLeft, String onRight, String how) {
 		DatasetField leftField = left.getField(onLeft);
 		DatasetField rightField = right.getField(onRight);
 		List<DatasetField> columns = Stream.concat(left.fields().stream(), right.fields().stream())
@@ -38,11 +38,11 @@ public class Combining {
 		}
 	}
 	
-	private static Dataset innerJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
+	private static DatasetOpeOld innerJoin(DatasetOpeOld left, DatasetOpeOld right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
 		// group right dataset. The map values are datasets that share the same rightField value;
-		HashMap<Object, Dataset> rightMap = right.group(rightField);
+		HashMap<Object, DatasetOpeOld> rightMap = right.group(rightField);
 		//initiate the joined dataset
-		Dataset dataset = new Dataset(columns);
+		DatasetOpeOld dataset = new DatasetOpeOld(columns);
 		for (Row leftRow : left) {
 			//for each row of the left dataset, compares the value of leftField to the keys of rightMap
 			Object key = leftRow.get(leftField);
@@ -61,10 +61,10 @@ public class Combining {
 		return dataset;	
 	}
 	
-	private static Dataset leftJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
+	private static DatasetOpeOld leftJoin(DatasetOpeOld left, DatasetOpeOld right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
 		// group right dataset. The map values are datasets that share the same rightField value;
-		HashMap<Object, Dataset> rightMap = right.group(rightField);
-		Dataset dataset = new Dataset(columns);
+		HashMap<Object, DatasetOpeOld> rightMap = right.group(rightField);
+		DatasetOpeOld dataset = new DatasetOpeOld(columns);
 		
 		// creating a right row map with only null values
 		HashMap<DatasetField, Object> rightRowContent = new HashMap<DatasetField, Object>();
@@ -97,9 +97,9 @@ public class Combining {
 		return dataset;	
 	}
 	
-	private static Dataset fullJoin(Dataset left, Dataset right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
-		HashMap<Object, Dataset> rightMap = right.group(rightField);
-		Dataset dataset = new Dataset(columns);
+	private static DatasetOpeOld fullJoin(DatasetOpeOld left, DatasetOpeOld right, List<DatasetField> columns, DatasetField leftField, DatasetField rightField) {
+		HashMap<Object, DatasetOpeOld> rightMap = right.group(rightField);
+		DatasetOpeOld dataset = new DatasetOpeOld(columns);
 		for (Row leftRow : left) {
 			Object key = leftRow.get(leftField);
 			if (rightMap.containsKey(key)) {
@@ -126,7 +126,7 @@ public class Combining {
 		}
 		
 		for (Object key : rightMap.keySet()) {
-			Dataset rightDataset = rightMap.get(key);
+			DatasetOpeOld rightDataset = rightMap.get(key);
 			for (Row rightRow: rightDataset) {
 				HashMap<DatasetField, Object> leftRowContent = new HashMap<DatasetField, Object>();
 				for (DatasetField field: left.fields()) {

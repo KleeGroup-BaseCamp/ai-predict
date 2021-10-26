@@ -5,6 +5,11 @@ create Domain DoLabel {
     storeType: "TEXT"
 }
 
+create Domain DoCode {
+	dataType: String
+	storeType: "VARCHAR(10)"
+}
+
 create Domain DoDecimal {
     dataType: BigDecimal
     storeType: "NUMERIC(5,2)"
@@ -15,34 +20,55 @@ create Domain DoInteger {
     storeType: "NUMERIC"
 }
 
+/*create Domain DoId {
+    dataType: Long
+    storeType: "NUMERIC"
+}*/
+
 create DtDefinition DtLocation {
-	stereotype: "Entity"
-    id id {domain: DoInteger label:"ID"}
+	/*stereotype: "Entity"*/
+	stereotype: "KeyConcept"
+	
+    id id {domain: DoId label:"ID"}
+    field code {domain: DoInteger label:"Code"}
     field location {domain: DoLabel label:"Location" cardinality:"1"}
     field severityFault {domain: DoInteger label:"Severity Fault" cardinality:"1"}
 }
 
 create DtDefinition DtResourceType {
-	stereotype: "StaticMasterData"
-    id id {domain: DoInteger label:"ID" }
+	/* stereotype: "StaticMasterData" */
+	stereotype: "KeyConcept"
+	
+    id id {domain: DoId label:"ID" }
+    field code {domain: DoInteger label:"Code"}
     field resourceType {domain: DoLabel label:"Resource Type" cardinality:"1"}
 }
 
 create DtDefinition DtSeverityType {
-	stereotype: "StaticMasterData"
-    id id {domain: DoInteger label:"ID"}
+	/* stereotype: "StaticMasterData" */
+	stereotype: "KeyConcept"
+	
+    id id {domain: DoId label:"ID"}
+    field code {domain: DoInteger label:"Code"}
     field severityType {domain: DoLabel label:"Severity Type" cardinality:"1"}
 }
 
 create DtDefinition DtEventType {
-	stereotype: "StaticMasterData"
-    id id {domain: DoInteger label:"ID"}
+	/* stereotype: "StaticMasterData" */
+	stereotype: "KeyConcept"
+	
+    id id {domain: DoId label:"ID"}
+    field code {domain: DoInteger label:"Code"}
     field eventType {domain: DoLabel label:"Event Type" cardinality:"1"}
 }
 
 create DtDefinition DtLogFeature {
-	stereotype: "Entity"
-    id id {domain: DoInteger label:"ID" }
+	/*stereotype: "Entity"*/
+	stereotype: "KeyConcept"
+	
+    id id {domain: DoId label:"ID" }
+    field code {domain: DoInteger label:"Code"}
     field logFeature {domain: DoLabel label:"Log Feature" cardinality:"1"}
     field volume {domain: DoInteger label:"Volume" cardinality:"1"}
 }
+

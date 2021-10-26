@@ -19,7 +19,7 @@ public final class ProcessorImpl implements Processor {
 	 * @param type the type of processor
 	 * @param params the processor parameters
 	 */
-	public <E extends Entity> ProcessorImpl(final int processingOrder,final ProcessorTypes type, final Map<String, Object> params) {
+	public <E extends Entity> ProcessorImpl(final int processingOrder, final ProcessorTypes type, final Map<String, Object> params) {
 		this.order = processingOrder;
 		this.type = type;
 		this.params = params;
@@ -48,6 +48,5 @@ public final class ProcessorImpl implements Processor {
 	public int getProcessingOrder() {
 		return order;
 	}
-	
 
 }

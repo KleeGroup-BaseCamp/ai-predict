@@ -1,0 +1,31 @@
+package io.vertigo.ai.example.telstra.train
+
+
+create Task TkLoadLogFeature {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select * from LOG_FEATURE where ID in (#logFeatureIds.rownum#);
+             "
+    in logFeatureIds  	   	{domain : DoId         			cardinality: "*" }
+    out dtcLogFeatureTrain	{domain : DoDtLogFeatureTrain	cardinality: "*" }
+}
+
+
+create Task TkBulkCreateLogFeatureTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    storeName : "train"
+    request : "
+            INSERT INTO LOG_FEATURE_TRAIN (ID, CODE, LOG_FEATURE, VOLUME) values (#logFeatureTrainList.id#, #logFeatureTrainList.code#, #logFeatureTrainList.logFeature#, #logFeatureTrainList.volume#)   
+             "
+    in logFeatureTrainList    {domain : DoDtLogFeatureTrain         cardinality: "*" }
+}
+
+
+create Task TkRemoveLogFeatureTrain {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    storeName : "train"
+    request : "
+            TRUNCATE TABLE LOG_FEATURE_TRAIN;
+             "
+}
+

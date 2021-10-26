@@ -143,7 +143,7 @@ public final class RecordManagerImpl implements RecordManager, Activeable{
 	@Override
 	public Future<Long> refreshAll(RecordDefinition recordDefinition) {
 		final WritableFuture<Long> refreshFuture = new WritableFuture<>();
-		executorService.schedule(new RefreshAllTrainDataTask(recordDefinition, refreshFuture/*, this*/), 5, TimeUnit.SECONDS); //une rerecordation total dans max 5s
+		executorService.schedule(new RefreshAllTrainDataTask(recordDefinition, refreshFuture), 5, TimeUnit.SECONDS);
 		return refreshFuture;
 	}
 

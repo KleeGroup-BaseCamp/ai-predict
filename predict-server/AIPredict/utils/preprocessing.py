@@ -1,7 +1,11 @@
 import pandas as pd
+import numpy as np
 from AIPredict.utils.encoders import *
+from AIPredict.utils.imputers import *
 
+import logging
 
+logger = logging.getLogger(__name__)
 class FeatureEngineering(object):
 
     def __init__(self, data: pd.DataFrame, bundle={}) -> None:
@@ -18,7 +22,7 @@ class FeatureEngineering(object):
     def get_bundle(self) -> dict:
         return self.bundle
 
-    def add(self, column: str, encoderType: FeatureEncoder) -> bool:
+    def add(self, column: str, encoderType: FeatureEncoder, imputerParams: str) -> bool:
         """This method adds and configure an encoder/scaler to a column of the attached dataset. It updates
         the feature engineering bundle with the column name, the encoder/scaler and its parameters.
 
@@ -35,8 +39,18 @@ class FeatureEngineering(object):
         # extract the column data from the dataset
         data = self.data[[column]]
         encoder = encoderType()
+
+        self.bundle[column] = { "encoder": { encoder.get_label(): encoder.fit(data) } }
+
+        if imputerParams is not None:
+            if imputerParams not in ('mean', 'median', 'most_frequent'):
+                imputer = SimpleImputer(strategy='constant', fill_value=imputerParams)
+            else:
+                imputer = SimpleImputer(strategy=imputerParams)
+            self.bundle[column]["imputer"] = { imputer.get_label(): imputer.fit(data) }
+
+
         # updates the bundle content and computes the scaler/encoder parameters
-        self.bundle[column] = {encoder.get_label(): encoder.fit(data)}
         return True
 
     def transform(self) -> bool:
@@ -49,9 +63,21 @@ class FeatureEngineering(object):
         for column in self.bundle:
             # apply the encoder/scaler to the columns
             if column in self.data.columns:
-                for encoderType in self.bundle[column]:
+                imputers = self.bundle[column].get('imputer')
+                if imputers is not None:
+                    for imputerType in imputers:
+                        # get the inputer parameters from the bundle
+                        params = self.bundle[column]['imputer'][imputerType]
+                        # initiate the encoder and set its parameters
+                        imputer = pick_imputer_from_label(imputerType)()
+                        imputer.set_params(params)
+                        # transform the data
+                        transformed_data = imputer.transform(self.data[[column]])
+                        self.data[column] = transformed_data
+
+                for encoderType in self.bundle[column]['encoder']:
                     # get the encoder/scaler's parameters from the bundle
-                    params = self.bundle[column][encoderType]
+                    params = self.bundle[column]['encoder'][encoderType]
                     # initiate the encoder and set its parameters
                     encoder = pick_encoder_from_label(encoderType)()
                     encoder.set_params(params)
@@ -77,6 +103,12 @@ encoders = {
     "StandardScaler": StandardScaler,
 }
 
-
 def pick_encoder_from_label(label: str):
     return encoders[label]
+
+imputers = {
+    "SimpleImputer": SimpleImputer,
+}
+
+def pick_imputer_from_label(label: str):
+    return imputers[label]

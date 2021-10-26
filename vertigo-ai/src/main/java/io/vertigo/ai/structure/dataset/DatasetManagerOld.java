@@ -26,7 +26,7 @@ import io.vertigo.datamodel.structure.model.KeyConcept;
 /**
  * Gestionnaire des datasets en mémoire.
  */
-public interface DatasetManagerOld extends Manager{
+public interface DatasetManagerOld extends Manager {
 	
 	/**
 	 * Find RowDefinition for a keyConcept. It must be one and only one RowDefinition.
